@@ -1,0 +1,37 @@
+name: Code coverage report
+
+on:
+  pull_request:
+
+jobs:
+  build:
+    permissions:
+      contents: read
+      pull-requests: write
+    name: Run code coverage analysis and reporting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        name: Checkout from Git
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-java@v2
+        name: Setup Java
+        with:
+          distribution: temurin
+          java-version: 11
+          cache: maven
+
+      - name: Run tests with coverage
+        run: mvn verify -Pcoverage
+
+      - name: Add coverage to PR
+        id: jacoco
+        uses: madrapps/jacoco-report@v1.3
+        with:
+          paths: ${{ github.workspace }}/api/target/site/jacoco/jacoco.xml,${{ github.workspace }}/runtime/target/site/jacoco/jacoco.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          min-coverage-overall: 50
+          min-coverage-changed-files: 75
+          debug-mode: true
