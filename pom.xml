@@ -32,7 +32,7 @@
     <byte-buddy.version>1.14.0</byte-buddy.version>
     <servlet-api.version>4.0.1</servlet-api.version>
     <servlet-jsp-api.version>2.3.3</servlet-jsp-api.version>
-    <vertx.version>4.3.8</vertx.version>
+    <vertx.version>4.4.0</vertx.version>
     <smallrye-mutiny-vertx-bindings.version>3.2.0</smallrye-mutiny-vertx-bindings.version>
     <system-stubs-jupiter.version>2.0.2</system-stubs-jupiter.version>
     <awaitility.version>4.2.0</awaitility.version>
