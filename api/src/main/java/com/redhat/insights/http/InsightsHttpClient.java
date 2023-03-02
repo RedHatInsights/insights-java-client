@@ -36,8 +36,6 @@ public interface InsightsHttpClient {
    */
   void sendInsightsReport(String filename, InsightsReport report);
 
-  //  void sendInsightsUpdateReport(String filename, InsightsReport report);
-
   /**
    * Indicates if the HttpClient is ready to send the data.
    *

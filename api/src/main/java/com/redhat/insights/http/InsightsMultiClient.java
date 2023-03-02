@@ -30,9 +30,6 @@ public class InsightsMultiClient implements InsightsHttpClient {
   @Override
   public void decorate(InsightsReport report) {
     logger.warning("Multiclients do not support direct decoration of reports");
-    //    for (InsightsHttpClient client : clients) {
-    //      client.decorate(report);
-    //    }
   }
 
   @Override
@@ -53,9 +50,4 @@ public class InsightsMultiClient implements InsightsHttpClient {
     }
     throw new InsightsException("All clients failed: " + clients);
   }
-
-  //  @Override
-  //  public void sendInsightsReport(String filename, byte[] gzipReport) {
-  //    throw new InsightsException("Multiclients do not support direct send of compressed data");
-  //  }
 }

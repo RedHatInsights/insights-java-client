@@ -115,8 +115,7 @@ public final class InsightsReportController {
           () -> {
             InsightsHttpClient httpClient = httpClientSupplier.get();
             if (httpClient.isReadyToSend()) {
-              generateCoreReport();
-              httpClient.decorate(report);
+              generateConnectReport();
               httpClient.sendInsightsReport(getIdHash() + "_connect.gz", report);
             }
           };
@@ -140,7 +139,7 @@ public final class InsightsReportController {
     }
   }
 
-  void generateCoreReport() {
+  void generateConnectReport() {
     report.generateReport(masking);
     generateAndSetReportIdHash();
   }
