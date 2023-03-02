@@ -15,6 +15,38 @@ jobs:
     name: Run code coverage analysis and reporting
     runs-on: ubuntu-latest
     steps:
+      - name: Download artifacts
+        # It would have been nice to be able to use actions/download-artifact@v2
+        # for this, but as the artifacts are uploaded by another workflow it does
+        # not seem possible - so we need to do this stuff instead
+        uses: actions/github-script@v6.4.0
+        with:
+          script: |
+            var artifacts = await github.rest.actions.listWorkflowRunArtifacts({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               run_id: ${{github.event.workflow_run.id }},
+            });
+            console.log(artifacts);
+            var matchArtifact = artifacts.data.artifacts.filter((artifact) => {
+              return artifact.name == "input-artifacts"
+            })[0];
+            var download = await github.rest.actions.downloadArtifact({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               artifact_id: matchArtifact.id,
+               archive_format: 'zip',
+            });
+            var fs = require('fs');
+            fs.writeFileSync('${{github.workspace}}/input.zip', Buffer.from(download.data));
+
+      - name: Set needed env vars in outputs
+        id: prepare
+        run: |
+          unzip -u input.zip
+          echo current directory contents
+          ls -al
+
       - uses: actions/setup-java@v2
         name: Setup Java
         with:
