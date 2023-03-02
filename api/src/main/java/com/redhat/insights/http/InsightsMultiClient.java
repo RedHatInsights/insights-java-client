@@ -4,9 +4,7 @@ package com.redhat.insights.http;
 import com.redhat.insights.InsightsException;
 import com.redhat.insights.InsightsReport;
 import com.redhat.insights.logging.InsightsLogger;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.List;
 
 /**
@@ -44,8 +42,7 @@ public class InsightsMultiClient implements InsightsHttpClient {
         return;
       } catch (InsightsException x) {
         logger.debug("Client failed, trying next", x);
-        byte[] msgBytes = x.getMessage().getBytes(StandardCharsets.UTF_8);
-        previousExceptionMsg = Base64.getEncoder().encodeToString(msgBytes);
+        previousExceptionMsg = x.getMessage();
       }
     }
     throw new InsightsException("All clients failed: " + clients);
