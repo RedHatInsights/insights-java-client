@@ -125,7 +125,7 @@ public final class InsightsReportController {
       Runnable sendNewJarsIfAny =
           () -> {
             InsightsHttpClient httpClient = httpClientSupplier.get();
-            if (httpClient.isReadyToSend()) {
+            if (httpClient.isReadyToSend() && !jarsToSend.isEmpty()) {
               updateReport.setIdHash(getIdHash());
               updateReport.generateReport(masking);
               httpClient.sendInsightsReport(getIdHash() + "_update.gz", updateReport);
