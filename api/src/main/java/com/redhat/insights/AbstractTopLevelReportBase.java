@@ -61,6 +61,11 @@ public abstract class AbstractTopLevelReportBase implements InsightsReport {
   }
 
   @Override
+  public void decorate(String key, String value) {
+    options.put(key, value);
+  }
+
+  @Override
   public void generateReport(Filtering masking) {
     // FIXME: Should we skip report generation if idHash is already set?
     // The invariant here is that idHash must be the same between CONNECT events from the

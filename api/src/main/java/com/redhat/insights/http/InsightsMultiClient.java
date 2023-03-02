@@ -2,6 +2,7 @@
 package com.redhat.insights.http;
 
 import com.redhat.insights.InsightsException;
+import com.redhat.insights.InsightsReport;
 import com.redhat.insights.logging.InsightsLogger;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -24,6 +25,13 @@ public class InsightsMultiClient implements InsightsHttpClient {
   public InsightsMultiClient(InsightsLogger logger, InsightsHttpClient... clients) {
     this.logger = logger;
     this.clients = Arrays.asList(clients);
+  }
+
+  @Override
+  public void decorate(InsightsReport report) {
+    for (InsightsHttpClient client : clients) {
+      client.decorate(report);
+    }
   }
 
   @Override

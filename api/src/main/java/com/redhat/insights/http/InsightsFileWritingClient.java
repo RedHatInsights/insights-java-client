@@ -2,6 +2,7 @@
 package com.redhat.insights.http;
 
 import com.redhat.insights.InsightsException;
+import com.redhat.insights.InsightsReport;
 import com.redhat.insights.config.InsightsConfiguration;
 import com.redhat.insights.logging.InsightsLogger;
 import java.io.IOException;
@@ -18,6 +19,11 @@ public class InsightsFileWritingClient implements InsightsHttpClient {
   public InsightsFileWritingClient(InsightsLogger logger, InsightsConfiguration config) {
     this.logger = logger;
     this.config = config;
+  }
+
+  @Override
+  public void decorate(InsightsReport report) {
+    report.decorate("transport.type.file", "rhel");
   }
 
   @Override

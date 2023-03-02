@@ -2,6 +2,7 @@
 package com.redhat.insights.http;
 
 import com.redhat.insights.InsightsException;
+import com.redhat.insights.InsightsReport;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -17,6 +18,15 @@ public interface InsightsHttpClient {
 
   public static final String GENERAL_MIME_TYPE =
       "application/vnd.redhat.runtimes-java-general.analytics+tgz";
+
+  /**
+   * Decorates the Insights report with any additional metadata that the client wants sent. This is
+   * a mandatory method, rather than optional, because client implementors should consider what data
+   * they need to convey to the Insights services.
+   *
+   * @param report
+   */
+  void decorate(InsightsReport report);
 
   /**
    * Send the report, which has not been gzipped.
@@ -45,6 +55,12 @@ public interface InsightsHttpClient {
     return true;
   }
 
+  /**
+   * Static gzip helper method
+   *
+   * @param report
+   * @return gzipped bytes
+   */
   static byte[] gzipReport(final String report) {
     try (final ByteArrayOutputStream baos = new ByteArrayOutputStream(report.length())) {
       final byte[] buffy = report.getBytes(StandardCharsets.UTF_8);

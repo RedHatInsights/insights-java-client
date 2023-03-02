@@ -71,4 +71,10 @@ public class UpdateReportImpl implements InsightsReport {
   public String getIdHash() {
     return idHash;
   }
+
+  @Override
+  public void decorate(String key, String value) {
+    logger.warning(
+        String.format("Attempt to add %s => %s to an update report. Ignored.", key, value));
+  }
 }
