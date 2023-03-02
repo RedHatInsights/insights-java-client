@@ -18,7 +18,7 @@ public class UpdateReportImpl implements InsightsReport {
   private String idHash = "";
   private final BlockingQueue<JarInfo> updatedJars;
   private final InsightsLogger logger;
-  private Optional<JarInfoSubreport> subreport;
+  private Optional<JarInfoSubreport> subreport = Optional.empty();
   private final InsightsReportSerializer serializer;
 
   public UpdateReportImpl(BlockingQueue<JarInfo> updatedJars, InsightsLogger logger) {
