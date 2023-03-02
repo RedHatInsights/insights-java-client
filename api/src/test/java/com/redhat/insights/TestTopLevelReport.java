@@ -3,28 +3,15 @@ package com.redhat.insights;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.redhat.insights.doubles.DummyTopLevelReport;
-import com.redhat.insights.doubles.NoopInsightsLogger;
 import com.redhat.insights.jars.ClasspathJarInfoSubreport;
 import com.redhat.insights.jars.JarInfo;
 import com.redhat.insights.jars.JarInfoSubreport;
-import com.redhat.insights.jars.JarInfoSubreportSerializer;
-import com.redhat.insights.logging.InsightsLogger;
 import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.util.*;
 import org.junit.jupiter.api.Test;
 
-public class TestTopLevelReport {
-  private static final InsightsLogger logger = new NoopInsightsLogger();
-
+public class TestTopLevelReport extends AbstractReportTest {
   @Test
   public void testGenerateReportWithoutSubreports() throws IOException {
     String idHash = "RandomIdHash";
@@ -253,39 +240,5 @@ public class TestTopLevelReport {
                 + " should be in the output");
       }
     }
-  }
-
-  private JsonGenerator getJsonGenerator(Writer output) throws IOException {
-    SimpleModule simpleModule =
-        new SimpleModule(
-            "SimpleModule", new Version(1, 0, 0, null, "com.redhat.insights", "runtimes-java"));
-    simpleModule.addSerializer(InsightsReport.class, new InsightsReportSerializer());
-    simpleModule.addSerializer(JarInfoSubreport.class, new JarInfoSubreportSerializer());
-
-    JsonMapper jsonMapper = new JsonMapper();
-    jsonMapper.registerModule(simpleModule);
-
-    JsonFactory factory = new JsonFactory();
-    JsonGenerator jsonGenerator = factory.createGenerator(output);
-    jsonGenerator.setCodec(jsonMapper);
-
-    return jsonGenerator;
-  }
-
-  private String generateReport(InsightsReport insightsReport) throws IOException {
-    insightsReport.generateReport(Filtering.DEFAULT);
-
-    StringWriter stringWriter = new StringWriter();
-    insightsReport.getSerializer().serialize(insightsReport, getJsonGenerator(stringWriter), null);
-    return stringWriter.toString();
-  }
-
-  private Map<?, ?> parseReport(String report) throws JsonProcessingException {
-    JsonMapper mapper = new JsonMapper();
-    return mapper.readValue(report, Map.class);
-  }
-
-  private boolean validateVersion(String version) {
-    return version.matches("^\\d\\.\\d\\.\\d.*$");
   }
 }
