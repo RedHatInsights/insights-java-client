@@ -14,7 +14,9 @@ The only authentication flows we support in this release are:
 - Requires Java 11
 - The [Spotless Maven Plugin](https://github.com/diffplug/spotless/tree/main/plugin-maven) enforces code formatting conventions and will be run as part of the build.
 
+```
 $ mvn clean install
+```
 
 To skip the spotless task, run :
 
