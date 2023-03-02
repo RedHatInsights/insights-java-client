@@ -40,12 +40,11 @@ public class DummyTopLevelReport extends AbstractTopLevelReportBase {
     return super.getBasic();
   }
 
+  @Override
+  public void decorate(String key, String value) {}
+
   public static DummyTopLevelReport of(InsightsLogger logger) {
-    return new DummyTopLevelReport(
-        logger, Collections.emptyMap()
-        //        Collections.<String, InsightsSubreport>unmodifiableMap(
-        //            "details", new AppInsightsSubreport())
-        );
+    return new DummyTopLevelReport(logger, Collections.emptyMap());
   }
 
   public Map<String, String> getNecessary() {

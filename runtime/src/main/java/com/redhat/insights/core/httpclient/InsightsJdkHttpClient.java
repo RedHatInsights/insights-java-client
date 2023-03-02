@@ -2,6 +2,7 @@
 package com.redhat.insights.core.httpclient;
 
 import com.redhat.insights.InsightsException;
+import com.redhat.insights.InsightsReport;
 import com.redhat.insights.config.InsightsConfiguration;
 import com.redhat.insights.http.InsightsHttpClient;
 import com.redhat.insights.logging.InsightsLogger;
@@ -23,7 +24,6 @@ public class InsightsJdkHttpClient implements InsightsHttpClient {
    * This means that the connection will eventually close after some time, and it might fail with a concurrent
    * key rotation.
    */
-
   private final InsightsConfiguration configuration;
   private final InsightsLogger logger;
   private final Supplier<SSLContext> sslContextSupplier;
@@ -57,7 +57,6 @@ public class InsightsJdkHttpClient implements InsightsHttpClient {
 
     final var tlsContext = sslContextSupplier.get();
     clientBuilder = clientBuilder.sslContext(tlsContext);
-    // FIXME How do we decide to build MTLS-decorated client HTTPS client?
     if (useMTLS) {
       final var sslParameters = new SSLParameters();
       sslParameters.setWantClientAuth(true);
@@ -75,9 +74,25 @@ public class InsightsJdkHttpClient implements InsightsHttpClient {
   }
 
   @Override
-  public void sendInsightsReport(String filename, byte[] gzipReport) {
+  public void decorate(InsightsReport report) {
+    if (useMTLS) {
+      report.decorate("transport.type.https", "mtls");
+      // We can't send anything more useful (e.g. SHA hash of cert file) as until
+      // we try to send, we don't know if we can read the file at this path
+      report.decorate("transport.cert.https", configuration.getCertFilePath());
+    } else {
+      final var authToken = configuration.getMaybeAuthToken().get();
+      report.decorate("transport.type.https", "token");
+      report.decorate("auth.token", authToken);
+    }
+  }
+
+  @Override
+  public void sendInsightsReport(String filename, InsightsReport report) {
+    decorate(report);
     final var client = getHttpClient();
-    sendInsightsReportWithClient(client, filename, gzipReport);
+    final var gzipJson = InsightsHttpClient.gzipReport(report.serialize());
+    sendInsightsReportWithClient(client, filename, gzipJson);
   }
 
   protected void sendInsightsReportWithClient(

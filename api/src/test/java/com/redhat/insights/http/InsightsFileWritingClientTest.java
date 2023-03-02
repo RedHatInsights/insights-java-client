@@ -2,7 +2,10 @@
 package com.redhat.insights.http;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+import com.redhat.insights.InsightsReport;
 import com.redhat.insights.config.InsightsConfiguration;
 import com.redhat.insights.doubles.NoopInsightsLogger;
 import com.redhat.insights.logging.InsightsLogger;
@@ -30,7 +33,10 @@ public class InsightsFileWritingClientTest {
 
     InsightsLogger logger = new NoopInsightsLogger();
     InsightsHttpClient client = new InsightsFileWritingClient(logger, cfg);
-    client.sendInsightsReport("foo.txt", "foo");
+    InsightsReport report = mock(InsightsReport.class);
+    when(report.serialize()).thenReturn("foo");
+
+    client.sendInsightsReport("foo.txt", report);
     File[] files = tmpdir.toFile().listFiles();
     assertEquals(1, files.length);
     assertEquals(3, files[0].length());

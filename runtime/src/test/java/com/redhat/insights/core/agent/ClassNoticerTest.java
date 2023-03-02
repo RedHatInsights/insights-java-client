@@ -8,6 +8,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 import com.redhat.insights.InsightsCustomScheduledExecutor;
+import com.redhat.insights.InsightsReport;
 import com.redhat.insights.InsightsReportController;
 import com.redhat.insights.core.app.AppTopLevelReport;
 import com.redhat.insights.doubles.MockInsightsConfiguration;
@@ -50,6 +51,7 @@ public class ClassNoticerTest {
         .atMost(Duration.ofSeconds(20))
         .untilAsserted(
             () ->
-                Mockito.verify(mockHttpClient, times(2)).sendInsightsReport(any(), (String) any()));
+                Mockito.verify(mockHttpClient, times(2))
+                    .sendInsightsReport(any(), (InsightsReport) any()));
   }
 }

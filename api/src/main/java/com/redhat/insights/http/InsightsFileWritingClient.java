@@ -2,6 +2,7 @@
 package com.redhat.insights.http;
 
 import com.redhat.insights.InsightsException;
+import com.redhat.insights.InsightsReport;
 import com.redhat.insights.config.InsightsConfiguration;
 import com.redhat.insights.logging.InsightsLogger;
 import java.io.IOException;
@@ -21,23 +22,26 @@ public class InsightsFileWritingClient implements InsightsHttpClient {
   }
 
   @Override
-  public void sendInsightsReport(String filename, String report) {
+  public void decorate(InsightsReport report) {
+    report.decorate("transport.type.file", "rhel");
+  }
+
+  @Override
+  public void sendInsightsReport(String filename, InsightsReport report) {
+    decorate(report);
+    String reportJson = report.serialize();
+    //    logger.debug(reportJson);
+
     // Can't reuse upload path - as this may be called as part of fallback
     Path p = Paths.get(config.getArchiveUploadDir(), filename);
     try {
       Files.write(
           p,
-          report.getBytes(StandardCharsets.UTF_8),
+          reportJson.getBytes(StandardCharsets.UTF_8),
           StandardOpenOption.WRITE,
           StandardOpenOption.CREATE);
     } catch (IOException iox) {
       throw new InsightsException("Could not write to: " + p, iox);
     }
-  }
-
-  @Override
-  public void sendInsightsReport(String filename, byte[] gzipReport) {
-    throw new InsightsException(
-        "Unsupported operation attempted on InsightsFileWritingClient: " + filename);
   }
 }

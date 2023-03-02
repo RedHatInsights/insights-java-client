@@ -4,16 +4,11 @@ package com.redhat.insights;
 import static com.redhat.insights.http.InsightsHttpClient.gzipReport;
 import static com.redhat.insights.jars.JarUtils.computeSha512;
 
-import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.redhat.insights.config.InsightsConfiguration;
 import com.redhat.insights.http.InsightsHttpClient;
 import com.redhat.insights.jars.JarInfo;
 import com.redhat.insights.logging.InsightsLogger;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.*;
 import java.util.function.Supplier;
@@ -120,11 +115,8 @@ public final class InsightsReportController {
           () -> {
             InsightsHttpClient httpClient = httpClientSupplier.get();
             if (httpClient.isReadyToSend()) {
-              report.generateReport(masking);
-              generateAndSetReportIdHash();
-              String reportJson = serializeReport(this.report);
-              logger.debug(reportJson);
-              httpClient.sendInsightsReport(getIdHash() + "_connect.gz", reportJson);
+              generateConnectReport();
+              httpClient.sendInsightsReport(getIdHash() + "_connect.gz", report);
             }
           };
       scheduler.scheduleConnect(sendConnect);
@@ -136,10 +128,7 @@ public final class InsightsReportController {
             if (httpClient.isReadyToSend() || !jarsToSend.isEmpty()) {
               updateReport.setIdHash(getIdHash());
               updateReport.generateReport(masking);
-              String updateJarReportJson = serializeReport(updateReport);
-              logger.debug(updateJarReportJson);
-              logger.debug("Sending jars from " + getIdHash());
-              httpClient.sendInsightsReport(getIdHash() + "_update.gz", updateJarReportJson);
+              httpClient.sendInsightsReport(getIdHash() + "_update.gz", updateReport);
             }
           };
       scheduler.scheduleJarUpdate(sendNewJarsIfAny);
@@ -148,6 +137,11 @@ public final class InsightsReportController {
       scheduler.shutdown();
       throw isx;
     }
+  }
+
+  void generateConnectReport() {
+    report.generateReport(masking);
+    generateAndSetReportIdHash();
   }
 
   /** Forward the shutdown-related calls to the scheduler */
@@ -166,7 +160,7 @@ public final class InsightsReportController {
    * timestamp for uniqueness here. 2.) this method mutates both the controller and report objects
    */
   void generateAndSetReportIdHash() {
-    String reportJsonNoHash = serializeReport(report);
+    String reportJsonNoHash = report.serialize();
     try {
       if (!idHashHolder.isDone()) {
         String hash = computeSha512(gzipReport(reportJsonNoHash));
@@ -184,34 +178,6 @@ public final class InsightsReportController {
     } catch (InterruptedException | ExecutionException x) {
       throw new InsightsException("Exception while trying to compute ID Hash: ", x);
     }
-  }
-
-  /**
-   * Serializes the supplied report to JSON for transport
-   *
-   * @param report the report object
-   * @return JSON serialized report
-   */
-  public String serializeReport(InsightsReport report) {
-    ObjectMapper mapper = new ObjectMapper();
-    mapper.registerModule(new JavaTimeModule());
-
-    SimpleModule simpleModule =
-        new SimpleModule(
-            "SimpleModule", new Version(1, 0, 0, null, "com.redhat.insights", "runtimes-java"));
-    simpleModule.addSerializer(InsightsReport.class, report.getSerializer());
-    for (InsightsSubreport subreport : report.getSubreports().values()) {
-      simpleModule.addSerializer(subreport.getClass(), subreport.getSerializer());
-    }
-    mapper.registerModule(simpleModule);
-
-    StringWriter writer = new StringWriter();
-    try {
-      mapper.writerWithDefaultPrettyPrinter().writeValue(writer, report);
-    } catch (IOException e) {
-      throw new InsightsException("JSON serialization exception", e);
-    }
-    return writer.toString();
   }
 
   public BlockingQueue<JarInfo> getJarsToSend() {
