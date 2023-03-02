@@ -1,12 +1,11 @@
 /* Copyright (C) Red Hat 2023 */
 package com.redhat.insights.jars;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.redhat.insights.doubles.NoopInsightsLogger;
-import com.redhat.insights.logging.InsightsLogger;
+import com.redhat.insights.AbstractReportTest;
 import java.util.*;
 import org.junit.jupiter.api.Test;
 
@@ -17,9 +16,7 @@ import org.junit.jupiter.api.Test;
  * @see JarInfoSubreportSerializer
  * @see ClasspathJarInfoSubreport
  */
-public class JarInfoSubreportTest {
-  private static final InsightsLogger logger = new NoopInsightsLogger();
-
+public class JarInfoSubreportTest extends AbstractReportTest {
   // list a few jars that should be in a classpath
   private static final List<String> expectedJars =
       Arrays.asList("junit-jupiter-engine", "jackson-core");
@@ -123,19 +120,6 @@ public class JarInfoSubreportTest {
             assertTrue(
                 jars.stream().anyMatch(map -> ((String) map.get("name")).contains(expectedJarName)),
                 "Expected to find jar " + expectedJarName + " in classpath"));
-  }
-
-  /**
-   * Check if version matches format: number dot number dot number suffix e.g 1.0.0 2.3.1-alpha
-   * 3.2.2.GA
-   */
-  private boolean validateVersion(String version) {
-    return version.matches("^\\d\\.\\d\\.\\d.*$");
-  }
-
-  private Map<?, ?> parseReport(String report) throws JsonProcessingException {
-    ObjectMapper mapper = new ObjectMapper();
-    return mapper.readValue(report, Map.class);
   }
 
   private void validateJarInfoEntry(JarInfo expectedInfo, Map<?, ?> infoFromReport) {

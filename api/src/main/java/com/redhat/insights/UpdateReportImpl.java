@@ -18,7 +18,7 @@ public class UpdateReportImpl implements InsightsReport {
   private String idHash = "";
   private final BlockingQueue<JarInfo> updatedJars;
   private final InsightsLogger logger;
-  private Optional<JarInfoSubreport> subreport;
+  private Optional<JarInfoSubreport> subreport = Optional.empty();
   private final InsightsReportSerializer serializer;
 
   public UpdateReportImpl(BlockingQueue<JarInfo> updatedJars, InsightsLogger logger) {
@@ -70,5 +70,11 @@ public class UpdateReportImpl implements InsightsReport {
   @Override
   public String getIdHash() {
     return idHash;
+  }
+
+  @Override
+  public void decorate(String key, String value) {
+    logger.warning(
+        String.format("Attempt to add %s => %s to an update report. Ignored.", key, value));
   }
 }

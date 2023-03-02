@@ -1,0 +1,53 @@
+name: Code coverage Builder
+# To deal with https://securitylab.github.com/research/github-actions-preventing-pwn-requests
+# we need to split this across two jobs. The part that writes to the pull request lives in
+# ./coverage-report-workflow.yaml
+on:
+  pull_request:
+
+jobs:
+  build:
+    permissions:
+      contents: read
+    name: Run code coverage analysis and reporting
+    runs-on: ubuntu-latest
+    env:
+      ARTIFACTS: .pr_artifacts
+    steps:
+      - name: Prepare
+        id: prepare
+        run: |
+          # Make ARTIFACTS absolute
+          ARTIFACTS="${GITHUB_WORKSPACE}/${ARTIFACTS}"
+          echo "ARTIFACTS=${ARTIFACTS}" >> $GITHUB_ENV
+          mkdir ${ARTIFACTS}
+          echo ${{ github.event.number }} > "${ARTIFACTS}/pr"
+          echo "base=${GITHUB_BASE_REF}" >> $GITHUB_OUTPUT
+          echo "artifacts=${ARTIFACTS}" >> $GITHUB_OUTPUT
+
+      - uses: actions/checkout@v2
+        name: Checkout from Git
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-java@v2
+        name: Setup Java
+        with:
+          distribution: temurin
+          java-version: 11
+          cache: maven
+
+      - name: Run tests with coverage
+        run: mvn verify -Pcoverage
+
+      - name: Run tests with coverage
+        run: |
+          mkdir -p ${ARTIFACTS}/build
+          cp -Rf ./runtime ${ARTIFACTS}/build/.
+          cp -Rf ./api ${ARTIFACTS}/build/.
+          cp -Rf *.* ${ARTIFACTS}/build/.
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: input-artifacts
+          path: ${{ steps.prepare.outputs.artifacts }}

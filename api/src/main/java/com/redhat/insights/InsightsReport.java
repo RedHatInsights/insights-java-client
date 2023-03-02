@@ -1,7 +1,13 @@
 /* Copyright (C) Red Hat 2022-2023 */
 package com.redhat.insights;
 
+import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.Map;
 
 /**
@@ -30,4 +36,33 @@ public interface InsightsReport {
   void setIdHash(String hash);
 
   String getIdHash();
+
+  void decorate(String key, String value);
+
+  /**
+   * Serializes this report to JSON for transport
+   *
+   * @return JSON serialized report
+   */
+  default String serialize() {
+    ObjectMapper mapper = new ObjectMapper();
+    mapper.registerModule(new JavaTimeModule());
+
+    SimpleModule simpleModule =
+        new SimpleModule(
+            "SimpleModule", new Version(1, 0, 0, null, "com.redhat.insights", "runtimes-java"));
+    simpleModule.addSerializer(InsightsReport.class, getSerializer());
+    for (InsightsSubreport subreport : getSubreports().values()) {
+      simpleModule.addSerializer(subreport.getClass(), subreport.getSerializer());
+    }
+    mapper.registerModule(simpleModule);
+
+    StringWriter writer = new StringWriter();
+    try {
+      mapper.writerWithDefaultPrettyPrinter().writeValue(writer, this);
+    } catch (IOException e) {
+      throw new InsightsException("JSON serialization exception", e);
+    }
+    return writer.toString();
+  }
 }
