@@ -120,9 +120,8 @@ public final class InsightsReportController {
           () -> {
             InsightsHttpClient httpClient = httpClientSupplier.get();
             if (httpClient.isReadyToSend()) {
-              report.generateReport(masking);
-              generateAndSetReportIdHash();
-              String reportJson = serializeReport(this.report);
+              generateCoreReport();
+              String reportJson = serializeReport();
               logger.debug(reportJson);
               httpClient.sendInsightsReport(getIdHash() + "_connect.gz", reportJson);
             }
@@ -148,6 +147,15 @@ public final class InsightsReportController {
       scheduler.shutdown();
       throw isx;
     }
+  }
+
+  void generateCoreReport() {
+    report.generateReport(masking);
+    generateAndSetReportIdHash();
+  }
+
+  private String serializeReport() {
+    return serializeReport(report);
   }
 
   /** Forward the shutdown-related calls to the scheduler */

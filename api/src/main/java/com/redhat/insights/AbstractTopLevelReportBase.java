@@ -20,7 +20,7 @@ import java.util.stream.Stream;
  * subreport class and a serializer.
  */
 public abstract class AbstractTopLevelReportBase implements InsightsReport {
-  private static final float BYTES_PER_MB = 1048576f;
+  private static final int BYTES_PER_MB = 1048576;
 
   private static final Pattern JSON_WORKAROUND = Pattern.compile("\\\\+$");
 
@@ -133,7 +133,7 @@ public abstract class AbstractTopLevelReportBase implements InsightsReport {
         defaultHost = host.getHostName();
       }
     } catch (UnknownHostException e) {
-      logger.error("Unknown Host in lookup", e);
+      logger.error("Unknown Host in lookup, continuing with localhost", e);
     }
     options.put("system.hostname", defaultHost);
     options.put("jvm.launch_time", System.currentTimeMillis());
@@ -167,9 +167,9 @@ public abstract class AbstractTopLevelReportBase implements InsightsReport {
     options.put("jvm.heap.gc.details", gcDetails.toString());
 
     //        if (instanceName != null) {
-    //            options.put("instance_name", instanceName);
+    //            options.put("instance.name", instanceName);
     //        }
-    //        options.put("app_name", appNames);
+    //        options.put("app.name", appNames);
 
     Package[] packages = getPackages();
     // This is Object[], not String[] b/c toArray() is not a generic method

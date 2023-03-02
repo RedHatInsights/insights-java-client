@@ -7,6 +7,12 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPOutputStream;
 
+/**
+ * The main interface used for delivering Insights data (aka archives) to Red Hat. Note that the
+ * interface name contains "Http" because the primary (and desired) transport is over HTTPS.
+ * However, we need to also support a file-based mechanism - but only temporarily - so we don't warp
+ * the interface name.
+ */
 public interface InsightsHttpClient {
 
   public static final String GENERAL_MIME_TYPE =
