@@ -11,7 +11,20 @@ jobs:
       contents: read
     name: Run code coverage analysis and reporting
     runs-on: ubuntu-latest
+    env:
+      ARTIFACTS: .pr_artifacts
     steps:
+      - name: Prepare
+        id: prepare
+        run: |
+          # Make ARTIFACTS absolute
+          ARTIFACTS="${GITHUB_WORKSPACE}/${ARTIFACTS}"
+          echo "ARTIFACTS=${ARTIFACTS}" >> $GITHUB_ENV
+          mkdir ${ARTIFACTS}
+          echo ${{ github.event.number }} > "${ARTIFACTS}/pr"
+          echo "base=${GITHUB_BASE_REF}" >> $GITHUB_OUTPUT
+          echo "artifacts=${ARTIFACTS}" >> $GITHUB_OUTPUT
+
       - uses: actions/checkout@v2
         name: Checkout from Git
         with:
@@ -26,3 +39,15 @@ jobs:
 
       - name: Run tests with coverage
         run: mvn verify -Pcoverage
+
+      - name: Run tests with coverage
+        run: |
+          mkdir -p ${ARTIFACTS}/build
+          cp -Rf ./runtime ${ARTIFACTS}/build/.
+          cp -Rf ./api ${ARTIFACTS}/build/.
+          cp -Rf *.* ${ARTIFACTS}/build/.
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: input-artifacts
+          path: ${{ steps.prepare.outputs.artifacts }}
