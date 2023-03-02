@@ -34,17 +34,9 @@ public interface InsightsHttpClient {
    * @param filename the name of the report.
    * @param report the report payload.
    */
-  default void sendInsightsReport(String filename, String report) {
-    sendInsightsReport(filename, gzipReport(report));
-  }
+  void sendInsightsReport(String filename, InsightsReport report);
 
-  /**
-   * Send the report, which has already been gzipped
-   *
-   * @param filename the name of the report.
-   * @param gzipReport the gzip containing the report payload.
-   */
-  void sendInsightsReport(String filename, byte[] gzipReport);
+  //  void sendInsightsUpdateReport(String filename, InsightsReport report);
 
   /**
    * Indicates if the HttpClient is ready to send the data.

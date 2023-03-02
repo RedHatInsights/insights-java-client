@@ -29,29 +29,33 @@ public class InsightsMultiClient implements InsightsHttpClient {
 
   @Override
   public void decorate(InsightsReport report) {
-    for (InsightsHttpClient client : clients) {
-      client.decorate(report);
-    }
+    logger.warning("Multiclients do not support direct decoration of reports");
+    //    for (InsightsHttpClient client : clients) {
+    //      client.decorate(report);
+    //    }
   }
 
   @Override
-  public void sendInsightsReport(String filename, String report) {
+  public void sendInsightsReport(String filename, InsightsReport report) {
     String previousExceptionMsg = "";
     for (InsightsHttpClient client : clients) {
       try {
-        client.sendInsightsReport(filename + previousExceptionMsg, report);
+        if (previousExceptionMsg != "") {
+          report.decorate("client.exception", previousExceptionMsg);
+        }
+        client.sendInsightsReport(filename, report);
         return;
       } catch (InsightsException x) {
         logger.debug("Client failed, trying next", x);
         byte[] msgBytes = x.getMessage().getBytes(StandardCharsets.UTF_8);
-        previousExceptionMsg = "__" + Base64.getEncoder().encodeToString(msgBytes);
+        previousExceptionMsg = Base64.getEncoder().encodeToString(msgBytes);
       }
     }
     throw new InsightsException("All clients failed: " + clients);
   }
 
-  @Override
-  public void sendInsightsReport(String filename, byte[] gzipReport) {
-    throw new InsightsException("Multiclients do not support direct send of compressed data");
-  }
+  //  @Override
+  //  public void sendInsightsReport(String filename, byte[] gzipReport) {
+  //    throw new InsightsException("Multiclients do not support direct send of compressed data");
+  //  }
 }

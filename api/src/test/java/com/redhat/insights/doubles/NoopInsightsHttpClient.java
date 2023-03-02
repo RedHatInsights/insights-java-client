@@ -5,11 +5,12 @@ import com.redhat.insights.InsightsReport;
 import com.redhat.insights.http.InsightsHttpClient;
 
 public final class NoopInsightsHttpClient implements InsightsHttpClient {
+
   @Override
   public void decorate(InsightsReport report) {}
 
   @Override
-  public void sendInsightsReport(String filename, byte[] gzipReport) {
+  public void sendInsightsReport(String filename, InsightsReport report) {
     return;
   }
 }
