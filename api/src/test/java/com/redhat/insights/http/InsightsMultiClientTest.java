@@ -55,7 +55,7 @@ class InsightsMultiClientTest {
     assertEquals(1, files.length);
     assertEquals(3, files[0].length());
 
-    verify(report).decorate("client.exception", "Failing on purpose");
+    verify(report).decorate("app.client.exception", "Failing on purpose");
 
     // Cleanup
     Files.delete(files[0].toPath());
@@ -89,6 +89,6 @@ class InsightsMultiClientTest {
     assertTrue(err.getMessage().startsWith("I4ASR0018: All clients failed"));
     assertTrue(err.getMessage().contains("Mock for InsightsHttpClient"));
     assertTrue(err.getMessage().contains(", Mock for InsightsHttpClient"));
-    verify(report).decorate("client.exception", "Failing on purpose");
+    verify(report).decorate("app.client.exception", "Failing on purpose");
   }
 }
