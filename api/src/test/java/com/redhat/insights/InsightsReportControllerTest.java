@@ -1,6 +1,7 @@
 /* Copyright (C) Red Hat 2022-2023 */
 package com.redhat.insights;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
@@ -73,6 +74,7 @@ public class InsightsReportControllerTest {
     assertThrows(InsightsException.class, instance::generate);
 
     // give controller some time to send a report, if it wants
+    // but no reports should be sent
     Thread.sleep(TimeUnit.SECONDS.toSeconds(2));
     instance.shutdown();
 
@@ -91,6 +93,7 @@ public class InsightsReportControllerTest {
     instance.generate();
 
     // give controller some time to send a report, if it wants
+    // but no reports should be sent
     Thread.sleep(TimeUnit.SECONDS.toSeconds(2));
     instance.shutdown();
 
@@ -99,7 +102,7 @@ public class InsightsReportControllerTest {
   }
 
   @Test
-  public void testConnectReportSent() throws InterruptedException, IOException {
+  public void testConnectReportSent() throws IOException {
     InsightsReport report = prepareReport();
     InsightsConfiguration config = new DefaultConfiguration();
     StoringInsightsHttpClient httpClient = new StoringInsightsHttpClient();
@@ -111,7 +114,10 @@ public class InsightsReportControllerTest {
     instance.generate();
 
     // wait for controller to asynchronously sent report
-    Thread.sleep(TimeUnit.SECONDS.toMillis(3));
+    await()
+        .atMost(Duration.ofSeconds(3))
+        .untilAsserted(
+            () -> assertEquals(1, httpClient.getReportsSent(), "There should be one report sent"));
     instance.shutdown();
 
     // start checking
@@ -119,7 +125,6 @@ public class InsightsReportControllerTest {
         instance.isShutdown(), "Controller should be shutdown, after it was forced to shutdown");
     assertEquals(jarsQueue, instance.getJarsToSend(), "JarsToSend should be the same as set");
 
-    assertEquals(1, httpClient.getReportsSent(), "There should be one report sent");
     assertTrue(
         httpClient.getReportFilename().matches("^.*_connect\\.gz"),
         "Report filename should be *_connect.gz");
@@ -149,7 +154,9 @@ public class InsightsReportControllerTest {
     instance.generate();
 
     // sleep for time, that multiple update events can be sent
-    // but only 1 should be send, because after one, there are no change jars
+    // but only 1 should be sent, because after one, there are no change jars
+    // we intentionally give controller to a lot of time, to validate that no more than 1 report was
+    // sent
     Thread.sleep(TimeUnit.SECONDS.toMillis(20));
 
     // There should be two reports sent - one connect and one update
@@ -167,7 +174,7 @@ public class InsightsReportControllerTest {
   }
 
   @Test
-  public void testMultipleUpdateReportsSent() throws InterruptedException, IOException {
+  public void testMultipleUpdateReportsSent() throws IOException {
     InsightsReport report = prepareReport();
     InsightsConfiguration config =
         MockInsightsConfiguration.of("test", false, Duration.ofDays(1), Duration.ofSeconds(5));
@@ -179,18 +186,22 @@ public class InsightsReportControllerTest {
         InsightsReportController.of(logger, config, report, () -> httpClient, jarsQueue);
     instance.generate();
 
-    // sleep for a time, that 1 update reports should be sent
-    Thread.sleep(TimeUnit.SECONDS.toMillis(8));
-    assertEquals(2, httpClient.getReportsSent(), "There should be 2 reports sent");
+    // wait for a time, that 1 update reports should be sent
+    await()
+        .atMost(Duration.ofSeconds(8))
+        .untilAsserted(
+            () -> assertEquals(2, httpClient.getReportsSent(), "There should be 2 reports sent"));
 
     // add another jars to report, so there should be another update report send
     String newJarName = "newJarName";
     jarsQueue.add(new JarInfo(newJarName, "1.0", Collections.emptyMap()));
 
     // give it time to send report, and assert it was sent
-    Thread.sleep(TimeUnit.SECONDS.toMillis(10));
+    await()
+        .atMost(Duration.ofSeconds(10))
+        .untilAsserted(
+            () -> assertEquals(3, httpClient.getReportsSent(), "There should be 3 reports sent"));
     instance.shutdown();
-    assertEquals(3, httpClient.getReportsSent(), "There should be 3 reports sent");
 
     assertTrue(
         httpClient.getReportFilename().matches("^.*_update\\.gz"),
@@ -228,7 +239,15 @@ public class InsightsReportControllerTest {
     instance.generate();
 
     // wait for some time, after one update is sent
-    Thread.sleep(TimeUnit.SECONDS.toMillis(8));
+    // that means there should be 2 reports sent - connect and one update
+    await()
+        .atMost(Duration.ofSeconds(8))
+        .untilAsserted(
+            () ->
+                assertEquals(
+                    2,
+                    httpClient.getReportsSent(),
+                    "There should be 2 reports - connect and update"));
     int reportsSent = httpClient.getReportsSent();
 
     // "break" the http client
@@ -242,21 +261,30 @@ public class InsightsReportControllerTest {
     jarsQueue.add(new JarInfo("RandomName", "0.9", Collections.emptyMap()));
 
     // wait for some time, if any reports are sent
-    // now controller have not ready http client, but jars to send
+    // now controller have not-ready http client, but jars to send
     Thread.sleep(TimeUnit.SECONDS.toMillis(10));
     // there should be no more reports sent
+
+    assertEquals(
+        reportsSent,
+        httpClient.getReportsSent(),
+        "There should be no more reports sent, with broken http-client");
 
     // "fix" the client, and give it some time
     // controller should recover and send the report
     httpClient.setReadyToSend(true);
-    Thread.sleep(TimeUnit.SECONDS.toMillis(10));
-    instance.shutdown();
 
-    // now there should be another report send
-    assertEquals(
-        reportsSent + 1,
-        httpClient.getReportsSent(),
-        "There should be no reports sent, after http client is not ready to send");
+    // now it should send the report
+    await()
+        .atMost(Duration.ofSeconds(10))
+        .untilAsserted(
+            () ->
+                assertEquals(
+                    reportsSent + 1,
+                    httpClient.getReportsSent(),
+                    "There should be one reports sent, after http client is again ready to send"));
+
+    instance.shutdown();
   }
 
   /** Prepare report to be sent */
