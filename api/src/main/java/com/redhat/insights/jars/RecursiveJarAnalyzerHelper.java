@@ -121,7 +121,7 @@ public class RecursiveJarAnalyzerHelper {
   public static Path createTempDirectory(Path dir, String prefix) throws IOException {
     try {
       return Files.createTempDirectory(dir, prefix);
-    } catch (UnsupportedOperationException ex) {
+    } catch (UnsupportedOperationException ignored) {
     }
     return Files.createTempDirectory(dir, prefix);
   }

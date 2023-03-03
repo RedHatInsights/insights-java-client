@@ -38,17 +38,15 @@ public class CertHelper {
     } catch (ExecutionException e) {
       throw new IOException("Helper subprocess execution failed", e);
     }
-    switch (exitCode) {
-      case OK:
-        return sb.toString().getBytes(StandardCharsets.UTF_8);
-      default:
-        String msg =
-            "Couldn't use helper. Sub-process returned: "
-                + exitCode.getCode()
-                + " ; "
-                + exitCode.getMessage();
-        // Should this be an InsightsException ?
-        throw new IOException(msg);
+    if (InsightsHelperStatus.OK.equals(exitCode)) {
+      return sb.toString().getBytes(StandardCharsets.UTF_8);
     }
+    String msg =
+        "Couldn't use helper. Sub-process returned: "
+            + exitCode.getCode()
+            + " ; "
+            + exitCode.getMessage();
+    // Should this be an InsightsException ?
+    throw new IOException(msg);
   }
 }

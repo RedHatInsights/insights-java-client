@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 /**
  * Runtime-dependent sub-report.
  *
- * @see TopLevelReportBaseImpl
+ * @see AbstractTopLevelReportBase
  */
 public interface InsightsSubreport {
 

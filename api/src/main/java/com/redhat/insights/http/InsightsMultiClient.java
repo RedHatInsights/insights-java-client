@@ -37,7 +37,7 @@ public class InsightsMultiClient implements InsightsHttpClient {
     String previousExceptionMsg = "";
     for (InsightsHttpClient client : clients) {
       try {
-        if (previousExceptionMsg != "") {
+        if (!"".equals(previousExceptionMsg)) {
           report.decorate("client.exception", previousExceptionMsg);
         }
         client.sendInsightsReport(filename, report);
