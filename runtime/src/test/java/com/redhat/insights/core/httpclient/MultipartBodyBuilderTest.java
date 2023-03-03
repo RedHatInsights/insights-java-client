@@ -42,7 +42,7 @@ class MultipartBodyBuilderTest {
 
               @Override
               public void onNext(ByteBuffer item) {
-                body.append(StandardCharsets.UTF_8.decode(item).toString());
+                body.append(StandardCharsets.UTF_8.decode(item));
               }
 
               @Override

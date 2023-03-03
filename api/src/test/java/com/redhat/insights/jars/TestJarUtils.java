@@ -19,7 +19,7 @@ public class TestJarUtils {
   @Test
   public void basicHashTest() throws IOException, NoSuchAlgorithmException {
     try (InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream(JAR_PATH);
-        InputStream is2 = ClassLoader.getSystemClassLoader().getResourceAsStream(JAR_PATH_2); ) {
+        InputStream is2 = ClassLoader.getSystemClassLoader().getResourceAsStream(JAR_PATH_2)) {
 
       assertNotEquals(computeSha512(readAllBytes(is)), computeSha512(readAllBytes(is2)));
     }
