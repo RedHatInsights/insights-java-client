@@ -53,7 +53,7 @@ public abstract class AbstractTopLevelReportBase implements InsightsReport {
                 "jvm.heap.gc.details",
                 "jvm.heap.max",
                 "jvm.heap.min",
-                "jvm.launch_time",
+                "jvm.report_time",
                 "jvm.packages",
                 "jvm.pid",
                 "sun.java.command",
@@ -171,9 +171,7 @@ public abstract class AbstractTopLevelReportBase implements InsightsReport {
 
     ///////////////// JVM Details
 
-    //    options.put("system.report_time", LocalDateTime.now());
-    // FIXME Is this actually correct naming? This is report generation time.
-    options.put("jvm.launch_time", System.currentTimeMillis());
+    options.put("jvm.report_time", System.currentTimeMillis());
     options.put("jvm.pid", getProcessPID());
 
     MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
