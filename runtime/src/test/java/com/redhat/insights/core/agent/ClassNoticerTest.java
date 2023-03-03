@@ -4,8 +4,7 @@ package com.redhat.insights.core.agent;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import com.redhat.insights.InsightsCustomScheduledExecutor;
 import com.redhat.insights.InsightsReport;
@@ -39,7 +38,7 @@ public class ClassNoticerTest {
         MockInsightsConfiguration.of("test_app", false, Duration.ofDays(1), Duration.ofSeconds(5));
     var mockHttpClient = Mockito.mock(InsightsHttpClient.class);
     when(mockHttpClient.isReadyToSend()).thenReturn(true);
-    var report = AppTopLevelReport.of(logger);
+    var report = AppTopLevelReport.of(logger, mockConfig);
     var scheduler = InsightsCustomScheduledExecutor.of(logger, mockConfig);
 
     var controller =

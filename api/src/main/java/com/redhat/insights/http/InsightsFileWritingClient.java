@@ -23,7 +23,7 @@ public class InsightsFileWritingClient implements InsightsHttpClient {
 
   @Override
   public void decorate(InsightsReport report) {
-    report.decorate("transport.type.file", "rhel");
+    report.decorate("app.transport.type.file", "rhel");
   }
 
   @Override

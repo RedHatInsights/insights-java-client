@@ -2,6 +2,7 @@
 package com.redhat.insights;
 
 import com.fasterxml.jackson.databind.JsonSerializer;
+import com.redhat.insights.config.InsightsConfiguration;
 import com.redhat.insights.logging.InsightsLogger;
 import java.lang.management.*;
 import java.net.InetAddress;
@@ -24,17 +25,73 @@ public abstract class AbstractTopLevelReportBase implements InsightsReport {
 
   private static final Pattern JSON_WORKAROUND = Pattern.compile("\\\\+$");
 
-  private final Map<String, Object> options = new HashMap<>();
+  private static final Set<String> allowKeys;
+  private static final Map<String, String> renameKeys;
+
+  static {
+    // FIXME Move to a constant when finalized
+    // What about JVM arguments? PII?
+
+    allowKeys =
+        Stream.of(
+                "http.nonProxyHosts",
+                "java.class.path",
+                "java.class.version",
+                "java.home",
+                "java.library.path",
+                "java.runtime.version",
+                "java.specification.vendor",
+                "java.specification.version",
+                "java.vendor",
+                "java.vendor.version",
+                "java.version",
+                "java.vm.name",
+                "java.vm.specification.vendor",
+                "java.vm.specification.version",
+                "java.vm.vendor",
+                "jvm.args",
+                "jvm.heap.gc.details",
+                "jvm.heap.max",
+                "jvm.heap.min",
+                "jvm.launch_time",
+                "jvm.packages",
+                "jvm.pid",
+                "sun.java.command",
+                "system.arch",
+                "system.cores.logical",
+                "system.hostname",
+                "system.os.name",
+                "system.os.version",
+                "user.dir",
+                "user.name")
+            .collect(Collectors.toCollection(HashSet::new));
+
+    // Massage a few names into proper namespaces
+    Map<String, String> tmpRenames = new HashMap<>();
+    tmpRenames.put("http.nonProxyHosts", "jvm.http.nonProxyHosts");
+    tmpRenames.put("sun.java.command", "java.command");
+    tmpRenames.put("user.dir", "app.user.dir");
+    tmpRenames.put("user.name", "app.user.name");
+
+    renameKeys = tmpRenames;
+  }
+
+  // This is non-final because we want to apply global filtering to this value as the final step
+  private Map<String, Object> options = new HashMap<>();
 
   private final Map<String, InsightsSubreport> subReports;
   private final JsonSerializer<InsightsReport> serializer;
   private final InsightsLogger logger;
+  private final InsightsConfiguration config;
 
   // Can't be set properly until after report has been generated
   private String idHash = "";
 
   public AbstractTopLevelReportBase(
-      InsightsLogger logger, Map<String, InsightsSubreport> subReports) {
+      InsightsLogger logger,
+      InsightsConfiguration config,
+      Map<String, InsightsSubreport> subReports) {
+    this.config = config;
     this.logger = logger;
     this.subReports = subReports;
     this.serializer = new InsightsReportSerializer();
@@ -67,69 +124,33 @@ public abstract class AbstractTopLevelReportBase implements InsightsReport {
 
   @Override
   public void generateReport(Filtering masking) {
-    // FIXME: Should we skip report generation if idHash is already set?
+    // Should we skip report generation if idHash is already set?
     // The invariant here is that idHash must be the same between CONNECT events from the
     // same long-lived process
 
     ///////////////// Core Java Properties Details
-
-    // FIXME Move to a constant when finalized
-    Set<String> skipKeys =
-        Stream.of(
-                "sun.jnu.encoding",
-                "sun.arch.data.model",
-                "java.vendor.url",
-                "sun.java.launcher",
-                "user.country",
-                "sun.boot.library.path",
-                "jdk.debug",
-                "sun.cpu.endian",
-                "user.home",
-                "user.language",
-                "sun.stderr.encoding",
-                "java.version.date",
-                "file.separator",
-                "java.vm.compressedOopsMode",
-                "sun.stdout.encoding",
-                "java.specification.name",
-                "sun.management.compiler",
-                "path.separator",
-                "java.runtime.name",
-                "java.vendor.url.bug",
-                "java.io.tmpdir",
-                "java.vm.specification.name",
-                "native.encoding",
-                "java.vm.info",
-                "gopherProxySet",
-                "awt.toolkit",
-                "sun.cpu.isalist",
-                "ftp.nonProxyHosts",
-                "os.version",
-                "user.timezone",
-                "os.name",
-                "java.awt.printerjob",
-                "sun.os.patch.level",
-                "line.separator",
-                "java.awt.graphicsenv",
-                "sun.io.unicode.encoding",
-                "socksNonProxyHosts")
-            .collect(Collectors.toCollection(HashSet::new));
-
-    // What about JVM arguments? PII?
-    //    var maybe = List.of("user.dir", "java.library.path");
 
     Properties properties = System.getProperties();
     Map<String, String> stringProperties = new HashMap<>();
     properties.forEach(
         (k, v) -> {
           String key = k.toString();
-          if (!skipKeys.contains(key)) {
-            stringProperties.put(key, v.toString());
+          if (allowKeys.contains(key)) {
+            if (renameKeys.containsKey(key)) {
+              stringProperties.put(renameKeys.get(key), v.toString());
+            } else {
+              stringProperties.put(key, v.toString());
+            }
           }
         });
     options.putAll(stringProperties);
 
-    ///////////////// System Details
+    ///////////////// App and System Details
+
+    // This is the top-level name - implementors that may have to care about multi-tenancy
+    // should handle that in product-specific code.
+    final String name = config.getIdentificationName();
+    options.put("app.name", name);
 
     String defaultHost = "localhost";
     try {
@@ -141,8 +162,6 @@ public abstract class AbstractTopLevelReportBase implements InsightsReport {
       logger.error("Unknown Host in lookup, continuing with localhost", e);
     }
     options.put("system.hostname", defaultHost);
-    options.put("jvm.launch_time", System.currentTimeMillis());
-    //    options.put("system.report_time", LocalDateTime.now());
 
     OperatingSystemMXBean systemMXBean = ManagementFactory.getOperatingSystemMXBean();
     options.put("system.cores.logical", systemMXBean.getAvailableProcessors());
@@ -152,8 +171,10 @@ public abstract class AbstractTopLevelReportBase implements InsightsReport {
 
     ///////////////// JVM Details
 
-    long pid = getProcessPID();
-    options.put("jvm.pid", pid);
+    //    options.put("system.report_time", LocalDateTime.now());
+    // FIXME Is this actually correct naming? This is report generation time.
+    options.put("jvm.launch_time", System.currentTimeMillis());
+    options.put("jvm.pid", getProcessPID());
 
     MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
     MemoryUsage heapMemoryUsage = memoryMXBean.getHeapMemoryUsage();
@@ -171,21 +192,17 @@ public abstract class AbstractTopLevelReportBase implements InsightsReport {
     }
     options.put("jvm.heap.gc.details", gcDetails.toString());
 
-    //        if (instanceName != null) {
-    //            options.put("instance.name", instanceName);
-    //        }
-    //        options.put("app.name", appNames);
-
     Package[] packages = getPackages();
     // This is Object[], not String[] b/c toArray() is not a generic method
     Object[] out = Arrays.stream(packages).map(Package::toString).toArray();
     options.put("jvm.packages", Arrays.toString(out));
 
-    // Final step - apply filtering
-    //    options = masking.apply(options);
     for (InsightsSubreport subReport : subReports.values()) {
       subReport.generateReport();
     }
+
+    // Final step - apply filtering
+    options = masking.apply(options);
   }
 
   protected abstract long getProcessPID();

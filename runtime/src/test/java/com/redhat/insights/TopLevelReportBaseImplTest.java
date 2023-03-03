@@ -17,11 +17,18 @@ class TopLevelReportBaseImplTest {
   @Test
   void findJupiterInLocalHashes() {
     var logger = PrintLogger.STDOUT_LOGGER;
-    var configuration = new EnvAndSysPropsInsightsConfiguration();
+    var configuration =
+        new EnvAndSysPropsInsightsConfiguration() {
+          @Override
+          public String getIdentificationName() {
+            return "foo";
+          }
+        };
     ClasspathJarInfoSubreport classpathJarInfoSubreport = new ClasspathJarInfoSubreport(logger);
     var simpleReport =
         new AppTopLevelReport(
             logger,
+            configuration,
             Map.of("jars", classpathJarInfoSubreport, "details", new AppInsightsSubreport()));
 
     simpleReport.generateReport(Filtering.NOTHING);

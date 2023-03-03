@@ -76,14 +76,14 @@ public class InsightsJdkHttpClient implements InsightsHttpClient {
   @Override
   public void decorate(InsightsReport report) {
     if (useMTLS) {
-      report.decorate("transport.type.https", "mtls");
+      report.decorate("app.transport.type.https", "mtls");
       // We can't send anything more useful (e.g. SHA hash of cert file) as until
       // we try to send, we don't know if we can read the file at this path
-      report.decorate("transport.cert.https", configuration.getCertFilePath());
+      report.decorate("app.transport.cert.https", configuration.getCertFilePath());
     } else {
       final var authToken = configuration.getMaybeAuthToken().get();
-      report.decorate("transport.type.https", "token");
-      report.decorate("auth.token", authToken);
+      report.decorate("app.transport.type.https", "token");
+      report.decorate("app.auth.token", authToken);
     }
   }
 
