@@ -1,6 +1,8 @@
 /* Copyright (C) Red Hat 2023 */
 package com.redhat.insights.http;
 
+import static com.redhat.insights.InsightsErrorCode.ERROR_WRITING_FILE;
+
 import com.redhat.insights.InsightsException;
 import com.redhat.insights.InsightsReport;
 import com.redhat.insights.config.InsightsConfiguration;
@@ -41,7 +43,7 @@ public class InsightsFileWritingClient implements InsightsHttpClient {
           StandardOpenOption.WRITE,
           StandardOpenOption.CREATE);
     } catch (IOException iox) {
-      throw new InsightsException("Could not write to: " + p, iox);
+      throw new InsightsException(ERROR_WRITING_FILE, "Could not write to: " + p, iox);
     }
   }
 }

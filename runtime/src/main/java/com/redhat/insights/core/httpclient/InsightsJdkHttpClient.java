@@ -1,6 +1,12 @@
 /* Copyright (C) Red Hat 2023 */
 package com.redhat.insights.core.httpclient;
 
+import static com.redhat.insights.InsightsErrorCode.ERROR_HTTP_SEND_;
+import static com.redhat.insights.InsightsErrorCode.ERROR_HTTP_SEND_AUTH_ERROR;
+import static com.redhat.insights.InsightsErrorCode.ERROR_HTTP_SEND_INVALID_CONTENT_TYPE;
+import static com.redhat.insights.InsightsErrorCode.ERROR_HTTP_SEND_PAYLOAD;
+import static com.redhat.insights.InsightsErrorCode.ERROR_HTTP_SEND_SERVER_ERROR;
+
 import com.redhat.insights.InsightsException;
 import com.redhat.insights.InsightsReport;
 import com.redhat.insights.config.InsightsConfiguration;
@@ -142,15 +148,19 @@ public class InsightsJdkHttpClient implements InsightsHttpClient {
                   logger.debug("Red Hat Insights - Payload was accepted for processing");
                   break;
                 case 401:
-                  throw new InsightsException("Authentication missing from request");
+                  throw new InsightsException(
+                      ERROR_HTTP_SEND_AUTH_ERROR, "Authentication missing from request");
                 case 413:
-                  throw new InsightsException("Payload too large");
+                  throw new InsightsException(ERROR_HTTP_SEND_PAYLOAD, "Payload too large");
                 case 415:
-                  throw new InsightsException("Content type of payload is unsupported");
+                  throw new InsightsException(
+                      ERROR_HTTP_SEND_INVALID_CONTENT_TYPE,
+                      "Content type of payload is unsupported");
                 case 500:
                 case 503:
                 default:
                   throw new InsightsException(
+                      ERROR_HTTP_SEND_SERVER_ERROR,
                       "Request failed on the server with code: " + response.statusCode());
               }
             });
@@ -159,7 +169,7 @@ public class InsightsJdkHttpClient implements InsightsHttpClient {
     } catch (InsightsException isx) {
       throw isx;
     } catch (Throwable err) {
-      throw new InsightsException("HTTP client request failed", err);
+      throw new InsightsException(ERROR_HTTP_SEND_, "HTTP client request failed", err);
     }
   }
 }
