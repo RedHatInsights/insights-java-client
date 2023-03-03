@@ -1,6 +1,9 @@
 /* Copyright (C) Red Hat 2023 */
 package com.redhat.insights.core.httpclient;
 
+import static com.redhat.insights.InsightsErrorCode.ERROR_CLIENT_BACKOFF_RETRIES_FAILED;
+import static com.redhat.insights.InsightsErrorCode.ERROR_INTERRUPTED_THREAD;
+
 import com.redhat.insights.InsightsException;
 import com.redhat.insights.config.InsightsConfiguration;
 import com.redhat.insights.logging.InsightsLogger;
@@ -51,7 +54,9 @@ public final class BackoffWrapper {
         return count;
       } catch (Throwable err) {
         if (retryFailure == null) {
-          retryFailure = new InsightsException("Exponential backoff retries have failed");
+          retryFailure =
+              new InsightsException(
+                  ERROR_CLIENT_BACKOFF_RETRIES_FAILED, "Exponential backoff retries have failed");
         }
         retryFailure.addSuppressed(err);
         logger.debug("Backoff #" + (count + 1) + "/" + max + ", sleeping " + delay + "ms", err);
@@ -59,7 +64,8 @@ public final class BackoffWrapper {
           Thread.sleep(delay);
         } catch (InterruptedException e) {
           Thread.currentThread().interrupt();
-          throw new InsightsException("HTTP sending thread interrupted", e);
+          throw new InsightsException(
+              ERROR_INTERRUPTED_THREAD, "HTTP sending thread interrupted", e);
         }
         count = count + 1;
         if (count == max) {

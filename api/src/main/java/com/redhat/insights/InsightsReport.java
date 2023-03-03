@@ -1,6 +1,8 @@
 /* Copyright (C) Red Hat 2022-2023 */
 package com.redhat.insights;
 
+import static com.redhat.insights.InsightsErrorCode.ERROR_SERIALIZING_TO_JSON;
+
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -61,7 +63,7 @@ public interface InsightsReport {
     try {
       mapper.writerWithDefaultPrettyPrinter().writeValue(writer, this);
     } catch (IOException e) {
-      throw new InsightsException("JSON serialization exception", e);
+      throw new InsightsException(ERROR_SERIALIZING_TO_JSON, "JSON serialization exception", e);
     }
     return writer.toString();
   }

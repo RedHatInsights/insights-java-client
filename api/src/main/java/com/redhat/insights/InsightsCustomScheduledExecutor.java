@@ -1,6 +1,8 @@
 /* Copyright (C) Red Hat 2023 */
 package com.redhat.insights;
 
+import static com.redhat.insights.InsightsErrorCode.ERROR_SCHEDULED_SENT;
+
 import com.redhat.insights.config.InsightsConfiguration;
 import com.redhat.insights.logging.InsightsLogger;
 import java.util.concurrent.ScheduledFuture;
@@ -52,11 +54,14 @@ public class InsightsCustomScheduledExecutor extends ScheduledThreadPoolExecutor
           try {
             command.run();
           } catch (InsightsException ix) {
-            logger.error("Scheduled send failed: ", ix);
+            logger.error(
+                ERROR_SCHEDULED_SENT.formatMessage("Scheduled send failed: " + ix.getMessage()),
+                ix);
             shutdown();
             throw ix;
           } catch (Exception x) {
-            logger.error("Non-Insights failure: ", x);
+            logger.error(
+                ERROR_SCHEDULED_SENT.formatMessage("Non-Insights failure: " + x.getMessage()), x);
             shutdown();
             throw x;
           }

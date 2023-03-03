@@ -32,7 +32,7 @@ public class PEMSupportTest {
                         getPathFromResource("com/redhat/insights/tls/dummy.cert"),
                         Paths.get("missing.key")));
 
-    Assertions.assertEquals("SSLContext creation error", exception.getMessage());
+    Assertions.assertEquals("I4ASR0015: SSLContext creation error", exception.getMessage());
     Assertions.assertTrue(exception.getCause() instanceof NoSuchFileException);
     Assertions.assertEquals("missing.key", exception.getCause().getMessage());
   }
@@ -48,7 +48,7 @@ public class PEMSupportTest {
                         Paths.get("missing.cert"),
                         getPathFromResource("com/redhat/insights/tls/dummy.key")));
 
-    Assertions.assertEquals("SSLContext creation error", exception.getMessage());
+    Assertions.assertEquals("I4ASR0015: SSLContext creation error", exception.getMessage());
     Assertions.assertTrue(exception.getCause() instanceof NoSuchFileException);
     Assertions.assertEquals("missing.cert", exception.getCause().getMessage());
   }
@@ -64,7 +64,7 @@ public class PEMSupportTest {
                         getPathFromResource("com/redhat/insights/tls/dummy.cert"),
                         createNonReadableFile()));
 
-    Assertions.assertEquals("SSLContext creation error", exception.getMessage());
+    Assertions.assertEquals("I4ASR0015: SSLContext creation error", exception.getMessage());
     Assertions.assertTrue(exception.getCause() instanceof AccessDeniedException);
   }
 
@@ -79,7 +79,7 @@ public class PEMSupportTest {
                         createNonReadableFile(),
                         getPathFromResource("com/redhat/insights/tls/dummy.key")));
 
-    Assertions.assertEquals("SSLContext creation error", exception.getMessage());
+    Assertions.assertEquals("I4ASR0015: SSLContext creation error", exception.getMessage());
     Assertions.assertTrue(exception.getCause() instanceof AccessDeniedException);
   }
 

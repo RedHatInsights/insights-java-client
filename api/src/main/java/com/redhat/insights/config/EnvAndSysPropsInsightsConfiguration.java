@@ -1,6 +1,8 @@
 /* Copyright (C) Red Hat 2023 */
 package com.redhat.insights.config;
 
+import static com.redhat.insights.InsightsErrorCode.ERROR_IDENTIFICATION_NOT_DEFINED;
+
 import com.redhat.insights.InsightsException;
 import java.time.Duration;
 import java.util.Optional;
@@ -48,7 +50,8 @@ public class EnvAndSysPropsInsightsConfiguration extends DefaultInsightsConfigur
     if (value == null) {
       // TODO should we guess a name instead?
       //  Maybe: This has some subtleties and is not as simple as it might appear
-      throw new InsightsException("The identification name has not been defined");
+      throw new InsightsException(
+          ERROR_IDENTIFICATION_NOT_DEFINED, "The identification name has not been defined");
     }
     return value;
   }

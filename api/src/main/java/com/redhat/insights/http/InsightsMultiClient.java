@@ -1,6 +1,8 @@
 /* Copyright (C) Red Hat 2023 */
 package com.redhat.insights.http;
 
+import static com.redhat.insights.InsightsErrorCode.ERROR_CLIENT_FAILED;
+
 import com.redhat.insights.InsightsException;
 import com.redhat.insights.InsightsReport;
 import com.redhat.insights.logging.InsightsLogger;
@@ -35,7 +37,7 @@ public class InsightsMultiClient implements InsightsHttpClient {
     String previousExceptionMsg = "";
     for (InsightsHttpClient client : clients) {
       try {
-        if (previousExceptionMsg != "") {
+        if (!"".equals(previousExceptionMsg)) {
           report.decorate("app.client.exception", previousExceptionMsg);
         }
         client.sendInsightsReport(filename, report);
@@ -45,6 +47,6 @@ public class InsightsMultiClient implements InsightsHttpClient {
         previousExceptionMsg = x.getMessage();
       }
     }
-    throw new InsightsException("All clients failed: " + clients);
+    throw new InsightsException(ERROR_CLIENT_FAILED, "All clients failed: " + clients);
   }
 }

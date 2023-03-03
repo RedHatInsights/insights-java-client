@@ -1,6 +1,8 @@
 /* Copyright (C) Red Hat 2022-2023 */
 package com.redhat.insights;
 
+import static com.redhat.insights.InsightsErrorCode.ERROR_GENERATING_HASH;
+import static com.redhat.insights.InsightsErrorCode.OPT_OUT;
 import static com.redhat.insights.http.InsightsHttpClient.gzipReport;
 import static com.redhat.insights.jars.JarUtils.computeSha512;
 
@@ -106,7 +108,7 @@ public final class InsightsReportController {
     try {
 
       if (configuration.isOptingOut()) {
-        throw new InsightsException("Opting out of the Red Hat Insights client");
+        throw new InsightsException(OPT_OUT, "Opting out of the Red Hat Insights client");
       }
       final InsightsReport updateReport = new UpdateReportImpl(jarsToSend, logger);
 
@@ -168,7 +170,7 @@ public final class InsightsReportController {
         report.setIdHash(hash);
       }
     } catch (NoSuchAlgorithmException | IOException x) {
-      throw new InsightsException("Exception when generating ID Hash: ", x);
+      throw new InsightsException(ERROR_GENERATING_HASH, "Exception when generating ID Hash: ", x);
     }
   }
 
@@ -176,7 +178,8 @@ public final class InsightsReportController {
     try {
       return idHashHolder.get();
     } catch (InterruptedException | ExecutionException x) {
-      throw new InsightsException("Exception while trying to compute ID Hash: ", x);
+      throw new InsightsException(
+          ERROR_GENERATING_HASH, "Exception while trying to compute ID Hash: ", x);
     }
   }
 

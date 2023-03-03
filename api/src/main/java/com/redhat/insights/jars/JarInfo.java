@@ -32,11 +32,16 @@ public final class JarInfo {
 
   @Override
   public String toString() {
-    final StringBuffer sb = new StringBuffer("JarInfo{");
-    sb.append("name='").append(name).append('\'');
-    sb.append(", version='").append(version).append('\'');
-    sb.append(", attributes=").append(attributes);
-    sb.append('}');
-    return sb.toString();
+    return new StringBuilder("JarInfo{")
+        .append("name='")
+        .append(name)
+        .append('\'')
+        .append(", version='")
+        .append(version)
+        .append('\'')
+        .append(", attributes=")
+        .append(attributes)
+        .append('}')
+        .toString();
   }
 }
