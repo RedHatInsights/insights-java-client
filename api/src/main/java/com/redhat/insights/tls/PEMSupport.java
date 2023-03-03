@@ -1,6 +1,11 @@
 /* Copyright (C) Red Hat 2022-2023 */
 package com.redhat.insights.tls;
 
+import static com.redhat.insights.InsightsErrorCode.ERROR_SSL_CREATING_CONTEXT;
+import static com.redhat.insights.InsightsErrorCode.ERROR_SSL_PARSING_CERTS;
+import static com.redhat.insights.InsightsErrorCode.ERROR_SSL_READING_CERTS;
+import static com.redhat.insights.InsightsErrorCode.ERROR_SSL_READING_CERTS_INVALID_MODE;
+
 import com.redhat.insights.InsightsException;
 import com.redhat.insights.config.InsightsConfiguration;
 import com.redhat.insights.logging.InsightsLogger;
@@ -32,7 +37,8 @@ public class PEMSupport {
     byte[] certBytes = getBytesPossiblyPrivileged("--cert");
     byte[] keyBytes = getBytesPossiblyPrivileged("--key");
     if (certBytes.length == 0 || keyBytes.length == 0) {
-      throw new InsightsException("SSLContext creation error - could not get file bytes");
+      throw new InsightsException(
+          ERROR_SSL_READING_CERTS, "SSLContext creation error - could not get file bytes");
     }
     logger.debug("Cert and key obtained successfully, trying to create TLS context");
     return createTLSContext(certBytes, keyBytes);
@@ -45,7 +51,7 @@ public class PEMSupport {
       byte[] keyBytes = Files.readAllBytes(keyPath);
       return createTLSContext(certBytes, keyBytes);
     } catch (IOException err) {
-      throw new InsightsException("SSLContext creation error", err);
+      throw new InsightsException(ERROR_SSL_CREATING_CONTEXT, "SSLContext creation error", err);
     }
   }
 
@@ -61,6 +67,7 @@ public class PEMSupport {
         break;
       default:
         throw new InsightsException(
+            ERROR_SSL_READING_CERTS_INVALID_MODE,
             "Invalid mode " + mode + " passed for cert retrieval. This should not happen.");
     }
     try {
@@ -73,7 +80,7 @@ public class PEMSupport {
       try {
         return helper.readUsingHelper(mode);
       } catch (IOException | InterruptedException e) {
-        throw new InsightsException("SSLContext creation error", e);
+        throw new InsightsException(ERROR_SSL_CREATING_CONTEXT, "SSLContext creation error", e);
       }
     }
   }
@@ -111,7 +118,7 @@ public class PEMSupport {
         | IOException
         | NoSuchAlgorithmException
         | KeyManagementException err) {
-      throw new InsightsException("SSLContext creation error", err);
+      throw new InsightsException(ERROR_SSL_CREATING_CONTEXT, "SSLContext creation error", err);
     }
   }
 
@@ -123,6 +130,7 @@ public class PEMSupport {
               T cast = pemEntry.tryCast(type);
               if (cast == null) {
                 throw new InsightsException(
+                    ERROR_SSL_PARSING_CERTS,
                     "Could not cast the a PemEntry of type " + type + " to class " + type);
               }
               items.add(cast);

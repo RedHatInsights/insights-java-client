@@ -1,6 +1,8 @@
 /* Copyright (C) Red Hat 2023 */
 package com.redhat.insights.jars;
 
+import static com.redhat.insights.InsightsErrorCode.ERROR_GENERATING_ARCHIVE_HASH;
+
 import com.redhat.insights.InsightsException;
 import com.redhat.insights.logging.InsightsLogger;
 import java.io.File;
@@ -36,7 +38,7 @@ public class ClasspathJarInfoSubreport extends JarInfoSubreport {
         Optional<JarInfo> oJar = analyzer.process(url);
         oJar.ifPresent(jarInfos::add);
       } catch (MalformedURLException | URISyntaxException e) {
-        throw new InsightsException("JAR hashing error", e);
+        throw new InsightsException(ERROR_GENERATING_ARCHIVE_HASH, "JAR hashing error", e);
       }
     }
   }

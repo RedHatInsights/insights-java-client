@@ -35,7 +35,7 @@ public class InsightsReportControllerSimpleThreadingTest {
             InsightsException.class,
             () -> controller.generate(),
             "Expected generate() to throw, but it didn't");
-    assertTrue(thrown.getMessage().contentEquals("Opting out of the Red Hat Insights client"));
+    assertEquals("I4ASR0001: Opting out of the Red Hat Insights client", thrown.getMessage());
 
     InsightsScheduler tp = controller.getScheduler();
     await().atMost(Duration.ofSeconds(10)).untilAsserted(tp::isShutdown);
