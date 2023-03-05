@@ -98,7 +98,7 @@ public final class AgentMain {
   }
 
   private void start() {
-    final var simpleReport = AppTopLevelReport.of(logger);
+    final var simpleReport = AppTopLevelReport.of(logger, configuration);
     final var pem = new PEMSupport(logger, configuration);
 
     final Supplier<InsightsHttpClient> httpClientSupplier =

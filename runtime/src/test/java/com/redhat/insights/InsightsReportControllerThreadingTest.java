@@ -41,7 +41,7 @@ public class InsightsReportControllerThreadingTest {
     var httpClient =
         new MockInsightsJdkHttpClient(config, () -> mock(SSLContext.class), logger, mock);
 
-    var report = AppTopLevelReport.of(logger);
+    var report = AppTopLevelReport.of(logger, config);
     return InsightsReportController.of(logger, config, report, () -> httpClient);
   }
 

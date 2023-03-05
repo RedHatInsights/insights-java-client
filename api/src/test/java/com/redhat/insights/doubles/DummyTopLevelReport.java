@@ -19,7 +19,7 @@ public class DummyTopLevelReport extends AbstractTopLevelReportBase {
   private boolean generateEmpty = false;
 
   public DummyTopLevelReport(InsightsLogger logger, Map<String, InsightsSubreport> subReports) {
-    super(logger, subReports);
+    super(logger, new DefaultConfiguration(), subReports);
   }
 
   @Override

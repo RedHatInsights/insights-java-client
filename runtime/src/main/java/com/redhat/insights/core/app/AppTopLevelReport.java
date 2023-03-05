@@ -2,6 +2,7 @@
 package com.redhat.insights.core.app;
 
 import com.redhat.insights.InsightsSubreport;
+import com.redhat.insights.config.InsightsConfiguration;
 import com.redhat.insights.core.TopLevelReportBaseImpl;
 import com.redhat.insights.jars.ClasspathJarInfoSubreport;
 import com.redhat.insights.logging.InsightsLogger;
@@ -12,13 +13,17 @@ import java.util.Map;
  * entries.
  */
 public class AppTopLevelReport extends TopLevelReportBaseImpl {
-  public AppTopLevelReport(InsightsLogger logger, Map<String, InsightsSubreport> subReports) {
-    super(logger, subReports);
+  public AppTopLevelReport(
+      InsightsLogger logger,
+      InsightsConfiguration config,
+      Map<String, InsightsSubreport> subReports) {
+    super(logger, config, subReports);
   }
 
-  public static AppTopLevelReport of(InsightsLogger logger) {
+  public static AppTopLevelReport of(InsightsLogger logger, InsightsConfiguration config) {
     return new AppTopLevelReport(
         logger,
+        config,
         Map.of(
             "jars", new ClasspathJarInfoSubreport(logger), "details", new AppInsightsSubreport()));
   }

@@ -3,6 +3,7 @@ package com.redhat.insights.core;
 
 import com.redhat.insights.AbstractTopLevelReportBase;
 import com.redhat.insights.InsightsSubreport;
+import com.redhat.insights.config.InsightsConfiguration;
 import com.redhat.insights.logging.InsightsLogger;
 import java.util.*;
 
@@ -15,8 +16,11 @@ import java.util.*;
  */
 public class TopLevelReportBaseImpl extends AbstractTopLevelReportBase {
 
-  public TopLevelReportBaseImpl(InsightsLogger logger, Map<String, InsightsSubreport> subReports) {
-    super(logger, subReports);
+  public TopLevelReportBaseImpl(
+      InsightsLogger logger,
+      InsightsConfiguration config,
+      Map<String, InsightsSubreport> subReports) {
+    super(logger, config, subReports);
   }
 
   @Override

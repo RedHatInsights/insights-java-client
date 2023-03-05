@@ -10,6 +10,7 @@ import com.redhat.insights.config.EnvAndSysPropsInsightsConfiguration;
 import com.redhat.insights.core.app.AppInsightsSubreport;
 import com.redhat.insights.core.app.AppTopLevelReport;
 import com.redhat.insights.core.httpclient.InsightsJdkHttpClient;
+import com.redhat.insights.doubles.DefaultConfiguration;
 import com.redhat.insights.jars.ClasspathJarInfoSubreport;
 import com.redhat.insights.logging.TestLogger;
 import com.redhat.insights.tls.PEMSupport;
@@ -39,6 +40,7 @@ class EphemeralEnvironmentTest {
     var report =
         new AppTopLevelReport(
             logger,
+            new DefaultConfiguration(),
             Map.of(
                 "jars",
                 new ClasspathJarInfoSubreport(logger),
