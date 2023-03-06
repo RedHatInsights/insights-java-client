@@ -49,7 +49,7 @@ public class DummyTopLevelReport extends AbstractTopLevelReportBase {
   }
 
   public Map<String, String> getDecorations() {
-    return decorations;
+    return Collections.unmodifiableMap(decorations);
   }
 
   public static DummyTopLevelReport of(InsightsLogger logger) {
