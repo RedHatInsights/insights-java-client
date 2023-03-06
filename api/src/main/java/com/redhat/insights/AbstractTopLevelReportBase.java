@@ -149,7 +149,7 @@ public abstract class AbstractTopLevelReportBase implements InsightsReport {
 
     // This is the top-level name - implementors that may have to care about multi-tenancy
     // should handle that in product-specific code.
-    final String name = config.getIdentificationName();
+    final String name = getIdentificationName();
     options.put("app.name", name);
 
     String defaultHost = "localhost";
@@ -206,6 +206,16 @@ public abstract class AbstractTopLevelReportBase implements InsightsReport {
   protected abstract long getProcessPID();
 
   protected abstract Package[] getPackages();
+
+  /**
+   * This is the top-level name - implementors that may have to care about multi-tenancy should
+   * handle that in product-specific code.
+   *
+   * @return an id of the current application.
+   */
+  protected String getIdentificationName() {
+    return config.getIdentificationName();
+  }
 
   @Override
   public Map<String, Object> getBasic() {
