@@ -7,7 +7,9 @@ import static org.mockito.Mockito.*;
 import com.redhat.insights.InsightsException;
 import com.redhat.insights.InsightsReport;
 import com.redhat.insights.config.InsightsConfiguration;
+import com.redhat.insights.doubles.DummyTopLevelReport;
 import com.redhat.insights.doubles.NoopInsightsLogger;
+import com.redhat.insights.doubles.StoringInsightsHttpClient;
 import com.redhat.insights.logging.InsightsLogger;
 import java.io.File;
 import java.io.IOException;
@@ -17,6 +19,20 @@ import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 
 class InsightsMultiClientTest {
+
+  @Test
+  public void testBothClientsOperational() {
+    StoringInsightsHttpClient client1 = new StoringInsightsHttpClient();
+    StoringInsightsHttpClient client2 = new StoringInsightsHttpClient();
+    InsightsLogger logger = new NoopInsightsLogger();
+    InsightsReport report = DummyTopLevelReport.of(logger);
+    InsightsMultiClient multiClient = new InsightsMultiClient(logger, client1, client2);
+
+    multiClient.sendInsightsReport("", report);
+
+    assertEquals(1, client1.getReportsSent(), "First client should send the report");
+    assertEquals(0, client2.getReportsSent(), "Second client should not send the report");
+  }
 
   @Test
   void firstFailsAndSecondSucceeds() throws IOException {
@@ -63,7 +79,7 @@ class InsightsMultiClientTest {
   }
 
   @Test
-  void theyAllFail() throws IOException {
+  void theyAllFail() {
     String filename = "yolo.txt";
 
     InsightsLogger logger = new NoopInsightsLogger();
