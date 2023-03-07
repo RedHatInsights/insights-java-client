@@ -13,7 +13,6 @@
 
   <properties>
     <mvn-golang-wrapper.version>2.3.10</mvn-golang-wrapper.version>
-    <build-helper-maven-plugin.version>3.3.0</build-helper-maven-plugin.version>
   </properties>
 
   <build>
@@ -35,30 +34,7 @@
               <packages>
                 <package>main.go</package>
               </packages>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <version>${build-helper-maven-plugin.version}</version>
-        <executions>
-          <execution>
-            <id>attach-artifacts</id>
-            <goals>
-              <goal>attach-artifact</goal>
-            </goals>
-            <phase>package</phase>
-            <configuration>
-              <artifacts>
-                <artifact>
-                  <file>bin/jboss-cert-helper-${project.version}</file>
-                  <type>bin</type>
-                  <classifier>${os.arch}</classifier>
-                </artifact>
-              </artifacts>
+              <attach>true</attach>
             </configuration>
           </execution>
         </executions>
