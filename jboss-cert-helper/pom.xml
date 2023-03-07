@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.redhat.insights</groupId>
+    <artifactId>runtimes-java</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>jboss-cert-helper</artifactId>
+  <packaging>mvn-golang</packaging>
+
+  <properties>
+    <mvn-golang-wrapper.version>2.3.10</mvn-golang-wrapper.version>
+    <build-helper-maven-plugin.version>3.3.0</build-helper-maven-plugin.version>
+  </properties>
+
+  <build>
+    <directory>${basedir}${file.separator}bin</directory>
+
+    <plugins>
+
+      <plugin>
+        <groupId>com.igormaznitsa</groupId>
+        <artifactId>mvn-golang-wrapper</artifactId>
+        <version>${mvn-golang-wrapper.version}</version>
+        <extensions>true</extensions>
+        <executions>
+          <execution>
+            <goals>
+              <goal>build</goal>
+            </goals>
+            <configuration>
+              <packages>
+                <package>main.go</package>
+              </packages>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>${build-helper-maven-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>attach-artifacts</id>
+            <goals>
+              <goal>attach-artifact</goal>
+            </goals>
+            <phase>package</phase>
+            <configuration>
+              <artifacts>
+                <artifact>
+                  <file>bin/jboss-cert-helper-${project.version}</file>
+                  <type>bin</type>
+                  <classifier>${os.arch}</classifier>
+                </artifact>
+              </artifacts>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>com.diffplug.spotless</groupId>
+        <artifactId>spotless-maven-plugin</artifactId>
+        <version>${spotless-maven-plugin.version}</version>
+        <configuration>
+          <skip>${skip.spotless}</skip>
+          <!-- optional: limit format enforcement to just the files changed by this feature branch -->
+          <ratchetFrom>origin/main</ratchetFrom>
+          <formats>
+            <!-- you can define as many formats as you want, each is independent -->
+            <format>
+              <!-- define the files to apply to -->
+              <includes>
+                <include>*.md</include>
+                <include>.gitignore</include>
+              </includes>
+              <!-- define the steps to apply to those files -->
+              <trimTrailingWhitespace></trimTrailingWhitespace>
+              <endWithNewline></endWithNewline>
+              <indent>
+                <tabs>true</tabs>
+                <spacesPerTab>4</spacesPerTab>
+              </indent>
+            </format>
+          </formats>
+          <!-- define a language-specific format -->
+          <java>
+            <!-- no need to specify files, inferred automatically, but you can if you want -->
+
+            <!-- apply a specific flavor of google-java-format and reflow long strings -->
+            <googleJavaFormat>
+              <version>${google-java-format.version}</version>
+              <style>GOOGLE</style>
+              <reflowLongStrings>true</reflowLongStrings>
+              <groupArtifact>com.google.googlejavaformat:google-java-format</groupArtifact>
+            </googleJavaFormat>
+
+            <!-- make sure every file has the following copyright header.
+			           optionally, Spotless can set copyright years by digging
+			           through git history (see "license" section below) -->
+            <licenseHeader>
+              <content>/* Copyright (C) Red Hat $YEAR */</content>
+              <!-- or <file>${project.basedir}/license-header</file> -->
+            </licenseHeader>
+          </java>
+          <pom>
+            <includes>
+              <include>pom.xml</include>
+            </includes>
+            <sortPom></sortPom>
+          </pom>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <phase>compile</phase>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
+    <!--Changing standard Maven project source structure to make it Go compatible-->
+    <sourceDirectory>${basedir}${file.separator}src</sourceDirectory>
+  </build>
+
+</project>
