@@ -5,6 +5,7 @@ import com.redhat.insights.AbstractTopLevelReportBase;
 import com.redhat.insights.InsightsSubreport;
 import com.redhat.insights.logging.InsightsLogger;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -17,6 +18,8 @@ public class DummyTopLevelReport extends AbstractTopLevelReportBase {
 
   // if set to true, will generate empty "basic" body of report
   private boolean generateEmpty = false;
+
+  private Map<String, String> decorations = new HashMap<>();
 
   public DummyTopLevelReport(InsightsLogger logger, Map<String, InsightsSubreport> subReports) {
     super(logger, new DefaultConfiguration(), subReports);
@@ -41,7 +44,13 @@ public class DummyTopLevelReport extends AbstractTopLevelReportBase {
   }
 
   @Override
-  public void decorate(String key, String value) {}
+  public void decorate(String key, String value) {
+    decorations.put(key, value);
+  }
+
+  public Map<String, String> getDecorations() {
+    return Collections.unmodifiableMap(decorations);
+  }
 
   public static DummyTopLevelReport of(InsightsLogger logger) {
     return new DummyTopLevelReport(logger, Collections.emptyMap());
