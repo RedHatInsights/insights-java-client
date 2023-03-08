@@ -74,7 +74,7 @@ public class UpdateReportImpl implements InsightsReport {
 
   @Override
   public void decorate(String key, String value) {
-    logger.warning(
+    logger.debug(
         String.format("Attempt to add %s => %s to an update report. Ignored.", key, value));
   }
 }
