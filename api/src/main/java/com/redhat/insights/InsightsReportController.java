@@ -190,4 +190,20 @@ public final class InsightsReportController {
   public InsightsScheduler getScheduler() {
     return scheduler;
   }
+
+  @Override
+  public String toString() {
+    final StringBuffer sb = new StringBuffer("InsightsReportController{");
+    sb.append("logger=").append(logger);
+    sb.append(", configuration=").append(configuration);
+    sb.append(", report=").append(report);
+    sb.append(", httpClientSupplier=").append(httpClientSupplier);
+    sb.append(", scheduler=").append(scheduler);
+    sb.append(", masking=").append(masking);
+    sb.append(", idHashHolder=").append(idHashHolder);
+    sb.append(", jarsToSend=").append(jarsToSend);
+    sb.append(", shutdown=").append(isShutdown());
+    sb.append('}');
+    return sb.toString();
+  }
 }
