@@ -27,14 +27,39 @@
         <extensions>true</extensions>
         <executions>
           <execution>
+            <id>default-build</id>
+            <phase>none</phase>
+          </execution>
+          <execution>
+            <id>build-for-linux-x86_64</id>
             <goals>
               <goal>build</goal>
             </goals>
             <configuration>
-              <packages>
-                <package>main.go</package>
-              </packages>
+              <targetOs>linux</targetOs>
+              <targetArch>amd64</targetArch>
+              <resultName>${project.build.finalName}-linux-x86_64</resultName>
               <attach>true</attach>
+              <attachClassifier>linux-x86_64</attachClassifier>
+              <packages>
+                <app>main.go</app>
+              </packages>
+            </configuration>
+          </execution>
+          <execution>
+            <id>build-for-linux-arm64</id>
+            <goals>
+              <goal>build</goal>
+            </goals>
+            <configuration>
+              <targetOs>linux</targetOs>
+              <targetArch>arm64</targetArch>
+              <resultName>${project.build.finalName}-linux-arm64</resultName>
+              <attach>true</attach>
+              <attachClassifier>linux-arm64</attachClassifier>
+              <packages>
+                <app>main.go</app>
+              </packages>
             </configuration>
           </execution>
         </executions>
