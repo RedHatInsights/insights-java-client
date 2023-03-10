@@ -21,8 +21,13 @@ public class CertHelper {
   }
 
   public byte[] readUsingHelper(String mode) throws IOException, InterruptedException {
+    String certHelperBinaryPath = configuration.getCertHelperBinary();
+    if (!new File(certHelperBinaryPath).exists()) {
+      throw new IOException("Cert helper binary: " + certHelperBinaryPath + " does not exists.");
+    }
+
     final ProcessBuilder builder = new ProcessBuilder();
-    builder.command(configuration.getCertHelperBinary(), mode);
+    builder.command(certHelperBinaryPath, mode);
     builder.directory(new File(System.getProperty("user.home")));
     final Process process = builder.start();
     final StringBuilder sb = new StringBuilder();
