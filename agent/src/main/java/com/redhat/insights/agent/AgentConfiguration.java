@@ -1,5 +1,5 @@
 /* Copyright (C) Red Hat 2023 */
-package com.redhat.insights.core.agent;
+package com.redhat.insights.agent;
 
 import com.redhat.insights.config.InsightsConfiguration;
 import java.util.Map;
