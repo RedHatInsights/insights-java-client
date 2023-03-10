@@ -1,50 +1,32 @@
 /* Copyright (C) Red Hat 2023 */
 package com.redhat.insights.agent;
 
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.redhat.insights.Filtering;
-import com.redhat.insights.InsightsReport;
+import com.redhat.insights.AbstractTopLevelReportBase;
 import com.redhat.insights.InsightsSubreport;
 import com.redhat.insights.config.InsightsConfiguration;
 import com.redhat.insights.logging.InsightsLogger;
+import java.util.Collections;
 import java.util.Map;
 
-public class AgentBasicReport implements InsightsReport {
+public class AgentBasicReport extends AbstractTopLevelReportBase {
+  private AgentBasicReport(
+      InsightsLogger logger,
+      InsightsConfiguration config,
+      Map<String, InsightsSubreport> subReports) {
+    super(logger, config, subReports);
+  }
+
   public static AgentBasicReport of(InsightsLogger logger, InsightsConfiguration configuration) {
-    return null;
+    return new AgentBasicReport(logger, configuration, Collections.emptyMap());
   }
 
   @Override
-  public Map<String, InsightsSubreport> getSubreports() {
-    return null;
+  protected long getProcessPID() {
+    return 0;
   }
 
   @Override
-  public JsonSerializer<InsightsReport> getSerializer() {
-    return null;
+  protected Package[] getPackages() {
+    return new Package[0];
   }
-
-  @Override
-  public void generateReport(Filtering masking) {}
-
-  @Override
-  public Map<String, Object> getBasic() {
-    return null;
-  }
-
-  @Override
-  public String getVersion() {
-    return null;
-  }
-
-  @Override
-  public void setIdHash(String hash) {}
-
-  @Override
-  public String getIdHash() {
-    return null;
-  }
-
-  @Override
-  public void decorate(String key, String value) {}
 }

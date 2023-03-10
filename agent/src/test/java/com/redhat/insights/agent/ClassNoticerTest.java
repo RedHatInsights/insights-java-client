@@ -18,7 +18,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import net.bytebuddy.agent.ByteBuddyAgent;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
@@ -26,7 +25,6 @@ import org.mockito.Mockito;
 public class ClassNoticerTest {
 
   @Test
-  @Disabled
   public void testNoticer() throws InterruptedException {
     // Setup Byte Buddy agent
     Instrumentation instrumentation = ByteBuddyAgent.install();
