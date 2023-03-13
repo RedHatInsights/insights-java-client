@@ -25,6 +25,9 @@
         <artifactId>mvn-golang-wrapper</artifactId>
         <version>${mvn-golang-wrapper.version}</version>
         <extensions>true</extensions>
+        <configuration>
+          <useEnvVars>true</useEnvVars>
+        </configuration>
         <executions>
           <execution>
             <id>default-build</id>
