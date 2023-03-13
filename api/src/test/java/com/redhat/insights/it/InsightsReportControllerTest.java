@@ -1,5 +1,5 @@
 /* Copyright (C) Red Hat 2023 */
-package com.redhat.insights;
+package com.redhat.insights.it;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
@@ -8,6 +8,10 @@ import static org.mockito.Mockito.mock;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.redhat.insights.InsightsException;
+import com.redhat.insights.InsightsReport;
+import com.redhat.insights.InsightsReportController;
+import com.redhat.insights.InsightsSubreport;
 import com.redhat.insights.config.InsightsConfiguration;
 import com.redhat.insights.doubles.*;
 import com.redhat.insights.jars.ClasspathJarInfoSubreport;
@@ -20,9 +24,11 @@ import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-public class ITReportControllerTest {
+@Tag("IntegrationTest")
+public class InsightsReportControllerTest {
   private static final InsightsLogger logger = new NoopInsightsLogger();
 
   /** Test there are not reports sent, if opted out */
