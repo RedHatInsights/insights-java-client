@@ -14,8 +14,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.*;
-import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 import javax.net.ssl.KeyManagerFactory;
@@ -96,14 +96,15 @@ public class PEMSupport {
     char[] keystorePassword = new char[0];
     try {
 
-      Certificate[] certificates =
-          parsePemData(Certificate.class, certPemData).toArray(new Certificate[0]);
+      X509Certificate[] certificates =
+          parsePemData(X509Certificate.class, certPemData).toArray(new X509Certificate[0]);
       List<PrivateKey> keys = parsePemData(PrivateKey.class, keyPemData);
 
       KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
       keyStore.load(null);
 
       for (int i = 0; i < certificates.length; i++) {
+        certificates[i].checkValidity();
         keyStore.setCertificateEntry("cert-" + i, certificates[i]);
       }
 
