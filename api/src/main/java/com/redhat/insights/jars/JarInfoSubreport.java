@@ -13,25 +13,25 @@ import com.redhat.insights.logging.InsightsLogger;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 public class JarInfoSubreport implements InsightsSubreport {
   protected final InsightsLogger logger;
-  protected final List<JarInfo> jarInfos;
+  protected final Collection<JarInfo> jarInfos;
 
   public JarInfoSubreport(InsightsLogger logger) {
     this.logger = logger;
     this.jarInfos = new ArrayList<>();
   }
 
-  public JarInfoSubreport(InsightsLogger logger, List<JarInfo> jarInfos) {
+  public JarInfoSubreport(InsightsLogger logger, Collection<JarInfo> jarInfos) {
     this.logger = logger;
     this.jarInfos = jarInfos;
   }
 
-  public List<JarInfo> getJarInfos() {
-    return Collections.unmodifiableList(jarInfos);
+  public Collection<JarInfo> getJarInfos() {
+    return Collections.unmodifiableCollection(jarInfos);
   }
 
   @Override

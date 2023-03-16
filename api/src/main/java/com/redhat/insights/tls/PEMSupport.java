@@ -74,7 +74,14 @@ public class PEMSupport {
       return Files.readAllBytes(Paths.get(pathStr));
     } catch (IOException iox) {
       // Direct read failed - try to use the helper, if configured
-      logger.debug("Direct read failed - trying to use the helper");
+      logger.debug("Direct read of cert and key failed.", iox);
+      logger.debug(
+          "Trying to use the helper binary "
+              + configuration.getCertHelperBinary()
+              + " to read default cert: "
+              + InsightsConfiguration.DEFAULT_RHEL_CERT_FILE_PATH
+              + " and key: "
+              + InsightsConfiguration.DEFAULT_RHEL_CERT_FILE_PATH);
       CertHelper helper = new CertHelper(logger, configuration);
 
       try {
