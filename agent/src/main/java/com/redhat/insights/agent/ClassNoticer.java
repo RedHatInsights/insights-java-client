@@ -76,7 +76,7 @@ public class ClassNoticer implements ClassFileTransformer {
       }
     } catch (URISyntaxException e) {
       // Shouldn't be possible - so just log and carry on
-      logger.error("Jar with bad URI seen, should not be possible: " + jarUrl, e);
+      logger.error("Jar with bad URI seen, should not be possible: " + jarUrl);
     }
 
     // Return unmodified bytes

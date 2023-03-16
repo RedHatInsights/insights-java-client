@@ -22,11 +22,12 @@ public class AgentBasicReport extends AbstractTopLevelReportBase {
 
   @Override
   protected long getProcessPID() {
-    return 0;
+    return Long.parseLong(
+        java.lang.management.ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
   }
 
   @Override
   protected Package[] getPackages() {
-    return new Package[0];
+    return Package.getPackages();
   }
 }

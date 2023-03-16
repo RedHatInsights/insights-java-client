@@ -54,6 +54,10 @@ public final class JarAnalyzer {
       logger.debug(url + " Skipping temp jar file");
       return Optional.empty();
     }
+    if (isModularJdkJar(url)) {
+      logger.debug(url + " Skipping JDK jar file");
+      return Optional.empty();
+    }
     String archive = file.toLowerCase(Locale.ROOT);
     if (!archive.endsWith(".zip")
         && !archive.endsWith(".jar")
@@ -218,12 +222,17 @@ public final class JarAnalyzer {
    * @return The name of the jar to put in the internal map.
    */
   String parseJarName(final URL url) throws URISyntaxException {
+    // Skip JDK jars
+    if (isModularJdkJar(url)) {
+      return "";
+    }
+
     if ("file".equals(url.getProtocol())) {
       File file = new File(url.toURI());
       return file.getName().trim();
     }
 
-    logger.debug(url + "Parsing jar file name");
+    logger.debug("Parsing jar file name " + url);
     String path = url.getFile();
     int end = path.lastIndexOf(JAR_EXTENSION);
     if (end > 0) {
@@ -237,6 +246,10 @@ public final class JarAnalyzer {
     }
 
     throw new URISyntaxException(url.getPath(), "Unable to parse the jar file name from a URL");
+  }
+
+  private boolean isModularJdkJar(URL url) {
+    return "jrt".equals(url.getProtocol());
   }
 
   /**

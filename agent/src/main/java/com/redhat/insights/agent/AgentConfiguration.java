@@ -7,14 +7,17 @@ import java.util.Optional;
 
 public final class AgentConfiguration implements InsightsConfiguration {
 
-  public static final String ARG_NAME = "name";
-  public static final String ARG_CERT = "cert";
-  public static final String ARG_KEY = "key";
-  public static final String ARG_URL = "url";
-  public static final String ARG_PATH = "path";
-  public static final String ARG_PROXY = "proxy";
-  public static final String ARG_PROXY_PORT = "proxyPort";
-  public static final String ARG_OPT_OUT = "optOut";
+  static final String AGENT_ARG_NAME = "name";
+  static final String AGENT_ARG_CERT = "cert";
+  static final String AGENT_ARG_KEY = "key";
+  static final String AGENT_ARG_TOKEN = "token";
+
+  static final String AGENT_ARG_BASE_URL = "base_url"; // url
+  static final String AGENT_ARG_UPLOAD_URI = "uri"; // path
+
+  static final String AGENT_ARG_PROXY = "proxy";
+  static final String AGENT_ARG_PROXY_PORT = "proxyPort";
+  static final String AGENT_ARG_OPT_OUT = "optOut";
 
   private final Map<String, String> args;
 
@@ -22,51 +25,65 @@ public final class AgentConfiguration implements InsightsConfiguration {
     this.args = args;
   }
 
+  public Optional<String> getMaybeAuthToken() {
+    String value = args.get(AGENT_ARG_TOKEN);
+    if (value != null) {
+      return Optional.of(value);
+    }
+    return Optional.empty();
+  }
+
   @Override
   public String getIdentificationName() {
-    return args.get(ARG_NAME);
+    return args.get(AGENT_ARG_NAME);
   }
 
   @Override
   public String getCertFilePath() {
-    return args.get(ARG_CERT);
+    if (args.containsKey(AGENT_ARG_CERT)) {
+      return args.get(AGENT_ARG_CERT);
+    }
+    return InsightsConfiguration.DEFAULT_RHEL_CERT_FILE_PATH;
   }
 
   @Override
   public String getKeyFilePath() {
-    return args.get(ARG_KEY);
+    if (args.containsKey(AGENT_ARG_KEY)) {
+      return args.get(AGENT_ARG_KEY);
+    }
+    return InsightsConfiguration.DEFAULT_RHEL_KEY_FILE_PATH;
   }
 
   @Override
   public String getUploadBaseURL() {
-    if (args.containsKey(ARG_URL)) {
-      return args.get(ARG_URL);
+    if (args.containsKey(AGENT_ARG_BASE_URL)) {
+      return args.get(AGENT_ARG_BASE_URL);
     }
     return InsightsConfiguration.DEFAULT_UPLOAD_BASE_URL;
   }
 
   @Override
   public String getUploadUri() {
-    if (args.containsKey(ARG_PATH)) {
-      return args.get(ARG_PATH);
+    if (args.containsKey(AGENT_ARG_UPLOAD_URI)) {
+      return args.get(AGENT_ARG_UPLOAD_URI);
     }
     return InsightsConfiguration.DEFAULT_UPLOAD_URI;
   }
 
   @Override
   public Optional<ProxyConfiguration> getProxyConfiguration() {
-    if (args.containsKey(ARG_PROXY) && args.containsKey(ARG_PROXY_PORT)) {
+    if (args.containsKey(AGENT_ARG_PROXY) && args.containsKey(AGENT_ARG_PROXY_PORT)) {
       return Optional.of(
           new ProxyConfiguration(
-              args.get(ARG_PROXY), Integer.parseUnsignedInt(args.get(ARG_PROXY_PORT))));
+              args.get(AGENT_ARG_PROXY), Integer.parseUnsignedInt(args.get(AGENT_ARG_PROXY_PORT))));
     }
     return Optional.empty();
   }
 
   @Override
   public boolean isOptingOut() {
-    if (args.containsKey(ARG_OPT_OUT)) {
-      return "true".equalsIgnoreCase(args.get(ARG_OPT_OUT));
+    if (args.containsKey(AGENT_ARG_OPT_OUT)) {
+      return "true".equalsIgnoreCase(args.get(AGENT_ARG_OPT_OUT));
     }
     return false;
   }
