@@ -13,7 +13,7 @@ public interface InsightsConfiguration {
   String DEFAULT_RHEL_CERT_FILE_PATH = "/etc/pki/consumer/cert.pem";
   String DEFAULT_RHEL_KEY_FILE_PATH = "/etc/pki/consumer/key.pem";
   // FIXME
-  String DEFAULT_UPLOAD_BASE_URL = "https://cert.console.stage.redhat.com";
+  String DEFAULT_UPLOAD_BASE_URL = "https://cert.console.redhat.com";
   String DEFAULT_UPLOAD_URI = "/api/ingress/v1/upload";
   // FIXME
   String DEFAULT_ARCHIVE_UPLOAD_DIR = "/var/tmp/insights-runtimes/uploads";
