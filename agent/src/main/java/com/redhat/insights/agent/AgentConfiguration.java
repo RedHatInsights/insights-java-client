@@ -11,12 +11,10 @@ public final class AgentConfiguration implements InsightsConfiguration {
   static final String AGENT_ARG_CERT = "cert";
   static final String AGENT_ARG_KEY = "key";
   static final String AGENT_ARG_TOKEN = "token";
-
-  static final String AGENT_ARG_BASE_URL = "base_url"; // url
-  static final String AGENT_ARG_UPLOAD_URI = "uri"; // path
-
+  static final String AGENT_ARG_BASE_URL = "base_url";
+  static final String AGENT_ARG_UPLOAD_URI = "uri";
   static final String AGENT_ARG_PROXY = "proxy";
-  static final String AGENT_ARG_PROXY_PORT = "proxyPort";
+  static final String AGENT_ARG_PROXY_PORT = "proxy_port";
   static final String AGENT_ARG_OPT_OUT = "optOut";
 
   private final Map<String, String> args;
