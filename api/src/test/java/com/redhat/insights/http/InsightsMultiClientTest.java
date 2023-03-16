@@ -102,7 +102,7 @@ class InsightsMultiClientTest {
     InsightsException err =
         assertThrows(InsightsException.class, () -> client.sendInsightsReport(filename, report));
 
-    assertTrue(err.getMessage().startsWith("I4ASR0018: All clients failed"));
+    assertTrue(err.getMessage().startsWith("I4ASR0019: All clients failed"));
     assertTrue(err.getMessage().contains("Mock for InsightsHttpClient"));
     assertTrue(err.getMessage().contains(", Mock for InsightsHttpClient"));
     verify(report).decorate("app.client.exception", "Failing on purpose");
