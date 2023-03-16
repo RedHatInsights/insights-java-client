@@ -1,10 +1,7 @@
 /* Copyright (C) Red Hat 2022-2023 */
 package com.redhat.insights.tls;
 
-import static com.redhat.insights.InsightsErrorCode.ERROR_SSL_CREATING_CONTEXT;
-import static com.redhat.insights.InsightsErrorCode.ERROR_SSL_PARSING_CERTS;
-import static com.redhat.insights.InsightsErrorCode.ERROR_SSL_READING_CERTS;
-import static com.redhat.insights.InsightsErrorCode.ERROR_SSL_READING_CERTS_INVALID_MODE;
+import static com.redhat.insights.InsightsErrorCode.*;
 
 import com.redhat.insights.InsightsException;
 import com.redhat.insights.config.InsightsConfiguration;
@@ -119,8 +116,9 @@ public class PEMSupport {
 
       return sslContext;
 
+    } catch (CertificateException err) {
+      throw new InsightsException(ERROR_SSL_CERTS_PROBLEM, "Certificates error", err);
     } catch (UnrecoverableKeyException
-        | CertificateException
         | KeyStoreException
         | IOException
         | NoSuchAlgorithmException
