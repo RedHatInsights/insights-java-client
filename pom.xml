@@ -9,7 +9,6 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>agent</module>
     <module>api</module>
     <module>runtime</module>
     <module>jboss-cert-helper</module>
