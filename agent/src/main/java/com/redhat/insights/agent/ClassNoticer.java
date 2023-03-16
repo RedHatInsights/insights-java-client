@@ -1,7 +1,5 @@
 /* Copyright (C) Red Hat 2023 */
-package com.redhat.insights.core.agent;
-
-import static com.redhat.insights.jars.JarAnalyzer.SHA512_CHECKSUM_KEY;
+package com.redhat.insights.agent;
 
 import com.redhat.insights.jars.JarAnalyzer;
 import com.redhat.insights.jars.JarInfo;
@@ -9,8 +7,10 @@ import com.redhat.insights.logging.InsightsLogger;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.security.ProtectionDomain;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 
@@ -55,17 +55,17 @@ public class ClassNoticer implements ClassFileTransformer {
     if ((protectionDomain == null) || (protectionDomain.getCodeSource() == null)) {
       return bytes;
     }
-    var jarUrl = protectionDomain.getCodeSource().getLocation();
+    URL jarUrl = protectionDomain.getCodeSource().getLocation();
 
     // If we haven't seen it before, add it to the set and enqueue it
     try {
-      var jarLoc = jarUrl.toString();
+      String jarLoc = jarUrl.toString();
       if (!seenUrls.contains(jarLoc)) {
         seenUrls.add(jarLoc);
-        var oJar = analyzer.process(jarUrl);
+        Optional<JarInfo> oJar = analyzer.process(jarUrl);
         if (oJar.isPresent()) {
-          var jarInfo = oJar.get();
-          var sha512 = jarInfo.attributes().get(SHA512_CHECKSUM_KEY);
+          JarInfo jarInfo = oJar.get();
+          String sha512 = jarInfo.attributes().get(JarAnalyzer.SHA512_CHECKSUM_KEY);
           if (!seenJarHashes.contains(sha512)) {
             seenJarHashes.add(sha512);
             if (!jarsToSend.offer(jarInfo)) {
@@ -76,7 +76,7 @@ public class ClassNoticer implements ClassFileTransformer {
       }
     } catch (URISyntaxException e) {
       // Shouldn't be possible - so just log and carry on
-      logger.error("Jar with bad URI seen, should not be possible: " + jarUrl, e);
+      logger.error("Jar with bad URI seen, should not be possible: " + jarUrl);
     }
 
     // Return unmodified bytes

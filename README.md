@@ -9,6 +9,13 @@ The only authentication flows we support in this release are:
 1. mTLS using certs managed by Red Hat Subscription Manager (RHSM)
 2. Bearer token authentication in OpenShift Container Platform (OCP)
 
+There are four modules within the project:
+
+* agent - A Java agent, supporting Java 8. Implementations need not depend on this
+* api - The core API (Java 8). All uses cases will need to depend on this
+* jboss-cert-helper - A standalone Go binary that is used to provide access to RHEL certs
+* runtime - A Java 11 module that provides an HTTP client and some top-level reports. Most implementations will depend on this.
+
 ## Building
 
 - Requires Java 11
@@ -30,7 +37,7 @@ This project contains some code comprising derivative works based upon open-sour
 
 The original work is also licensed under the Apache 2 License.
 
-## How to test against an ephemeral environment
+## How to test against a token-based (e.g. ephemeral) environment
 
 Here's a command-line guide to uploading some payload:
 
@@ -54,6 +61,7 @@ type='application/vnd.redhat.runtimes-java-general.analytics+tgz' \
 
 ## Environment variables and system properties
 
+For standard, in-process clients, a combination of environment vars & system properties are used to configure the client.
 The following environment variables are available to be overriden when using `EnvAndSysPropsInsightsConfiguration`.
 
 | Name                                                 | Default value                           | Description                                                          |
@@ -79,6 +87,33 @@ JVM system properties are derived from the environment variable names.
 For instance `RHT_INSIGHTS_JAVA_KEY_FILE_PATH` becomes `rht.insights.java.key.file.path`.
 
 Note that environment variables take priority over system properties.
+
+## Java agent args string
+
+When using the agent in the startup configuration, the usual agent args string technique is used.
+That is, the path to the agent jar is followed by an `=` and then the rest of the argument is passed as a single string to the agent.
+
+In our case, the args are passed as key-value pairs, separated by `;`. For example:
+
+```
+-javaagent:runtimes-java-agent-1.0.0.jar=name=my_app;token=amXXXXYYYYZZZZj
+```
+
+Note that the use of `;` means that on Unix, means that the javaagent argument will typically need to be quoted.
+
+The available key-value pairs are:
+
+| Name         | Default value                           | Description                                        |
+|--------------|-----------------------------------------|----------------------------------------------------|
+| `optOut`     | `false`                                 | Opt out of Red Hat Insights reporting when `true`  |
+| `name`       | N/A, must be defined                    | Identification name for reporting                  |
+| `cert`       | `/etc/pki/consumer/cert.pem`            | Certificate path file                              |
+| `key`        | `/etc/pki/consumer/key.pem`             | Certificate key file                               |
+| `token`      | (empty)                                 | Authentication token for token-based auth, if used |
+| `base_url`   | `https://cert.console.stage.redhat.com` | Server endpoint URL                                |
+| `uri`        | `/api/ingress/v1/upload`                | Request URI at the server endpoint                 |
+| `proxy`      | (empty)                                 | Proxy host, if any                                 |
+| `proxy_port` | (empty)                                 | Proxy port, if any                                 |
 
 ## Testing & coverage report
 

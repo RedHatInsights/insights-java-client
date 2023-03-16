@@ -1,9 +1,8 @@
 /* Copyright (C) Red Hat 2023 */
-package com.redhat.insights.core.agent;
+package com.redhat.insights.agent;
 
+import com.redhat.insights.InsightsReport;
 import com.redhat.insights.InsightsReportController;
-import com.redhat.insights.core.app.AppTopLevelReport;
-import com.redhat.insights.core.httpclient.InsightsJdkHttpClient;
 import com.redhat.insights.http.InsightsHttpClient;
 import com.redhat.insights.jars.JarInfo;
 import com.redhat.insights.logging.InsightsLogger;
@@ -12,6 +11,7 @@ import com.redhat.insights.tls.PEMSupport;
 import java.lang.instrument.Instrumentation;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -28,9 +28,9 @@ public final class AgentMain {
   private final BlockingQueue<JarInfo> waitingJars;
 
   private AgentMain(
-      InsightsLogger logger, Map<String, String> args, LinkedBlockingQueue<JarInfo> jarsToSend) {
+      InsightsLogger logger, AgentConfiguration configuration, BlockingQueue<JarInfo> jarsToSend) {
     this.logger = logger;
-    this.configuration = new AgentConfiguration(args);
+    this.configuration = configuration;
     this.waitingJars = jarsToSend;
   }
 
@@ -40,41 +40,17 @@ public final class AgentMain {
       logger.error("Unable to start Red Hat Insights client: Need config arguments");
       return;
     }
-    var oArgs = parseArgs(logger, agentArgs);
-    if (oArgs.isEmpty()) {
+    Optional<AgentConfiguration> oArgs = parseArgs(logger, agentArgs);
+    if (!oArgs.isPresent()) {
       return;
     }
-    var args = oArgs.get();
+    AgentConfiguration args = oArgs.get();
 
-    if (args.get(AgentConfiguration.ARG_NAME) == null
-        || "".equals(args.get(AgentConfiguration.ARG_NAME))) {
-      logger.error(
-          "Unable to start Red Hat Insights client: App requires a name for identification");
-      return;
-    }
-
-    if (args.get(AgentConfiguration.ARG_CERT) == null
-        || "".equals(args.get(AgentConfiguration.ARG_CERT))
-        || args.get(AgentConfiguration.ARG_KEY) == null
-        || "".equals(args.get(AgentConfiguration.ARG_KEY))) {
-      var certPath = Path.of(DEFAULT_CERT_PATH);
-      var keyPath = Path.of(DEFAULT_KEY_PATH);
-      if (Files.exists(certPath) && Files.exists(keyPath)) {
-        args.put("cert", DEFAULT_CERT_PATH);
-        args.put("key", DEFAULT_KEY_PATH);
-      } else {
-        logger.error(
-            "Unable to start Red Hat Insights client: Missing certificate or key path arguments and"
-                + " default locations empty");
-        return;
-      }
-    }
-
-    var jarsToSend = new LinkedBlockingQueue<JarInfo>();
+    BlockingQueue<JarInfo> jarsToSend = new LinkedBlockingQueue<>();
     try {
       logger.info("Starting Red Hat Insights client");
       new AgentMain(logger, args, jarsToSend).start();
-      var noticer = new ClassNoticer(logger, jarsToSend);
+      ClassNoticer noticer = new ClassNoticer(logger, jarsToSend);
       instrumentation.addTransformer(noticer);
     } catch (Throwable t) {
       logger.error("Unable to start Red Hat Insights client", t);
@@ -82,10 +58,10 @@ public final class AgentMain {
     }
   }
 
-  static Optional<Map<String, String>> parseArgs(InsightsLogger logger, String agentArgs) {
-    var out = new HashMap<String, String>();
-    for (var pair : agentArgs.split(":")) {
-      var kv = pair.split("=");
+  static Optional<AgentConfiguration> parseArgs(InsightsLogger logger, String agentArgs) {
+    Map<String, String> out = new HashMap<>();
+    for (String pair : agentArgs.split(";")) {
+      String[] kv = pair.split("=");
       if (kv.length != 2) {
         logger.error(
             "Unable to start Red Hat Insights client: Malformed config arguments (should be"
@@ -94,16 +70,33 @@ public final class AgentMain {
       }
       out.put(kv[0], kv[1]);
     }
-    return Optional.of(out);
+    AgentConfiguration config = new AgentConfiguration(out);
+
+    if (config.getIdentificationName() == null || "".equals(config.getIdentificationName())) {
+      logger.error(
+          "Unable to start Red Hat Insights client: App requires a name for identification");
+      return Optional.empty();
+    }
+
+    if (!config.getMaybeAuthToken().isPresent()) {
+      Path certPath = Paths.get(config.getCertFilePath());
+      Path keyPath = Paths.get(config.getKeyFilePath());
+      if (!Files.exists(certPath) || !Files.exists(keyPath)) {
+        logger.error("Unable to start Red Hat Insights client: Missing certificate or key files");
+        return Optional.empty();
+      }
+    }
+
+    return Optional.of(config);
   }
 
   private void start() {
-    final var simpleReport = AppTopLevelReport.of(logger, configuration);
-    final var pem = new PEMSupport(logger, configuration);
+    final InsightsReport simpleReport = AgentBasicReport.of(logger, configuration);
+    final PEMSupport pem = new PEMSupport(logger, configuration);
 
     final Supplier<InsightsHttpClient> httpClientSupplier =
-        () -> new InsightsJdkHttpClient(logger, configuration, () -> pem.createTLSContext());
-    final var controller =
+        () -> new InsightsAgentHttpClient(logger, configuration, () -> pem.createTLSContext());
+    final InsightsReportController controller =
         InsightsReportController.of(
             logger, configuration, simpleReport, httpClientSupplier, waitingJars);
     controller.generate();

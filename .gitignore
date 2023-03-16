@@ -1,5 +1,6 @@
 # Compiled Go code
 jboss-cert-helper/jboss-cert-helper
+jboss-cert-helper/bin
 
 # Compiled class file
 *.class

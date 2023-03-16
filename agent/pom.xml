@@ -8,13 +8,68 @@
     <artifactId>runtimes-java</artifactId>
     <version>1.0.0-SNAPSHOT</version>
   </parent>
-  <artifactId>runtimes-java-core-runtime</artifactId>
+  <artifactId>runtimes-java-agent</artifactId>
+
+  <properties>
+    <maven.compiler.release>8</maven.compiler.release>
+    <maven.compiler.source>8</maven.compiler.source>
+    <maven.compiler.target>8</maven.compiler.target>
+
+    <apache.httpclient.version>4.5.14</apache.httpclient.version>
+    <apache.httpcore.version>4.4.16</apache.httpcore.version>
+    <apache.httpmime.version>4.5.14</apache.httpmime.version>
+
+    <!-- Test libraries versions -->
+    <byte-buddy.version>1.14.0</byte-buddy.version>
+
+  </properties>
 
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>runtimes-java-api</artifactId>
       <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jsr310</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.wildfly.security</groupId>
+      <artifactId>wildfly-elytron-x500-cert</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>${apache.httpclient.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpcore</artifactId>
+      <version>${apache.httpcore.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpmime</artifactId>
+      <version>${apache.httpmime.version}</version>
     </dependency>
 
     <!-- Test dependencies -->
@@ -38,33 +93,54 @@
       <artifactId>mockito-core</artifactId>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>org.awaitility</groupId>
       <artifactId>awaitility</artifactId>
       <scope>test</scope>
     </dependency>
+
+    <!-- Byte Buddy is used for testing the agent -->
     <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-junit-jupiter</artifactId>
+      <groupId>net.bytebuddy</groupId>
+      <artifactId>byte-buddy</artifactId>
+      <version>${byte-buddy.version}</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
-      <groupId>io.smallrye.reactive</groupId>
-      <artifactId>smallrye-mutiny-vertx-web</artifactId>
+      <groupId>net.bytebuddy</groupId>
+      <artifactId>byte-buddy-agent</artifactId>
+      <version>${byte-buddy.version}</version>
       <scope>test</scope>
     </dependency>
 
-    <dependency>
-      <groupId>uk.org.webcompere</groupId>
-      <artifactId>system-stubs-jupiter</artifactId>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
   <build>
 
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <phase>package</phase>
+            <configuration>
+              <archive>
+                <manifest></manifest>
+                <manifestEntries>
+                  <Premain-Class>com.redhat.insights.agent.AgentMain</Premain-Class>
+                </manifestEntries>
+              </archive>
+              <descriptorRefs>
+                <descriptorRef>jar-with-dependencies</descriptorRef>
+              </descriptorRefs>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -134,6 +210,19 @@
         </executions>
       </plugin>
 
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
     </plugins>
+
   </build>
 </project>
