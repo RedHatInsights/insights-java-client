@@ -31,6 +31,14 @@ public class PEMSupport {
   }
 
   public SSLContext createTLSContext() {
+    if (!configuration.useMTLS()) {
+      try {
+        return SSLContext.getDefault();
+      } catch (NoSuchAlgorithmException e) {
+        throw new InsightsException(ERROR_SSL_CREATING_CONTEXT, "SSLContext creation error", e);
+      }
+    }
+
     byte[] certBytes = getBytesPossiblyPrivileged("--cert");
     byte[] keyBytes = getBytesPossiblyPrivileged("--key");
     if (certBytes.length == 0 || keyBytes.length == 0) {

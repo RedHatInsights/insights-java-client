@@ -1,11 +1,7 @@
 /* Copyright (C) Red Hat 2023 */
 package com.redhat.insights.core.httpclient;
 
-import static com.redhat.insights.InsightsErrorCode.ERROR_HTTP_SEND_;
-import static com.redhat.insights.InsightsErrorCode.ERROR_HTTP_SEND_AUTH_ERROR;
-import static com.redhat.insights.InsightsErrorCode.ERROR_HTTP_SEND_INVALID_CONTENT_TYPE;
-import static com.redhat.insights.InsightsErrorCode.ERROR_HTTP_SEND_PAYLOAD;
-import static com.redhat.insights.InsightsErrorCode.ERROR_HTTP_SEND_SERVER_ERROR;
+import static com.redhat.insights.InsightsErrorCode.*;
 
 import com.redhat.insights.InsightsException;
 import com.redhat.insights.InsightsReport;
@@ -18,6 +14,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.security.NoSuchAlgorithmException;
 import java.util.function.Supplier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLParameters;
@@ -33,7 +30,6 @@ public class InsightsJdkHttpClient implements InsightsHttpClient {
   private final InsightsConfiguration configuration;
   private final InsightsLogger logger;
   private final Supplier<SSLContext> sslContextSupplier;
-  private final boolean useMTLS;
 
   public InsightsJdkHttpClient(
       InsightsLogger logger,
@@ -42,17 +38,20 @@ public class InsightsJdkHttpClient implements InsightsHttpClient {
     this.logger = logger;
     this.configuration = configuration;
     this.sslContextSupplier = sslContextSupplier;
-    this.useMTLS = configuration.getMaybeAuthToken().isEmpty();
   }
 
-  //  public InsightsJdkHttpClient(
-  //    InsightsLogger logger,
-  //    InsightsConfiguration configuration) {
-  //    this.logger = logger;
-  //    this.configuration = configuration;
-  //    this.sslContextSupplier = () -> throw new InsightsException();
-  //    this.useMTLS = false;
-  //  }
+  public InsightsJdkHttpClient(InsightsLogger logger, InsightsConfiguration configuration) {
+    this.logger = logger;
+    this.configuration = configuration;
+    this.sslContextSupplier =
+        () -> {
+          try {
+            return SSLContext.getDefault();
+          } catch (NoSuchAlgorithmException e) {
+            throw new InsightsException(ERROR_SSL_CREATING_CONTEXT, "SSLContext creation error", e);
+          }
+        };
+  }
 
   // Package-private for testing
   URI assembleURI(String url, String path) {
@@ -70,7 +69,7 @@ public class InsightsJdkHttpClient implements InsightsHttpClient {
   HttpClient getHttpClient() {
     var clientBuilder = HttpClient.newBuilder();
 
-    if (useMTLS) {
+    if (configuration.useMTLS()) {
       final var sslParameters = new SSLParameters();
       sslParameters.setWantClientAuth(true);
       clientBuilder = clientBuilder.sslParameters(sslParameters);
@@ -90,7 +89,7 @@ public class InsightsJdkHttpClient implements InsightsHttpClient {
 
   @Override
   public void decorate(InsightsReport report) {
-    if (useMTLS) {
+    if (configuration.useMTLS()) {
       report.decorate("app.transport.type.https", "mtls");
       // We can't send anything more useful (e.g. SHA hash of cert file) as until
       // we try to send, we don't know if we can read the file at this path
@@ -125,7 +124,7 @@ public class InsightsJdkHttpClient implements InsightsHttpClient {
             .version(HttpClient.Version.HTTP_1_1)
             .header(MultipartBodyBuilder.CONTENT_TYPE_HEADER, bodyBuilder.contentTypeHeaderValue());
 
-    if (!useMTLS) {
+    if (!configuration.useMTLS()) {
       final var authToken = configuration.getMaybeAuthToken().get();
       requestBuilder = requestBuilder.setHeader("Authorization", "Basic " + authToken);
     }

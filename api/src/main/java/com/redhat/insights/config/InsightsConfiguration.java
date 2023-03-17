@@ -48,6 +48,10 @@ public interface InsightsConfiguration {
     return DEFAULT_UPLOAD_BASE_URL;
   }
 
+  default boolean useMTLS() {
+    return !getMaybeAuthToken().isPresent();
+  }
+
   default String getUploadUri() {
     return DEFAULT_UPLOAD_URI;
   }
