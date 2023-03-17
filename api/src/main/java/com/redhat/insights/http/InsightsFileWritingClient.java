@@ -7,6 +7,7 @@ import com.redhat.insights.InsightsException;
 import com.redhat.insights.InsightsReport;
 import com.redhat.insights.config.InsightsConfiguration;
 import com.redhat.insights.logging.InsightsLogger;
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -45,5 +46,11 @@ public class InsightsFileWritingClient implements InsightsHttpClient {
     } catch (IOException iox) {
       throw new InsightsException(ERROR_WRITING_FILE, "Could not write to: " + p, iox);
     }
+  }
+
+  @Override
+  public boolean isReadyToSend() {
+    return (new File(config.getCertFilePath()).exists()
+        && new File(config.getKeyFilePath()).exists());
   }
 }
