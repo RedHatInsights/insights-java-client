@@ -11,7 +11,7 @@ import com.redhat.insights.doubles.DummyTopLevelReport;
 import com.redhat.insights.doubles.MockInsightsConfiguration;
 import com.redhat.insights.doubles.NoopInsightsLogger;
 import com.redhat.insights.logging.InsightsLogger;
-
+import com.redhat.insights.tls.PEMSupport;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -25,8 +25,6 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.net.ssl.SSLContext;
-
-import com.redhat.insights.tls.PEMSupport;
 import org.junit.jupiter.api.Test;
 
 public class InsightsJdkHttpClientTest {

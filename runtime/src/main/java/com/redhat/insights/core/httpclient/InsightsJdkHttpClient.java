@@ -15,7 +15,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.security.NoSuchAlgorithmException;
 import java.util.function.Supplier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLParameters;
@@ -42,16 +41,13 @@ public class InsightsJdkHttpClient implements InsightsHttpClient {
   }
 
   public InsightsJdkHttpClient(InsightsLogger logger, InsightsConfiguration configuration) {
-    this.logger = logger;
-    this.configuration = configuration;
-    this.sslContextSupplier =
+    this(
+        logger,
+        configuration,
         () -> {
-          try {
-            return SSLContext.getDefault();
-          } catch (NoSuchAlgorithmException e) {
-            throw new InsightsException(ERROR_SSL_CREATING_CONTEXT, "SSLContext creation error", e);
-          }
-        };
+          throw new InsightsException(
+              ERROR_SSL_CREATING_CONTEXT, "Illegal attempt to create SSLContext for token auth");
+        });
   }
 
   // Package-private for testing
