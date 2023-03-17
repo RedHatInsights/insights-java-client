@@ -8,6 +8,7 @@ import com.redhat.insights.InsightsReport;
 import com.redhat.insights.config.InsightsConfiguration;
 import com.redhat.insights.http.InsightsHttpClient;
 import com.redhat.insights.logging.InsightsLogger;
+import java.io.File;
 import java.net.InetSocketAddress;
 import java.net.ProxySelector;
 import java.net.URI;
@@ -179,5 +180,12 @@ public class InsightsJdkHttpClient implements InsightsHttpClient {
     } catch (Throwable err) {
       throw new InsightsException(ERROR_HTTP_SEND_, "HTTP client request failed", err);
     }
+  }
+
+  @Override
+  public boolean isReadyToSend() {
+    return configuration.getMaybeAuthToken().isPresent()
+        || (new File(configuration.getCertFilePath()).exists()
+            && new File(configuration.getKeyFilePath()).exists());
   }
 }
