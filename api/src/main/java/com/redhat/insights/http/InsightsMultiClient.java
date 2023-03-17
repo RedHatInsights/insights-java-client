@@ -49,4 +49,13 @@ public class InsightsMultiClient implements InsightsHttpClient {
     }
     throw new InsightsException(ERROR_CLIENT_FAILED, "All clients failed: " + clients);
   }
+
+  @Override
+  public boolean isReadyToSend() {
+    boolean isReady = false;
+    for (InsightsHttpClient client : clients) {
+      isReady = isReady || client.isReadyToSend();
+    }
+    return isReady;
+  }
 }
