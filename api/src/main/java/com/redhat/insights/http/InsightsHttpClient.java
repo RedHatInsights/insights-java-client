@@ -33,10 +33,10 @@ public interface InsightsHttpClient {
   /**
    * Send the report, which has not been gzipped.
    *
-   * @param filename the name of the report.
+   * @param reportName the name of the report.
    * @param report the report payload.
    */
-  void sendInsightsReport(String filename, InsightsReport report);
+  void sendInsightsReport(String reportName, InsightsReport report);
 
   /**
    * Indicates if the HttpClient is ready to send the data.
@@ -46,7 +46,6 @@ public interface InsightsHttpClient {
   default boolean isReadyToSend() {
     return true;
   }
-
   /**
    * Static gzip helper method
    *

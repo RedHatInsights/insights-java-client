@@ -37,9 +37,10 @@ public class InsightsFileWritingClientTest {
     InsightsReport report = mock(InsightsReport.class);
     when(report.serialize()).thenReturn("foo");
 
-    client.sendInsightsReport("foo.txt", report);
+    client.sendInsightsReport("foo", report);
     File[] files = tmpdir.toFile().listFiles();
     assertEquals(1, files.length);
+    assertEquals("foo.json", files[0].getName());
     assertEquals(3, files[0].length());
     // Cleanup
     Files.delete(files[0].toPath());

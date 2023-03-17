@@ -36,7 +36,7 @@ class InsightsMultiClientTest {
 
   @Test
   void firstFailsAndSecondSucceeds() throws IOException {
-    String filename = "yolo.txt";
+    String reportName = "yolo";
 
     Path tmpdir = Files.createTempDirectory("tmpDirPrefix");
     InsightsConfiguration cfg =
@@ -59,16 +59,17 @@ class InsightsMultiClientTest {
     InsightsHttpClient failingClient = mock(InsightsHttpClient.class);
     doThrow(new InsightsException("Failing on purpose"))
         .when(failingClient)
-        .sendInsightsReport(filename, report);
+        .sendInsightsReport(reportName, report);
 
     InsightsHttpClient fileClient = new InsightsFileWritingClient(logger, cfg);
 
     InsightsMultiClient client =
         new InsightsMultiClient(logger, Arrays.asList(failingClient, fileClient));
-    client.sendInsightsReport(filename, report);
+    client.sendInsightsReport(reportName, report);
 
     File[] files = tmpdir.toFile().listFiles();
     assertEquals(1, files.length);
+    assertEquals(reportName + ".json", files[0].getName());
     assertEquals(3, files[0].length());
 
     verify(report).decorate("app.client.exception", "Failing on purpose");
@@ -80,7 +81,7 @@ class InsightsMultiClientTest {
 
   @Test
   void theyAllFail() {
-    String filename = "yolo.txt";
+    String reportName = "yolo";
 
     InsightsLogger logger = new NoopInsightsLogger();
 
@@ -90,17 +91,17 @@ class InsightsMultiClientTest {
     InsightsHttpClient failingClient = mock(InsightsHttpClient.class);
     doThrow(new InsightsException("Failing on purpose"))
         .when(failingClient)
-        .sendInsightsReport(filename, report);
+        .sendInsightsReport(reportName, report);
 
     InsightsHttpClient alsoFailingClient = mock(InsightsHttpClient.class);
     doThrow(new InsightsException("Also failing on purpose"))
         .when(alsoFailingClient)
-        .sendInsightsReport(filename, report);
+        .sendInsightsReport(reportName, report);
 
     InsightsMultiClient client =
         new InsightsMultiClient(logger, Arrays.asList(failingClient, alsoFailingClient));
     InsightsException err =
-        assertThrows(InsightsException.class, () -> client.sendInsightsReport(filename, report));
+        assertThrows(InsightsException.class, () -> client.sendInsightsReport(reportName, report));
 
     assertTrue(err.getMessage().startsWith("I4ASR0019: All clients failed"));
     assertTrue(err.getMessage().contains("Mock for InsightsHttpClient"));
