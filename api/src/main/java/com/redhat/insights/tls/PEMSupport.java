@@ -31,6 +31,11 @@ public class PEMSupport {
   }
 
   public SSLContext createTLSContext() {
+    if (!configuration.useMTLS()) {
+      throw new InsightsException(
+        ERROR_SSL_CREATING_CONTEXT, "Illegal attempt to create SSLContext for token auth");
+    }
+
     byte[] certBytes = getBytesPossiblyPrivileged("--cert");
     byte[] keyBytes = getBytesPossiblyPrivileged("--key");
     if (certBytes.length == 0 || keyBytes.length == 0) {

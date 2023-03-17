@@ -1,11 +1,7 @@
 /* Copyright (C) Red Hat 2023 */
 package com.redhat.insights.core.httpclient;
 
-import static com.redhat.insights.InsightsErrorCode.ERROR_HTTP_SEND_;
-import static com.redhat.insights.InsightsErrorCode.ERROR_HTTP_SEND_AUTH_ERROR;
-import static com.redhat.insights.InsightsErrorCode.ERROR_HTTP_SEND_INVALID_CONTENT_TYPE;
-import static com.redhat.insights.InsightsErrorCode.ERROR_HTTP_SEND_PAYLOAD;
-import static com.redhat.insights.InsightsErrorCode.ERROR_HTTP_SEND_SERVER_ERROR;
+import static com.redhat.insights.InsightsErrorCode.*;
 
 import com.redhat.insights.InsightsException;
 import com.redhat.insights.InsightsReport;
@@ -34,7 +30,6 @@ public class InsightsJdkHttpClient implements InsightsHttpClient {
   private final InsightsConfiguration configuration;
   private final InsightsLogger logger;
   private final Supplier<SSLContext> sslContextSupplier;
-  private final boolean useMTLS;
 
   public InsightsJdkHttpClient(
       InsightsLogger logger,
@@ -43,7 +38,16 @@ public class InsightsJdkHttpClient implements InsightsHttpClient {
     this.logger = logger;
     this.configuration = configuration;
     this.sslContextSupplier = sslContextSupplier;
-    this.useMTLS = configuration.getMaybeAuthToken().isEmpty();
+  }
+
+  public InsightsJdkHttpClient(InsightsLogger logger, InsightsConfiguration configuration) {
+    this(
+        logger,
+        configuration,
+        () -> {
+          throw new InsightsException(
+              ERROR_SSL_CREATING_CONTEXT, "Illegal attempt to create SSLContext for token auth");
+        });
   }
 
   // Package-private for testing
@@ -62,12 +66,12 @@ public class InsightsJdkHttpClient implements InsightsHttpClient {
   HttpClient getHttpClient() {
     var clientBuilder = HttpClient.newBuilder();
 
-    final var tlsContext = sslContextSupplier.get();
-    clientBuilder = clientBuilder.sslContext(tlsContext);
-    if (useMTLS) {
+    if (configuration.useMTLS()) {
       final var sslParameters = new SSLParameters();
       sslParameters.setWantClientAuth(true);
       clientBuilder = clientBuilder.sslParameters(sslParameters);
+      final var tlsContext = sslContextSupplier.get();
+      clientBuilder = clientBuilder.sslContext(tlsContext);
     }
 
     if (configuration.getProxyConfiguration().isPresent()) {
@@ -82,7 +86,7 @@ public class InsightsJdkHttpClient implements InsightsHttpClient {
 
   @Override
   public void decorate(InsightsReport report) {
-    if (useMTLS) {
+    if (configuration.useMTLS()) {
       report.decorate("app.transport.type.https", "mtls");
       // We can't send anything more useful (e.g. SHA hash of cert file) as until
       // we try to send, we don't know if we can read the file at this path
@@ -117,7 +121,7 @@ public class InsightsJdkHttpClient implements InsightsHttpClient {
             .version(HttpClient.Version.HTTP_1_1)
             .header(MultipartBodyBuilder.CONTENT_TYPE_HEADER, bodyBuilder.contentTypeHeaderValue());
 
-    if (!useMTLS) {
+    if (!configuration.useMTLS()) {
       final var authToken = configuration.getMaybeAuthToken().get();
       requestBuilder = requestBuilder.setHeader("Authorization", "Basic " + authToken);
     }
@@ -176,7 +180,7 @@ public class InsightsJdkHttpClient implements InsightsHttpClient {
 
   @Override
   public boolean isReadyToSend() {
-    return configuration.getMaybeAuthToken().isPresent()
+    return !configuration.useMTLS()
         || (new File(configuration.getCertFilePath()).exists()
             && new File(configuration.getKeyFilePath()).exists());
   }

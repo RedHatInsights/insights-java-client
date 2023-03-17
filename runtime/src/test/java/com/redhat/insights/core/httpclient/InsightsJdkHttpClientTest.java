@@ -11,6 +11,7 @@ import com.redhat.insights.doubles.DummyTopLevelReport;
 import com.redhat.insights.doubles.MockInsightsConfiguration;
 import com.redhat.insights.doubles.NoopInsightsLogger;
 import com.redhat.insights.logging.InsightsLogger;
+import com.redhat.insights.tls.PEMSupport;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -21,7 +22,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.net.ssl.SSLContext;
@@ -47,8 +47,7 @@ public class InsightsJdkHttpClientTest {
     InsightsConfiguration config = mock(InsightsConfiguration.class);
     when(config.getMaybeAuthToken()).thenReturn(Optional.of("randomToken"));
 
-    InsightsJdkHttpClient insightsClient =
-        new InsightsJdkHttpClient(logger, config, this::getSSlContext);
+    InsightsJdkHttpClient insightsClient = new InsightsJdkHttpClient(logger, config);
     HttpClient httpClient = insightsClient.getHttpClient();
 
     assertFalse(
@@ -62,8 +61,7 @@ public class InsightsJdkHttpClientTest {
     when(config.getProxyConfiguration())
         .thenReturn(Optional.of(new InsightsConfiguration.ProxyConfiguration("localhost", 8080)));
 
-    InsightsJdkHttpClient insightsClient =
-        new InsightsJdkHttpClient(logger, config, this::getSSlContext);
+    InsightsJdkHttpClient insightsClient = new InsightsJdkHttpClient(logger, config);
     HttpClient httpClient = insightsClient.getHttpClient();
 
     // check a proxy is there
@@ -111,8 +109,7 @@ public class InsightsJdkHttpClientTest {
     InsightsConfiguration config = mock(InsightsConfiguration.class);
     when(config.getMaybeAuthToken()).thenReturn(Optional.of("randomToken"));
 
-    InsightsJdkHttpClient insightsClient =
-        new InsightsJdkHttpClient(logger, config, this::getSSlContext);
+    InsightsJdkHttpClient insightsClient = new InsightsJdkHttpClient(logger, config);
     DummyTopLevelReport report = new DummyTopLevelReport(logger, Collections.emptyMap());
     insightsClient.decorate(report);
 
@@ -162,7 +159,7 @@ public class InsightsJdkHttpClientTest {
     InsightsConfiguration config = MockInsightsConfiguration.of("yolo", false);
     HttpClient httpClient = mock(HttpClient.class);
     InsightsJdkHttpClient insightsClient =
-        new MockInsightsJdkHttpClient(config, this::getSSlContext, logger, httpClient);
+        new MockInsightsJdkHttpClient(logger, config, httpClient);
 
     AtomicReference<HttpRequest> request = new AtomicReference<>();
 
@@ -188,8 +185,9 @@ public class InsightsJdkHttpClientTest {
     when(config.getUploadUri()).thenReturn("/path");
 
     HttpClient httpClient = mock(HttpClient.class);
+    PEMSupport pem = new PEMSupport(logger, config);
     InsightsJdkHttpClient insightsClient =
-        new MockInsightsJdkHttpClient(config, this::getSSlContext, logger, httpClient);
+        new MockInsightsJdkHttpClient(logger, config, () -> pem.createTLSContext(), httpClient);
 
     AtomicReference<HttpRequest> request = new AtomicReference<>();
 
@@ -340,14 +338,5 @@ public class InsightsJdkHttpClientTest {
         return 202;
       }
     };
-  }
-
-  private SSLContext getSSlContext() {
-    try {
-      return SSLContext.getDefault();
-    } catch (NoSuchAlgorithmException e) {
-      e.printStackTrace();
-    }
-    return null;
   }
 }

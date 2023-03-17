@@ -11,11 +11,17 @@ public class MockInsightsJdkHttpClient extends InsightsJdkHttpClient {
   private final HttpClient mock;
 
   public MockInsightsJdkHttpClient(
+      InsightsLogger logger,
       InsightsConfiguration configuration,
       Supplier<SSLContext> sslContextSupplier,
-      InsightsLogger logger,
       HttpClient mock) {
     super(logger, configuration, sslContextSupplier);
+    this.mock = mock;
+  }
+
+  public MockInsightsJdkHttpClient(
+      InsightsLogger logger, InsightsConfiguration configuration, HttpClient mock) {
+    super(logger, configuration);
     this.mock = mock;
   }
 
