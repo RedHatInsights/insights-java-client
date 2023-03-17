@@ -45,6 +45,15 @@ public class InsightsJdkHttpClient implements InsightsHttpClient {
     this.useMTLS = configuration.getMaybeAuthToken().isEmpty();
   }
 
+  //  public InsightsJdkHttpClient(
+  //    InsightsLogger logger,
+  //    InsightsConfiguration configuration) {
+  //    this.logger = logger;
+  //    this.configuration = configuration;
+  //    this.sslContextSupplier = () -> throw new InsightsException();
+  //    this.useMTLS = false;
+  //  }
+
   // Package-private for testing
   URI assembleURI(String url, String path) {
     String fullURL;
@@ -61,12 +70,12 @@ public class InsightsJdkHttpClient implements InsightsHttpClient {
   HttpClient getHttpClient() {
     var clientBuilder = HttpClient.newBuilder();
 
-    final var tlsContext = sslContextSupplier.get();
-    clientBuilder = clientBuilder.sslContext(tlsContext);
     if (useMTLS) {
       final var sslParameters = new SSLParameters();
       sslParameters.setWantClientAuth(true);
       clientBuilder = clientBuilder.sslParameters(sslParameters);
+      final var tlsContext = sslContextSupplier.get();
+      clientBuilder = clientBuilder.sslContext(tlsContext);
     }
 
     if (configuration.getProxyConfiguration().isPresent()) {
