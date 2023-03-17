@@ -184,7 +184,7 @@ public class InsightsJdkHttpClient implements InsightsHttpClient {
 
   @Override
   public boolean isReadyToSend() {
-    return configuration.getMaybeAuthToken().isPresent()
+    return !configuration.useMTLS()
         || (new File(configuration.getCertFilePath()).exists()
             && new File(configuration.getKeyFilePath()).exists());
   }

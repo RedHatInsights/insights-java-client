@@ -11,10 +11,10 @@ import com.redhat.insights.core.httpclient.HttpResponseBase;
 import com.redhat.insights.core.httpclient.MockInsightsJdkHttpClient;
 import com.redhat.insights.doubles.MockInsightsConfiguration;
 import com.redhat.insights.doubles.NoopInsightsLogger;
+import com.redhat.insights.tls.PEMSupport;
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
 import java.time.Duration;
-import javax.net.ssl.SSLContext;
 import org.junit.jupiter.api.Test;
 
 public class InsightsReportControllerThreadingTest {
@@ -38,8 +38,9 @@ public class InsightsReportControllerThreadingTest {
     HttpResponse<String> response = makeResponder(code);
 
     when(mock.send(any(), any(HttpResponse.BodyHandler.class))).thenReturn(response);
+    var pem = new PEMSupport(logger, config);
     var httpClient =
-        new MockInsightsJdkHttpClient(config, () -> mock(SSLContext.class), logger, mock);
+        new MockInsightsJdkHttpClient(logger, config, () -> pem.createTLSContext(), mock);
 
     var report = AppTopLevelReport.of(logger, config);
     return InsightsReportController.of(logger, config, report, () -> httpClient);
