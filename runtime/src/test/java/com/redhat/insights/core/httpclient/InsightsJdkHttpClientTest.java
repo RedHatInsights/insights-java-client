@@ -11,6 +11,7 @@ import com.redhat.insights.doubles.DummyTopLevelReport;
 import com.redhat.insights.doubles.MockInsightsConfiguration;
 import com.redhat.insights.doubles.NoopInsightsLogger;
 import com.redhat.insights.logging.InsightsLogger;
+import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
@@ -18,6 +19,8 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
@@ -203,6 +206,131 @@ public class InsightsJdkHttpClientTest {
     // if using token, there should be authorization header
     assertEquals(1, request.get().headers().allValues("Authorization").size());
     assertEquals("Basic randomToken", request.get().headers().allValues("Authorization").get(0));
+  }
+
+  @Test
+  public void testIsReadyToSendMTLS() {
+    InsightsConfiguration config =
+        new InsightsConfiguration() {
+          @Override
+          public String getIdentificationName() {
+            return "GOOD";
+          }
+
+          @Override
+          public String getKeyFilePath() {
+            return getPathFromResource("com/redhat/insights/tls/dummy.key").toString();
+          }
+
+          @Override
+          public String getCertFilePath() {
+            return getPathFromResource("com/redhat/insights/tls/dummy.cert").toString();
+          }
+
+          @Override
+          public Optional<String> getMaybeAuthToken() {
+            return Optional.empty();
+          }
+        };
+    assertFalse(config.getMaybeAuthToken().isPresent());
+    assertTrue(new File(config.getCertFilePath()).exists());
+    assertTrue(new File(config.getKeyFilePath()).exists());
+    assertTrue(
+        config.getMaybeAuthToken().isPresent()
+            || (new File(config.getCertFilePath()).exists()
+                && new File(config.getKeyFilePath()).exists()));
+    assertTrue(
+        new InsightsJdkHttpClient(logger, config, () -> mock(SSLContext.class)).isReadyToSend(),
+        "Client should be ready to send");
+  }
+
+  @Test
+  public void testIsReadyToSendWithToken() {
+    InsightsConfiguration config =
+        new InsightsConfiguration() {
+          @Override
+          public String getIdentificationName() {
+            return "GOOD_MTLS";
+          }
+
+          @Override
+          public String getKeyFilePath() {
+            return getPathFromResource("com/redhat/insights/tls/dummy.key")
+                .resolveSibling("wrong.key")
+                .toString();
+          }
+
+          @Override
+          public String getCertFilePath() {
+            return getPathFromResource("com/redhat/insights/tls/dummy.cert")
+                .resolveSibling("wrong.cert")
+                .toString();
+          }
+
+          @Override
+          public Optional<String> getMaybeAuthToken() {
+            return Optional.of("random-token");
+          }
+        };
+    assertTrue(
+        new InsightsJdkHttpClient(logger, config, () -> mock(SSLContext.class)).isReadyToSend(),
+        "Client should be ready to send");
+  }
+
+  @Test
+  public void testIsReadyToSendWithMissingCert() {
+    InsightsConfiguration config =
+        new InsightsConfiguration() {
+          @Override
+          public String getIdentificationName() {
+            return "BAD_CERT";
+          }
+
+          @Override
+          public String getKeyFilePath() {
+            return getPathFromResource("com/redhat/insights/tls/dummy.key").toString();
+          }
+
+          @Override
+          public String getCertFilePath() {
+            return getPathFromResource("com/redhat/insights/tls/dummy.cert")
+                .resolveSibling("wrong.cert")
+                .toString();
+          }
+        };
+    assertFalse(
+        new InsightsJdkHttpClient(logger, config, () -> mock(SSLContext.class)).isReadyToSend(),
+        "Client shouldn't be ready to send because of wrong certificate path");
+  }
+
+  @Test
+  public void testIsReadyToSendWithMissingKey() {
+    InsightsConfiguration config =
+        new InsightsConfiguration() {
+          @Override
+          public String getIdentificationName() {
+            return "BAD_KEY";
+          }
+
+          @Override
+          public String getKeyFilePath() {
+            return getPathFromResource("com/redhat/insights/tls/dummy.key")
+                .resolveSibling("wrong.key")
+                .toString();
+          }
+
+          @Override
+          public String getCertFilePath() {
+            return getPathFromResource("com/redhat/insights/tls/dummy.cert").toString();
+          }
+        };
+    assertFalse(
+        new InsightsJdkHttpClient(logger, config, () -> mock(SSLContext.class)).isReadyToSend(),
+        "Client shouldn't be ready to send because of wrong key path");
+  }
+
+  private Path getPathFromResource(String path) {
+    return Paths.get(ClassLoader.getSystemClassLoader().getResource(path).getPath());
   }
 
   private HttpResponse<String> getOKResponse() {
