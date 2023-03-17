@@ -26,7 +26,7 @@ public class StoringInsightsHttpClient implements InsightsHttpClient {
 
   @Override
   public void sendInsightsReport(String filename, InsightsReport report) {
-    reportFilename = filename;
+    reportFilename = filename + ".txt";
     reportContent = report;
     reportsSent++;
   }

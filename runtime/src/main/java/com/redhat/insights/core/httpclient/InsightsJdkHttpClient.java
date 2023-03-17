@@ -99,11 +99,11 @@ public class InsightsJdkHttpClient implements InsightsHttpClient {
   }
 
   @Override
-  public void sendInsightsReport(String filename, InsightsReport report) {
+  public void sendInsightsReport(String reportName, InsightsReport report) {
     decorate(report);
     final var client = getHttpClient();
     final var gzipJson = InsightsHttpClient.gzipReport(report.serialize());
-    sendInsightsReportWithClient(client, filename, gzipJson);
+    sendInsightsReportWithClient(client, reportName + ".gz", gzipJson);
   }
 
   protected void sendInsightsReportWithClient(

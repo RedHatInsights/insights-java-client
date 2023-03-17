@@ -118,7 +118,7 @@ public final class InsightsReportController {
             InsightsHttpClient httpClient = httpClientSupplier.get();
             if (httpClient.isReadyToSend()) {
               generateConnectReport();
-              httpClient.sendInsightsReport(getIdHash() + "_connect.gz", report);
+              httpClient.sendInsightsReport(getIdHash() + "_connect", report);
             }
           };
       scheduler.scheduleConnect(sendConnect);
@@ -130,7 +130,7 @@ public final class InsightsReportController {
             if (httpClient.isReadyToSend() && !jarsToSend.isEmpty()) {
               updateReport.setIdHash(getIdHash());
               updateReport.generateReport(masking);
-              httpClient.sendInsightsReport(getIdHash() + "_update.gz", updateReport);
+              httpClient.sendInsightsReport(getIdHash() + "_update", updateReport);
             }
           };
       scheduler.scheduleJarUpdate(sendNewJarsIfAny);

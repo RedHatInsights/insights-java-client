@@ -36,7 +36,7 @@ public class InsightsFileWritingClient implements InsightsHttpClient {
     //    logger.debug(reportJson);
 
     // Can't reuse upload path - as this may be called as part of fallback
-    Path p = Paths.get(config.getArchiveUploadDir(), filename);
+    Path p = Paths.get(config.getArchiveUploadDir(), filename + ".json");
     try {
       Files.write(
           p,
