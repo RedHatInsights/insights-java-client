@@ -97,8 +97,8 @@ public class InsightsReportControllerTest {
     assertEquals(jarsQueue, instance.getJarsToSend(), "JarsToSend should be the same as set");
 
     assertTrue(
-        httpClient.getReportFilename().matches("^.*_connect\\.gz"),
-        "Report filename should be *_connect.gz");
+        httpClient.getReportFilename().matches("^.*_connect\\.txt"),
+        "Report filename should be *_connect.txt");
 
     Map<?, ?> parsedReport = parseReport(httpClient.getReportContent().serialize());
     assertTrue(parsedReport.containsKey("version"), "Report should have version");
@@ -133,8 +133,8 @@ public class InsightsReportControllerTest {
     // There should be two reports sent - one connect and one update
     assertEquals(2, httpClient.getReportsSent(), "There should be 2 reports sent");
     assertTrue(
-        httpClient.getReportFilename().matches("^.*_update\\.gz"),
-        "Update report filename should be *_update.gz");
+        httpClient.getReportFilename().matches("^.*_update\\.txt"),
+        "Update report filename should be *_update.txt");
 
     // validate content of report
     Map<?, ?> parsedReport = parseReport(httpClient.getReportContent().serialize());
@@ -175,8 +175,8 @@ public class InsightsReportControllerTest {
     instance.shutdown();
 
     assertTrue(
-        httpClient.getReportFilename().matches("^.*_update\\.gz"),
-        "Update report filename should be *_update.gz");
+        httpClient.getReportFilename().matches("^.*_update\\.txt"),
+        "Update report filename should be *_update.txt");
     // validate content of last report
     Map<?, ?> parsedReport = parseReport(httpClient.getReportContent().serialize());
     assertTrue(parsedReport.containsKey("version"), "Report should have version");
