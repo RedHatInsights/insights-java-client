@@ -33,7 +33,7 @@ public class PEMSupport {
   public SSLContext createTLSContext() {
     if (!configuration.useMTLS()) {
       throw new InsightsException(
-        ERROR_SSL_CREATING_CONTEXT, "Illegal attempt to create SSLContext for token auth");
+          ERROR_SSL_CREATING_CONTEXT, "Illegal attempt to create SSLContext for token auth");
     }
 
     byte[] certBytes = getBytesPossiblyPrivileged("--cert");
@@ -83,7 +83,7 @@ public class PEMSupport {
               + " to read default cert: "
               + InsightsConfiguration.DEFAULT_RHEL_CERT_FILE_PATH
               + " and key: "
-              + InsightsConfiguration.DEFAULT_RHEL_CERT_FILE_PATH);
+              + InsightsConfiguration.DEFAULT_RHEL_KEY_FILE_PATH);
       CertHelper helper = new CertHelper(logger, configuration);
 
       try {
