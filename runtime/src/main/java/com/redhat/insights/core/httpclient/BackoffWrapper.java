@@ -23,11 +23,11 @@ public final class BackoffWrapper {
 
   private final InsightsLogger logger;
   private final long initialDelay;
-  private final long factor;
+  private final double factor;
   private final int max;
   private final Action action;
 
-  BackoffWrapper(InsightsLogger logger, long initialDelay, long factor, int max, Action action) {
+  BackoffWrapper(InsightsLogger logger, long initialDelay, double factor, int max, Action action) {
     this.logger = logger;
     this.initialDelay = initialDelay;
     this.factor = factor;
@@ -45,7 +45,7 @@ public final class BackoffWrapper {
   }
 
   public int run() {
-    long delay = initialDelay;
+    double delay = initialDelay;
     int count = 0;
     InsightsException retryFailure = null;
     while (true) {
@@ -61,7 +61,7 @@ public final class BackoffWrapper {
         retryFailure.addSuppressed(err);
         logger.debug("Backoff #" + (count + 1) + "/" + max + ", sleeping " + delay + "ms", err);
         try {
-          Thread.sleep(delay);
+          Thread.sleep((long) delay);
         } catch (InterruptedException e) {
           Thread.currentThread().interrupt();
           throw new InsightsException(

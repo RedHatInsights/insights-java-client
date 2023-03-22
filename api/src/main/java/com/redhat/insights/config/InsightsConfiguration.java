@@ -21,8 +21,8 @@ public interface InsightsConfiguration {
   String DEFAULT_CERT_HELPER_BINARY = "/opt/jboss-cert-helper";
 
   long DEFAULT_HTTP_CLIENT_RETRY_INITIAL_DELAY = 2000L;
-  long DEFAULT_HTTP_CLIENT_RETRY_BACKOFF_FACTOR = 2L;
-  int DEFAULT_HTTP_CLIENT_RETRY_MAX_ATTEMPTS = 10;
+  double DEFAULT_HTTP_CLIENT_RETRY_BACKOFF_FACTOR = 2.0;
+  int DEFAULT_HTTP_CLIENT_RETRY_MAX_ATTEMPTS = 5;
 
   /**
    * The insights client identification name, to be adjusted to allow each runtime to define what an
@@ -80,7 +80,7 @@ public interface InsightsConfiguration {
     return DEFAULT_HTTP_CLIENT_RETRY_INITIAL_DELAY;
   }
 
-  default long getHttpClientRetryBackoffFactor() {
+  default double getHttpClientRetryBackoffFactor() {
     return DEFAULT_HTTP_CLIENT_RETRY_BACKOFF_FACTOR;
   }
 
