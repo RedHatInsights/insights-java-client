@@ -157,10 +157,10 @@ public class EnvAndSysPropsInsightsConfiguration extends DefaultInsightsConfigur
   }
 
   @Override
-  public long getHttpClientRetryBackoffFactor() {
+  public double getHttpClientRetryBackoffFactor() {
     String value = lookup(ENV_HTTP_CLIENT_RETRY_BACKOFF_FACTOR);
     if (value != null) {
-      return Long.parseLong(value);
+      return Double.parseDouble(value);
     }
     return super.getHttpClientRetryBackoffFactor();
   }
