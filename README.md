@@ -78,7 +78,7 @@ The following environment variables are available to be overriden when using `En
 | `RHT_INSIGHTS_JAVA_CONNECT_PERIOD`                   | 1 day (`P1D`)                           | Connect period, see `java.time.Duration::parse` for the syntax       |
 | `RHT_INSIGHTS_JAVA_UPDATE_PERIOD`                    | 5 minutes (`PT5M`)                      | Update period, see `java.time.Duration::parse` for the syntax        |
 | `RHT_INSIGHTS_JAVA_HTTP_CLIENT_RETRY_INITIAL_DELAY`  | 2000 (milliseconds as `long`)           | HTTP client exponential backoff: initial retry delay in milliseconds |
-| `RHT_INSIGHTS_JAVA_HTTP_CLIENT_RETRY_BACKOFF_FACTOR` | 2 (`long`)                              | HTTP client exponential backoff: factor                              |
+| `RHT_INSIGHTS_JAVA_HTTP_CLIENT_RETRY_BACKOFF_FACTOR` | 2 (`double`)                              | HTTP client exponential backoff: factor                              |
 | `RHT_INSIGHTS_JAVA_HTTP_CLIENT_RETRY_MAX_ATTEMPTS`   | 10 (`int`)                              | HTTP client exponential backoff: maximum number of retry attempts    |
 | `RHT_INSIGHTS_JAVA_ARCHIVE_UPLOAD_DIR`               | `/var/tmp/insights-runtimes/uploads`    | Filesystem location to place archives if HTTP upload fails           |
 
