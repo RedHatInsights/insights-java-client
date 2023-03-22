@@ -22,7 +22,7 @@ public interface InsightsConfiguration {
 
   long DEFAULT_HTTP_CLIENT_RETRY_INITIAL_DELAY = 2000L;
   long DEFAULT_HTTP_CLIENT_RETRY_BACKOFF_FACTOR = 2L;
-  int DEFAULT_HTTP_CLIENT_RETRY_MAX_ATTEMPTS = 10;
+  int DEFAULT_HTTP_CLIENT_RETRY_MAX_ATTEMPTS = 5;
 
   /**
    * The insights client identification name, to be adjusted to allow each runtime to define what an
