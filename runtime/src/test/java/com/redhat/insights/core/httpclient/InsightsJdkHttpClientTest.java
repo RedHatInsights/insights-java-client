@@ -229,14 +229,21 @@ public class InsightsJdkHttpClientTest {
           public Optional<String> getMaybeAuthToken() {
             return Optional.empty();
           }
+
+          @Override
+          public String getMachineIdFilePath() {
+            return getPathFromResource("com/redhat/insights/machine-id").toString();
+          }
         };
     assertFalse(config.getMaybeAuthToken().isPresent());
     assertTrue(new File(config.getCertFilePath()).exists());
     assertTrue(new File(config.getKeyFilePath()).exists());
+    assertTrue(new File(config.getMachineIdFilePath()).exists());
     assertTrue(
         config.getMaybeAuthToken().isPresent()
             || (new File(config.getCertFilePath()).exists()
-                && new File(config.getKeyFilePath()).exists()));
+                && new File(config.getKeyFilePath()).exists()
+                && new File(config.getMachineIdFilePath()).exists()));
     assertTrue(
         new InsightsJdkHttpClient(logger, config, () -> mock(SSLContext.class)).isReadyToSend(),
         "Client should be ready to send");

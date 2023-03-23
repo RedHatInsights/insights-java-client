@@ -65,6 +65,11 @@ public class InsightsFileWritingClientTest {
           public String getCertFilePath() {
             return getPathFromResource("com/redhat/insights/tls/dummy.cert").toString();
           }
+
+          @Override
+          public String getMachineIdFilePath() {
+            return getPathFromResource("com/redhat/insights/machine-id").toString();
+          }
         };
     InsightsConfiguration wrongKeyConfig =
         new InsightsConfiguration() {
@@ -104,6 +109,28 @@ public class InsightsFileWritingClientTest {
                 .toString();
           }
         };
+    InsightsConfiguration wrongMachineIdConfig =
+        new InsightsConfiguration() {
+          @Override
+          public String getIdentificationName() {
+            return "GOOD";
+          }
+
+          @Override
+          public String getKeyFilePath() {
+            return getPathFromResource("com/redhat/insights/tls/dummy.key").toString();
+          }
+
+          @Override
+          public String getCertFilePath() {
+            return getPathFromResource("com/redhat/insights/tls/dummy.cert").toString();
+          }
+
+          @Override
+          public String getMachineIdFilePath() {
+            return "BAD";
+          }
+        };
 
     InsightsLogger logger = new NoopInsightsLogger();
     InsightsHttpClient client = new InsightsFileWritingClient(logger, goodConfig);
@@ -115,6 +142,10 @@ public class InsightsFileWritingClientTest {
     client = new InsightsFileWritingClient(logger, wrongKeyConfig);
     assertFalse(
         client.isReadyToSend(), "Client shouldn't be ready to send because of wrong key path");
+    client = new InsightsFileWritingClient(logger, wrongMachineIdConfig);
+    assertFalse(
+        client.isReadyToSend(),
+        "Client shouldn't be ready to send because of wrong machine-id path");
   }
 
   private Path getPathFromResource(String path) {

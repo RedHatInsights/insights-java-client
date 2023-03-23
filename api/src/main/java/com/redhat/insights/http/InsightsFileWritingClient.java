@@ -51,6 +51,7 @@ public class InsightsFileWritingClient implements InsightsHttpClient {
   @Override
   public boolean isReadyToSend() {
     return (new File(config.getCertFilePath()).exists()
-        && new File(config.getKeyFilePath()).exists());
+            && new File(config.getKeyFilePath()).exists())
+        && new File(config.getMachineIdFilePath()).exists();
   }
 }

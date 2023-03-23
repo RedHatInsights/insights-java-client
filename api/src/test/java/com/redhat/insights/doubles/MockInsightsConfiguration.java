@@ -12,6 +12,7 @@ public final class MockInsightsConfiguration extends DefaultInsightsConfiguratio
   private final String keyFilePath;
   private final String uploadURL;
   private final String uploadPath;
+  private final String machineIdFilePath;
   private final Optional<ProxyConfiguration> proxyConfiguration;
   private final boolean optingOut;
   private final Duration connectPeriod;
@@ -26,6 +27,7 @@ public final class MockInsightsConfiguration extends DefaultInsightsConfiguratio
       String keyFilePath,
       String uploadURL,
       String uploadPath,
+      String machineIdFilePath,
       Optional<ProxyConfiguration> proxyConfiguration,
       boolean optingOut,
       Duration connectPeriod,
@@ -38,6 +40,7 @@ public final class MockInsightsConfiguration extends DefaultInsightsConfiguratio
     this.keyFilePath = keyFilePath;
     this.uploadURL = uploadURL;
     this.uploadPath = uploadPath;
+    this.machineIdFilePath = machineIdFilePath;
     this.proxyConfiguration = proxyConfiguration;
     this.optingOut = optingOut;
     this.connectPeriod = connectPeriod;
@@ -78,6 +81,7 @@ public final class MockInsightsConfiguration extends DefaultInsightsConfiguratio
         "/fake",
         "https://127.0.0.1:999999",
         "/fake",
+        DEFAULT_RHEL_MACHINE_ID_FILE_PATH,
         Optional.empty(),
         optedOut,
         connectPeriod,
@@ -101,6 +105,7 @@ public final class MockInsightsConfiguration extends DefaultInsightsConfiguratio
         "/fake",
         "https://127.0.0.1:999999",
         "/fake",
+        DEFAULT_RHEL_MACHINE_ID_FILE_PATH,
         Optional.empty(),
         optedOut,
         connectPeriod,
@@ -123,6 +128,11 @@ public final class MockInsightsConfiguration extends DefaultInsightsConfiguratio
   @Override
   public String getKeyFilePath() {
     return keyFilePath;
+  }
+
+  @Override
+  public String getMachineIdFilePath() {
+    return machineIdFilePath;
   }
 
   @Override

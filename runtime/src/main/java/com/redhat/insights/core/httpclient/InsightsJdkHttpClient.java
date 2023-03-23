@@ -182,6 +182,7 @@ public class InsightsJdkHttpClient implements InsightsHttpClient {
   public boolean isReadyToSend() {
     return !configuration.useMTLS()
         || (new File(configuration.getCertFilePath()).exists()
-            && new File(configuration.getKeyFilePath()).exists());
+            && new File(configuration.getKeyFilePath()).exists()
+            && new File(configuration.getMachineIdFilePath()).exists());
   }
 }
