@@ -69,7 +69,6 @@ The following environment variables are available to be overriden when using `En
 | `RHT_INSIGHTS_JAVA_IDENTIFICATION_NAME`              | N/A, must be defined                    | Identification name for reporting                                    |
 | `RHT_INSIGHTS_JAVA_CERT_FILE_PATH`                   | `/etc/pki/consumer/cert.pem`            | Certificate file path                                                |
 | `RHT_INSIGHTS_JAVA_KEY_FILE_PATH`                    | `/etc/pki/consumer/key.pem`             | Key file path                                                        |
-| `RHT_INSIGHTS_JAVA_MACHINE_ID_FILE_PATH`             | `/etc/insights-client/machine-id`       | Insights machine identifier file path                                |
 | `RHT_INSIGHTS_JAVA_CERT_HELPER_BINARY`               | `/opt/jboss-cert-helper`                | JBoss certificate retrieval helper                                   |
 | `RHT_INSIGHTS_JAVA_AUTH_TOKEN`                       | (empty)                                 | Authentication token for token-based auth, if used                   |
 | `RHT_INSIGHTS_JAVA_UPLOAD_BASE_URL`                  | `https://cert.console.stage.redhat.com` | Server endpoint URL                                                  |

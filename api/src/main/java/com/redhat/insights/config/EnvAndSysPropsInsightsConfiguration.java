@@ -18,7 +18,6 @@ public class EnvAndSysPropsInsightsConfiguration extends DefaultInsightsConfigur
   public static final String ENV_IDENTIFICATION_NAME = "RHT_INSIGHTS_JAVA_IDENTIFICATION_NAME";
   public static final String ENV_CERT_FILE_PATH = "RHT_INSIGHTS_JAVA_CERT_FILE_PATH";
   public static final String ENV_KEY_FILE_PATH = "RHT_INSIGHTS_JAVA_KEY_FILE_PATH";
-  public static final String ENV_MACHINE_ID_FILE_PATH = "RHT_INSIGHTS_JAVA_MACHINE_ID_FILE_PATH";
   public static final String ENV_AUTH_TOKEN = "RHT_INSIGHTS_JAVA_AUTH_TOKEN";
   public static final String ENV_UPLOAD_BASE_URL = "RHT_INSIGHTS_JAVA_UPLOAD_BASE_URL";
   public static final String ENV_UPLOAD_URI = "RHT_INSIGHTS_JAVA_UPLOAD_URI";
@@ -73,15 +72,6 @@ public class EnvAndSysPropsInsightsConfiguration extends DefaultInsightsConfigur
       return value;
     }
     return super.getKeyFilePath();
-  }
-
-  @Override
-  public String getMachineIdFilePath() {
-    String value = lookup(ENV_MACHINE_ID_FILE_PATH);
-    if (value != null) {
-      return value;
-    }
-    return super.getMachineIdFilePath();
   }
 
   @Override
