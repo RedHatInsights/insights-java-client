@@ -12,6 +12,8 @@ public interface InsightsConfiguration {
 
   String DEFAULT_RHEL_CERT_FILE_PATH = "/etc/pki/consumer/cert.pem";
   String DEFAULT_RHEL_KEY_FILE_PATH = "/etc/pki/consumer/key.pem";
+  String DEFAULT_RHEL_MACHINE_ID_FILE_PATH = "/etc/insights-client/machine-id";
+
   // FIXME
   String DEFAULT_UPLOAD_BASE_URL = "https://cert.console.redhat.com";
   String DEFAULT_UPLOAD_URI = "/api/ingress/v1/upload";
@@ -38,6 +40,10 @@ public interface InsightsConfiguration {
 
   default String getKeyFilePath() {
     return DEFAULT_RHEL_KEY_FILE_PATH;
+  }
+
+  default String getMachineIdFilePath() {
+    return DEFAULT_RHEL_MACHINE_ID_FILE_PATH;
   }
 
   default Optional<String> getMaybeAuthToken() {

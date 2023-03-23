@@ -67,8 +67,8 @@ The following environment variables are available to be overriden when using `En
 |------------------------------------------------------|-----------------------------------------|----------------------------------------------------------------------|
 | `RHT_INSIGHTS_JAVA_OPT_OUT`                          | `false`                                 | Opt out of Red Hat Insights reporting when `true`                    |
 | `RHT_INSIGHTS_JAVA_IDENTIFICATION_NAME`              | N/A, must be defined                    | Identification name for reporting                                    |
-| `RHT_INSIGHTS_JAVA_CERT_FILE_PATH`                   | `/etc/pki/consumer/cert.pem`            | Certificate path file                                                |
-| `RHT_INSIGHTS_JAVA_KEY_FILE_PATH`                    | `/etc/pki/consumer/key.pem`             | Key path file                                                        |
+| `RHT_INSIGHTS_JAVA_CERT_FILE_PATH`                   | `/etc/pki/consumer/cert.pem`            | Certificate file path                                                |
+| `RHT_INSIGHTS_JAVA_KEY_FILE_PATH`                    | `/etc/pki/consumer/key.pem`             | Key file path                                                        |
 | `RHT_INSIGHTS_JAVA_CERT_HELPER_BINARY`               | `/opt/jboss-cert-helper`                | JBoss certificate retrieval helper                                   |
 | `RHT_INSIGHTS_JAVA_AUTH_TOKEN`                       | (empty)                                 | Authentication token for token-based auth, if used                   |
 | `RHT_INSIGHTS_JAVA_UPLOAD_BASE_URL`                  | `https://cert.console.stage.redhat.com` | Server endpoint URL                                                  |
@@ -78,7 +78,7 @@ The following environment variables are available to be overriden when using `En
 | `RHT_INSIGHTS_JAVA_CONNECT_PERIOD`                   | 1 day (`P1D`)                           | Connect period, see `java.time.Duration::parse` for the syntax       |
 | `RHT_INSIGHTS_JAVA_UPDATE_PERIOD`                    | 5 minutes (`PT5M`)                      | Update period, see `java.time.Duration::parse` for the syntax        |
 | `RHT_INSIGHTS_JAVA_HTTP_CLIENT_RETRY_INITIAL_DELAY`  | 2000 (milliseconds as `long`)           | HTTP client exponential backoff: initial retry delay in milliseconds |
-| `RHT_INSIGHTS_JAVA_HTTP_CLIENT_RETRY_BACKOFF_FACTOR` | 2.0 (`double`)                              | HTTP client exponential backoff: factor                              |
+| `RHT_INSIGHTS_JAVA_HTTP_CLIENT_RETRY_BACKOFF_FACTOR` | 2.0 (`double`)                          | HTTP client exponential backoff: factor                              |
 | `RHT_INSIGHTS_JAVA_HTTP_CLIENT_RETRY_MAX_ATTEMPTS`   | 10 (`int`)                              | HTTP client exponential backoff: maximum number of retry attempts    |
 | `RHT_INSIGHTS_JAVA_ARCHIVE_UPLOAD_DIR`               | `/var/tmp/insights-runtimes/uploads`    | Filesystem location to place archives if HTTP upload fails           |
 
@@ -90,16 +90,19 @@ Note that environment variables take priority over system properties.
 ## Testing & coverage report
 
 To run tests simply use maven command:
+
 ```
 mvn clean test
 ```
 
 This project is configured with JaCoCo coverage reporting, to get a coverage report run:
+
 ```
 mvn clean test -Pcoverage
 ```
 
 Report will be placed on:
+
 ```
 (module)/target/site/jacoco/index.html
 ```
