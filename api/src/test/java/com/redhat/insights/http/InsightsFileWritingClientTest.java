@@ -10,6 +10,7 @@ import com.redhat.insights.config.InsightsConfiguration;
 import com.redhat.insights.doubles.NoopInsightsLogger;
 import com.redhat.insights.logging.InsightsLogger;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -27,6 +28,7 @@ public class InsightsFileWritingClientTest {
             return "TEST";
           }
 
+          @Override
           public String getArchiveUploadDir() {
             return tmpdir.toString();
           }
@@ -48,7 +50,9 @@ public class InsightsFileWritingClientTest {
   }
 
   @Test
-  public void testIsReadyToSend() {
+  public void testIsReadyToSend() throws IOException {
+    Path tmpdir = Files.createTempDirectory("tmpDirPrefix");
+
     InsightsConfiguration goodConfig =
         new InsightsConfiguration() {
           @Override
@@ -57,13 +61,8 @@ public class InsightsFileWritingClientTest {
           }
 
           @Override
-          public String getKeyFilePath() {
-            return getPathFromResource("com/redhat/insights/tls/dummy.key").toString();
-          }
-
-          @Override
-          public String getCertFilePath() {
-            return getPathFromResource("com/redhat/insights/tls/dummy.cert").toString();
+          public String getArchiveUploadDir() {
+            return tmpdir.toString();
           }
 
           @Override
@@ -71,44 +70,7 @@ public class InsightsFileWritingClientTest {
             return getPathFromResource("com/redhat/insights/machine-id").toString();
           }
         };
-    InsightsConfiguration wrongKeyConfig =
-        new InsightsConfiguration() {
-          @Override
-          public String getIdentificationName() {
-            return "BAD";
-          }
 
-          @Override
-          public String getKeyFilePath() {
-            return getPathFromResource("com/redhat/insights/tls/dummy.key")
-                .resolveSibling("wrong.key")
-                .toString();
-          }
-
-          @Override
-          public String getCertFilePath() {
-            return getPathFromResource("com/redhat/insights/tls/dummy.cert").toString();
-          }
-        };
-    InsightsConfiguration wrongCertConfig =
-        new InsightsConfiguration() {
-          @Override
-          public String getIdentificationName() {
-            return "BAD";
-          }
-
-          @Override
-          public String getKeyFilePath() {
-            return getPathFromResource("com/redhat/insights/tls/dummy.key").toString();
-          }
-
-          @Override
-          public String getCertFilePath() {
-            return getPathFromResource("com/redhat/insights/tls/dummy.cert")
-                .resolveSibling("wrong.cert")
-                .toString();
-          }
-        };
     InsightsConfiguration wrongMachineIdConfig =
         new InsightsConfiguration() {
           @Override
@@ -117,13 +79,27 @@ public class InsightsFileWritingClientTest {
           }
 
           @Override
-          public String getKeyFilePath() {
-            return getPathFromResource("com/redhat/insights/tls/dummy.key").toString();
+          public String getArchiveUploadDir() {
+            return tmpdir.toString();
           }
 
           @Override
-          public String getCertFilePath() {
-            return getPathFromResource("com/redhat/insights/tls/dummy.cert").toString();
+          public String getMachineIdFilePath() {
+            return "BAD";
+          }
+        };
+
+    InsightsConfiguration wrongUploadPathConfig =
+        new InsightsConfiguration() {
+          @Override
+          public String getIdentificationName() {
+            return "GOOD";
+          }
+
+          @Override
+          public String getArchiveUploadDir() {
+            // This is unlikely to exist
+            return "/a/b/c/d/FC02B2FE-B18B-48FB-B0B5-9CC8B98E9CD9";
           }
 
           @Override
@@ -133,19 +109,19 @@ public class InsightsFileWritingClientTest {
         };
 
     InsightsLogger logger = new NoopInsightsLogger();
+
     InsightsHttpClient client = new InsightsFileWritingClient(logger, goodConfig);
     assertTrue(client.isReadyToSend(), "Client should be ready to send");
-    client = new InsightsFileWritingClient(logger, wrongCertConfig);
-    assertFalse(
-        client.isReadyToSend(),
-        "Client shouldn't be ready to send because of wrong certificate path");
-    client = new InsightsFileWritingClient(logger, wrongKeyConfig);
-    assertFalse(
-        client.isReadyToSend(), "Client shouldn't be ready to send because of wrong key path");
+
     client = new InsightsFileWritingClient(logger, wrongMachineIdConfig);
     assertFalse(
         client.isReadyToSend(),
         "Client shouldn't be ready to send because of wrong machine-id path");
+
+    client = new InsightsFileWritingClient(logger, wrongUploadPathConfig);
+    assertFalse(
+        client.isReadyToSend(),
+        "Client shouldn't be ready to send because of non-existing upload directory");
   }
 
   private Path getPathFromResource(String path) {
