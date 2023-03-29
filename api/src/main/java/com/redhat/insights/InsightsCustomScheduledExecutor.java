@@ -55,13 +55,18 @@ public class InsightsCustomScheduledExecutor extends ScheduledThreadPoolExecutor
             command.run();
           } catch (InsightsException ix) {
             logger.error(
-                ERROR_SCHEDULED_SENT.formatMessage("Scheduled send failed: " + ix.getMessage()),
+                ERROR_SCHEDULED_SENT.formatMessage(
+                    "Red Hat Insights client scheduler shutdown, scheduled send failed: "
+                        + ix.getMessage()),
                 ix);
             shutdown();
             throw ix;
           } catch (Exception x) {
             logger.error(
-                ERROR_SCHEDULED_SENT.formatMessage("Non-Insights failure: " + x.getMessage()), x);
+                ERROR_SCHEDULED_SENT.formatMessage(
+                    "Red Hat Insights client scheduler shutdown, non-Insights failure: "
+                        + x.getMessage()),
+                x);
             shutdown();
             throw x;
           }
