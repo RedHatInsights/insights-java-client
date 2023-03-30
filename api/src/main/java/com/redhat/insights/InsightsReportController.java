@@ -138,6 +138,8 @@ public final class InsightsReportController {
       scheduler.scheduleJarUpdate(sendNewJarsIfAny);
 
     } catch (InsightsException isx) {
+      logger.error(
+          "Red Hat Insights client scheduler shutdown due to a controller startup error", isx);
       scheduler.shutdown();
       throw isx;
     }
