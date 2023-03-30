@@ -182,4 +182,42 @@ public class EnvAndSysPropsInsightsConfiguration extends DefaultInsightsConfigur
     }
     return super.getCertHelperBinary();
   }
+
+  @Override
+  public String toString() {
+    return "EnvAndSysPropsInsightsConfiguration{"
+        + "identificationName = "
+        + getIdentificationName()
+        + ", certFilePath = "
+        + getCertFilePath()
+        + ", keyFilePath = "
+        + getKeyFilePath()
+        + ", maybeAuthToken = "
+        + getMaybeAuthToken()
+        + ", uploadBaseURL  = "
+        + getUploadBaseURL()
+        + ", uploadUri = "
+        + getUploadUri()
+        + ", archiveUploadDir = "
+        + getArchiveUploadDir()
+        + ", proxyConfiguration ="
+        + getProxyConfiguration()
+        + ", isOptingOut = "
+        + isOptingOut()
+        + ", connectPeriod = "
+        + getConnectPeriod()
+        + ", updatePeriod = "
+        + getUpdatePeriod()
+        + ", httpClientRetryInitialDelay = "
+        + getHttpClientRetryInitialDelay()
+        + ", httpClientRetryBackoffFactor = "
+        + getHttpClientRetryBackoffFactor()
+        + ", httpClientRetryMaxAttempts = "
+        + getHttpClientRetryMaxAttempts()
+        + ", certHelperBinary = "
+        + getCertHelperBinary()
+        + ", machineIdFilePath = "
+        + getMachineIdFilePath()
+        + '}';
+  }
 }

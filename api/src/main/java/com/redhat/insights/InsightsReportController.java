@@ -119,6 +119,8 @@ public final class InsightsReportController {
             if (httpClient.isReadyToSend()) {
               generateConnectReport();
               httpClient.sendInsightsReport(getIdHash() + "_connect", report);
+            } else {
+              logger.debug("Insights is not configured to send: " + configuration);
             }
           };
       scheduler.scheduleConnect(sendConnect);
