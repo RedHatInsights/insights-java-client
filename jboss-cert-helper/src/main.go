@@ -61,10 +61,6 @@ func setUidForRead() {
 	if err != nil {
 		fail(errNotSetuid, err.Error())
 	}
-	// TODO Do we actually want to print this?
-	//ruid = syscall.Getuid()
-	//euid := syscall.Geteuid()
-	//fmt.Println(ruid, " ", euid)
 }
 
 func readAndPrint(s string) {
