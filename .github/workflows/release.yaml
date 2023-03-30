@@ -30,7 +30,7 @@ jobs:
       - name: Commit & Push changes
         uses: actions-js/push@v1.4
         with:
-          github_token: ${{ secrets.JRELEASER_GITHUB_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           message: Releasing version ${{ github.event.inputs.version }}
       - name: Release with JReleaser
         uses: jreleaser/release-action@v2
@@ -45,6 +45,6 @@ jobs:
       - name: Commit & Push changes
         uses: actions-js/push@v1.4
         with:
-          github_token: ${{ secrets.JRELEASER_GITHUB_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           message: Setting SNAPSHOT version ${{ github.event.inputs.nextVersion }}-SNAPSHOT
           tags: true
