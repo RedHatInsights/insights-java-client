@@ -1,0 +1,26 @@
+project:
+  name: insights-java-client
+  version: 999 # To be overriden by the environment variable JRELEASER_PROJECT_VERSION
+  description: Red Hat Insights Java Client
+  longDescription: Red Hat Insights Java Client
+  authors:
+    - Red Hat
+  license: Apache-2.0
+  links:
+    homepage: https://github.com/RedHatInsights/insights-java-client
+  java:
+    groupId: com.redhat.insight
+    version: 11
+
+release:
+  github:
+    owner: RedHatInsights
+    changelog:
+      links: true
+      formatted: ALWAYS
+      hide:
+        contributors:
+          - "GitHub"
+          - "dependabot[bot]"
+          - "[bot]"
+
