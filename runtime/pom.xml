@@ -6,7 +6,7 @@
   <parent>
     <groupId>com.redhat.insights</groupId>
     <artifactId>runtimes-java</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.0.Beta4</version>
   </parent>
   <artifactId>runtimes-java-core-runtime</artifactId>
 
