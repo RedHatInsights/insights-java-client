@@ -6,66 +6,70 @@
   <parent>
     <groupId>com.redhat.insights</groupId>
     <artifactId>runtimes-java</artifactId>
-    <version>1.0.0.Beta3</version>
+    <version>1.0.0-SNAPSHOT</version>
   </parent>
-  <artifactId>jboss-cert-helper</artifactId>
-  <packaging>mvn-golang</packaging>
+  <artifactId>runtimes-java-core-runtime</artifactId>
 
-  <properties>
-    <mvn-golang-wrapper.version>2.3.10</mvn-golang-wrapper.version>
-  </properties>
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>runtimes-java-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
+    <!-- Test dependencies -->
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>runtimes-java-api</artifactId>
+      <version>${project.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.awaitility</groupId>
+      <artifactId>awaitility</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>io.smallrye.reactive</groupId>
+      <artifactId>smallrye-mutiny-vertx-web</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>uk.org.webcompere</groupId>
+      <artifactId>system-stubs-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
   <build>
-    <directory>${basedir}${file.separator}bin</directory>
 
     <plugins>
 
       <plugin>
-        <groupId>com.igormaznitsa</groupId>
-        <artifactId>mvn-golang-wrapper</artifactId>
-        <version>${mvn-golang-wrapper.version}</version>
-        <extensions>true</extensions>
-        <configuration>
-          <useEnvVars>true</useEnvVars>
-        </configuration>
-        <executions>
-          <execution>
-            <id>default-build</id>
-            <phase>none</phase>
-          </execution>
-          <execution>
-            <id>build-for-linux-x86_64</id>
-            <goals>
-              <goal>build</goal>
-            </goals>
-            <configuration>
-              <targetOs>linux</targetOs>
-              <targetArch>amd64</targetArch>
-              <resultName>${project.build.finalName}-linux-x86_64</resultName>
-              <attach>true</attach>
-              <attachClassifier>linux-x86_64</attachClassifier>
-              <packages>
-                <app>main.go</app>
-              </packages>
-            </configuration>
-          </execution>
-          <execution>
-            <id>build-for-linux-arm64</id>
-            <goals>
-              <goal>build</goal>
-            </goals>
-            <configuration>
-              <targetOs>linux</targetOs>
-              <targetArch>arm64</targetArch>
-              <resultName>${project.build.finalName}-linux-arm64</resultName>
-              <attach>true</attach>
-              <attachClassifier>linux-arm64</attachClassifier>
-              <packages>
-                <app>main.go</app>
-              </packages>
-            </configuration>
-          </execution>
-        </executions>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>${maven-surefire-plugin.version}</version>
       </plugin>
 
       <plugin>
@@ -131,8 +135,5 @@
       </plugin>
 
     </plugins>
-    <!--Changing standard Maven project source structure to make it Go compatible-->
-    <sourceDirectory>${basedir}${file.separator}src</sourceDirectory>
   </build>
-
 </project>
