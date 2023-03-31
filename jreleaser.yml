@@ -1,6 +1,7 @@
 project:
   name: insights-java-client
   version: 999 # To be overriden by the environment variable JRELEASER_PROJECT_VERSION
+  versionPattern: SEMVER
   description: Red Hat Insights Java Client
   longDescription: Red Hat Insights Java Client
   authors:

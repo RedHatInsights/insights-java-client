@@ -4,6 +4,9 @@ name: Publish a new release
 on:
   workflow_dispatch:
     inputs:
+      previousVersion:
+        description: 'Previous version'
+        required: true
       version:
         description: 'Release version'
         required: true
@@ -39,6 +42,7 @@ jobs:
         env:
           JRELEASER_PROJECT_VERSION: ${{ github.event.inputs.version }}
           JRELEASER_TAG_NAME: ${{ github.event.inputs.version }}
+          JRELEASER_PREVIOUS_TAG_NAME: ${{ github.event.inputs.previousVersion }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Set the next release version
         run: mvn --batch-mode versions:set -DnewVersion=${{ github.event.inputs.nextVersion }}
