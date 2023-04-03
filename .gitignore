@@ -1,3 +1,6 @@
+# JReleaser file
+JRELEASER_VERSION
+
 # Compiled Go code
 jboss-cert-helper/jboss-cert-helper
 jboss-cert-helper/bin
