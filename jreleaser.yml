@@ -10,7 +10,7 @@ project:
   links:
     homepage: https://github.com/RedHatInsights/insights-java-client
   java:
-    groupId: com.redhat.insight
+    groupId: com.redhat.insights
     version: 11
 
 release:
