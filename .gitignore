@@ -1,6 +1,9 @@
 # JReleaser file
 JRELEASER_VERSION
 
+# Release process POM manipulation
+pom.xml.versionsBackup
+
 # Compiled Go code
 jboss-cert-helper/jboss-cert-helper
 jboss-cert-helper/bin
