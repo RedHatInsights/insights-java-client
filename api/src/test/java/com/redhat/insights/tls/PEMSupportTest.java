@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.redhat.insights.InsightsException;
 import com.redhat.insights.doubles.DefaultConfiguration;
+import com.redhat.insights.logging.PrintLogger;
 import com.redhat.insights.logging.TestLogger;
 import java.io.IOException;
 import java.nio.file.*;
@@ -81,6 +82,21 @@ public class PEMSupportTest {
 
     Assertions.assertEquals("I4ASR0015: SSLContext creation error", exception.getMessage());
     Assertions.assertTrue(exception.getCause() instanceof AccessDeniedException);
+  }
+
+  @Test
+  public void malformedCertificates() {
+    InsightsException err =
+        assertThrows(
+            InsightsException.class,
+            () ->
+                new PEMSupport(PrintLogger.STDOUT_LOGGER, new DefaultConfiguration())
+                    .createTLSContext(
+                        getPathFromResource("com/redhat/insights/tls/malformed/cert.pem"),
+                        getPathFromResource("com/redhat/insights/tls/malformed/key.pem")));
+    assertEquals("I4ASR0015: SSLContext creation error", err.getMessage());
+    assertInstanceOf(IllegalArgumentException.class, err.getCause());
+    assertEquals("ELY03012: Certificate parse error", err.getCause().getMessage());
   }
 
   private Path createNonReadableFile() throws IOException {

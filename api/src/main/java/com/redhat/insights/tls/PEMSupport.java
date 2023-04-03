@@ -52,7 +52,7 @@ public class PEMSupport {
       byte[] certBytes = Files.readAllBytes(certificatePath);
       byte[] keyBytes = Files.readAllBytes(keyPath);
       return createTLSContext(certBytes, keyBytes);
-    } catch (IOException err) {
+    } catch (Throwable err) {
       throw new InsightsException(ERROR_SSL_CREATING_CONTEXT, "SSLContext creation error", err);
     }
   }
