@@ -48,6 +48,14 @@ public class PEMSupport {
 
   // For low-level testing only
   public SSLContext createTLSContext(Path certificatePath, Path keyPath) {
+    if (!Files.exists(certificatePath)) {
+      throw new InsightsException(
+          ERROR_SSL_CREATING_CONTEXT, "The certificate file does not exist: " + certificatePath);
+    }
+    if (!Files.exists(keyPath)) {
+      throw new InsightsException(
+          ERROR_SSL_CREATING_CONTEXT, "The key file does not exist: " + certificatePath);
+    }
     try {
       byte[] certBytes = Files.readAllBytes(certificatePath);
       byte[] keyBytes = Files.readAllBytes(keyPath);
