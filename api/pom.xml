@@ -78,6 +78,12 @@
       <scope>test</scope>
     </dependency>
 
+    <!--  TODO: this should fix the issue  -->
+    <!--    <dependency>
+      <groupId>org.jboss.logging</groupId>
+      <artifactId>jboss-logging</artifactId>
+      <version>3.5.0.Final</version>
+    </dependency>-->
   </dependencies>
   <build>
 
