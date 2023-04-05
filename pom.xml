@@ -88,12 +88,6 @@
         <groupId>org.wildfly.security</groupId>
         <artifactId>wildfly-elytron-x500-cert</artifactId>
         <version>${wildfly-elytron.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.jboss.logging</groupId>
-            <artifactId>jboss-logging</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
 
       <!-- Test dependencies -->
