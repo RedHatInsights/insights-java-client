@@ -38,7 +38,7 @@ jobs:
           cache: maven
 
       - name: Run tests with coverage
-        run: mvn verify -Pcoverage
+        run: ./mvnw verify -Pcoverage
 
       - name: Run tests with coverage
         run: |
