@@ -18,7 +18,8 @@ There are three modules within the project:
 ## Building
 
 - Requires Java 11
-- The [Spotless Maven Plugin](https://github.com/diffplug/spotless/tree/main/plugin-maven) enforces code formatting conventions and will be run as part of the build.
+- The [Spotless Maven Plugin](https://github.com/diffplug/spotless/tree/main/plugin-maven) enforces code formatting conventions and will be run as part of the build
+- Starting from version 1.0.0 we use [Conventional Commits](https://www.conventionalcommits.org/)
 
 ```
 $ mvn clean install
