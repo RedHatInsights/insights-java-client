@@ -34,7 +34,7 @@ jobs:
         uses: actions-js/push@v1.4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          message: Releasing version ${{ github.event.inputs.version }}
+          message: "chore: releasing version ${{ github.event.inputs.version }}"
       - name: Release with JReleaser
         uses: jreleaser/release-action@v2
         with:
@@ -50,4 +50,4 @@ jobs:
         uses: actions-js/push@v1.4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          message: Setting SNAPSHOT version ${{ github.event.inputs.nextVersion }}-SNAPSHOT
+          message: "chore: setting version ${{ github.event.inputs.nextVersion }}-SNAPSHOT"

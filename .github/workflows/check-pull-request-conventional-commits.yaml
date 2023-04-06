@@ -1,0 +1,11 @@
+name: Check conventional commits in pull-requests
+
+on:
+  pull_request:
+
+jobs:
+  conventional-commits:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Conventional Commits Validator
+        uses: wtfiscrq/conventional-commits-action@1.0.1
