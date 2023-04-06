@@ -17,6 +17,7 @@ release:
   github:
     owner: RedHatInsights
     changelog:
+      preset: conventional-commits
       links: true
       formatted: ALWAYS
       hide:
