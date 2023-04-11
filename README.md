@@ -15,6 +15,14 @@ There are three modules within the project:
 * jboss-cert-helper - A standalone Go binary that is used to provide access to RHEL certs
 * runtime - A Java 11 module that provides an HTTP client and some top-level reports. Most implementations will depend on this.
 
+## Consuming this library
+
+* This library is not published to any Maven public repository.
+* Product artifacts are available from Red Hat internal repositories.
+* If you need to use this library while in development then you can either:
+	1. run `./mvnw install` to have it available locally as a Maven dependency, or
+	2. deploy it yourself to some repository that you own (`./mvnw deploy (...)`).
+
 ## Building
 
 - Requires Java 11
