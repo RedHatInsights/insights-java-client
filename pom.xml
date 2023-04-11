@@ -33,16 +33,16 @@
     <servlet-api.version>4.0.1</servlet-api.version>
     <servlet-jsp-api.version>2.3.3</servlet-jsp-api.version>
     <vertx.version>4.4.1</vertx.version>
-    <smallrye-mutiny-vertx-bindings.version>3.2.0</smallrye-mutiny-vertx-bindings.version>
+    <smallrye-mutiny-vertx-bindings.version>3.3.0</smallrye-mutiny-vertx-bindings.version>
     <system-stubs-jupiter.version>2.0.2</system-stubs-jupiter.version>
     <awaitility.version>4.2.0</awaitility.version>
 
     <!-- Plugins versions -->
     <maven-assembly-plugin.version>3.5.0</maven-assembly-plugin.version>
     <google-java-format.version>1.16.0</google-java-format.version>
-    <spotless-maven-plugin.version>2.35.0</spotless-maven-plugin.version>
+    <spotless-maven-plugin.version>2.36.0</spotless-maven-plugin.version>
     <maven-surefire-plugin.version>3.0.0</maven-surefire-plugin.version>
-    <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
+    <jacoco-maven-plugin.version>0.8.9</jacoco-maven-plugin.version>
     <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
     <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
     <maven-install-plugin.version>3.1.1</maven-install-plugin.version>
