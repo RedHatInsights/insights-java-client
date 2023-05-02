@@ -8,6 +8,7 @@ import com.redhat.insights.doubles.DefaultConfiguration;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.time.Duration;
 import org.junit.jupiter.api.Test;
 
 public class TestDefaultConfiguration {
@@ -75,6 +76,11 @@ public class TestDefaultConfiguration {
 
     assertEquals(host, proxyConfiguration.getHost());
     assertEquals(port, proxyConfiguration.getPort());
+  }
+
+  @Test
+  void testHttpClientTimeout() {
+    assertEquals(Duration.ofMinutes(1), defaultConfig.getHttpClientTimeout());
   }
 
   /*

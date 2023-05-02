@@ -37,6 +37,7 @@ public class SysPropConfigurationTest {
           .set(ENV_HTTP_CLIENT_RETRY_INITIAL_DELAY.toLowerCase().replace("_", "."), "5000")
           .set(ENV_HTTP_CLIENT_RETRY_BACKOFF_FACTOR.toLowerCase().replace("_", "."), "3")
           .set(ENV_HTTP_CLIENT_RETRY_MAX_ATTEMPTS.toLowerCase().replace("_", "."), "5")
+          .set(ENV_HTTP_CLIENT_TIMEOUT.toLowerCase().replace("_", "."), "PT2M")
           .set(ENV_CERT_HELPER_BINARY.toLowerCase().replace("_", "."), "/usr/local/bin/yolo");
 
   // clean env variables which might interfere this test
@@ -153,5 +154,10 @@ public class SysPropConfigurationTest {
   @Test
   void testCertHelper() {
     assertEquals("/usr/local/bin/yolo", config.getCertHelperBinary());
+  }
+
+  @Test
+  void testHttpClientTimeout() {
+    assertEquals(Duration.ofMinutes(2), config.getHttpClientTimeout());
   }
 }

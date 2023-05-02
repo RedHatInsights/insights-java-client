@@ -33,6 +33,7 @@ public class EnvAndSysPropsInsightsConfiguration extends DefaultInsightsConfigur
       "RHT_INSIGHTS_JAVA_HTTP_CLIENT_RETRY_BACKOFF_FACTOR";
   public static final String ENV_HTTP_CLIENT_RETRY_MAX_ATTEMPTS =
       "RHT_INSIGHTS_JAVA_HTTP_CLIENT_RETRY_MAX_ATTEMPTS";
+  public static final String ENV_HTTP_CLIENT_TIMEOUT = "RHT_INSIGHTS_JAVA_HTTP_CLIENT_TIMEOUT";
 
   public static final String ENV_CERT_HELPER_BINARY = "RHT_INSIGHTS_JAVA_CERT_HELPER_BINARY";
 
@@ -148,6 +149,15 @@ public class EnvAndSysPropsInsightsConfiguration extends DefaultInsightsConfigur
   }
 
   @Override
+  public Duration getHttpClientTimeout() {
+    String value = lookup(ENV_HTTP_CLIENT_TIMEOUT);
+    if (value != null) {
+      return Duration.parse(value);
+    }
+    return super.getHttpClientTimeout();
+  }
+
+  @Override
   public long getHttpClientRetryInitialDelay() {
     String value = lookup(ENV_HTTP_CLIENT_RETRY_INITIAL_DELAY);
     if (value != null) {
@@ -218,6 +228,8 @@ public class EnvAndSysPropsInsightsConfiguration extends DefaultInsightsConfigur
         + getCertHelperBinary()
         + ", machineIdFilePath = "
         + getMachineIdFilePath()
+        + ", httpClientTimeout = "
+        + getHttpClientTimeout()
         + '}';
   }
 }

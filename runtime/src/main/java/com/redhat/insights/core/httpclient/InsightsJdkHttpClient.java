@@ -66,6 +66,8 @@ public class InsightsJdkHttpClient implements InsightsHttpClient {
   HttpClient getHttpClient() {
     var clientBuilder = HttpClient.newBuilder();
 
+    clientBuilder = clientBuilder.connectTimeout(configuration.getHttpClientTimeout());
+
     if (configuration.useMTLS()) {
       final var sslParameters = new SSLParameters();
       sslParameters.setWantClientAuth(true);
@@ -119,7 +121,8 @@ public class InsightsJdkHttpClient implements InsightsHttpClient {
     var requestBuilder =
         HttpRequest.newBuilder()
             .version(HttpClient.Version.HTTP_1_1)
-            .header(MultipartBodyBuilder.CONTENT_TYPE_HEADER, bodyBuilder.contentTypeHeaderValue());
+            .header(MultipartBodyBuilder.CONTENT_TYPE_HEADER, bodyBuilder.contentTypeHeaderValue())
+            .timeout(configuration.getHttpClientTimeout());
 
     if (!configuration.useMTLS()) {
       final var authToken = configuration.getMaybeAuthToken().get();

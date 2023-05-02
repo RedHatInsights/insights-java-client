@@ -98,6 +98,10 @@ public interface InsightsConfiguration {
     return DEFAULT_CERT_HELPER_BINARY;
   }
 
+  default Duration getHttpClientTimeout() {
+    return Duration.ofMinutes(1);
+  }
+
   final class ProxyConfiguration {
 
     private final String host;

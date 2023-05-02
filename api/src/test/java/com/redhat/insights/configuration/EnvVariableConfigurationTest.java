@@ -38,6 +38,7 @@ public class EnvVariableConfigurationTest {
           .set(ENV_HTTP_CLIENT_RETRY_INITIAL_DELAY, "5000")
           .set(ENV_HTTP_CLIENT_RETRY_BACKOFF_FACTOR, "3")
           .set(ENV_HTTP_CLIENT_RETRY_MAX_ATTEMPTS, "5")
+          .set(ENV_HTTP_CLIENT_TIMEOUT, "PT2M")
           .set(ENV_CERT_HELPER_BINARY, "/usr/local/bin/yolo");
 
   @BeforeAll
@@ -139,5 +140,10 @@ public class EnvVariableConfigurationTest {
   @Test
   void testCertHelper() {
     assertEquals("/usr/local/bin/yolo", config.getCertHelperBinary());
+  }
+
+  @Test
+  void testHttpClientTimeout() {
+    assertEquals(Duration.ofMinutes(2), config.getHttpClientTimeout());
   }
 }
