@@ -81,7 +81,7 @@ public class InsightsJdkHttpClient implements InsightsHttpClient {
               ProxySelector.of(new InetSocketAddress(conf.getHost(), conf.getPort())));
     }
 
-    return clientBuilder.build();
+    return clientBuilder.followRedirects(HttpClient.Redirect.NORMAL).build();
   }
 
   @Override
@@ -138,35 +138,40 @@ public class InsightsJdkHttpClient implements InsightsHttpClient {
             configuration,
             () -> {
               var response = client.send(request, HttpResponse.BodyHandlers.ofString());
+              int statusCode = response.statusCode();
               logger.debug(
                   "Red Hat Insights HTTP Client: status="
-                      + response.statusCode()
+                      + statusCode
                       + ", body="
                       + response.body());
-              switch (response.statusCode()) {
-                case 201:
-                  logger.debug(
-                      "Red Hat Insights - Advisor content type with no metadata accepted for"
-                          + " processing");
+              switch (statusCode / 100) {
+                case 2:
+                  if (statusCode == 201) {
+                    logger.debug(
+                        "Red Hat Insights - Advisor content type with no metadata accepted for"
+                            + " processing");
+                  } else {
+                    logger.debug("Red Hat Insights - Payload was accepted for processing");
+                  }
                   break;
-                case 202:
-                  logger.debug("Red Hat Insights - Payload was accepted for processing");
-                  break;
-                case 401:
-                  throw new InsightsException(
-                      ERROR_HTTP_SEND_AUTH_ERROR, "Authentication missing from request");
-                case 413:
-                  throw new InsightsException(ERROR_HTTP_SEND_PAYLOAD, "Payload too large");
-                case 415:
-                  throw new InsightsException(
-                      ERROR_HTTP_SEND_INVALID_CONTENT_TYPE,
-                      "Content type of payload is unsupported");
-                case 500:
-                case 503:
+                case 4:
+                  switch (statusCode) {
+                    case 401:
+                      throw new InsightsException(
+                          ERROR_HTTP_SEND_AUTH_ERROR, "Authentication missing from request");
+                    case 413:
+                      throw new InsightsException(ERROR_HTTP_SEND_PAYLOAD, "Payload too large");
+                    case 415:
+                    default:
+                      throw new InsightsException(
+                          ERROR_HTTP_SEND_INVALID_CONTENT_TYPE,
+                          "Content type of payload is unsupported");
+                  }
+                case 5:
                 default:
                   throw new InsightsException(
                       ERROR_HTTP_SEND_SERVER_ERROR,
-                      "Request failed on the server with code: " + response.statusCode());
+                      "Request failed on the server with code: " + statusCode);
               }
             });
     try {
