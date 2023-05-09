@@ -1,0 +1,21 @@
+name: Pull request check
+on:
+  pull_request:
+
+jobs:
+  build:
+    name: Pull request check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        name: Checkout from Git
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-java@v2
+        name: Setup Java
+        with:
+          distribution: temurin
+          java-version: 11
+          cache: maven
+      - name: Run tests
+        run: ./mvnw --no-transfer-progress verify
