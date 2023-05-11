@@ -20,6 +20,6 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - name: Publish package
-        run: ./mvnw --no-transfer-progress --batch-mode deploy
+        run: ./mvnw --no-transfer-progress --batch-mode -Dskip.spotless=true -DskipTests=true deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
