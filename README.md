@@ -17,11 +17,11 @@ There are three modules within the project:
 
 ## Consuming this library
 
-* This library is not published to any Maven public repository.
-* Product artifacts are available from Red Hat internal repositories.
-* If you need to use this library while in development then you can either:
-	1. run `./mvnw install` to have it available locally as a Maven dependency, or
-	2. deploy it yourself to some repository that you own (`./mvnw deploy (...)`).
+✅ Product artifacts are available from Red Hat internal repositories.
+
+🧪 If you need to use these libraries while in development then you can consume the upstream artefacts from GitHub Packages:
+- see https://github.com/orgs/RedHatInsights/packages?repo_name=insights-java-client
+- use https://maven.pkg.github.com/RedHatInsights/insights-java-client as an additional Maven repository to your build.
 
 ## Building
 
