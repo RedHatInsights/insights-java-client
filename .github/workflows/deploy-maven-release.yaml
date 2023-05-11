@@ -1,10 +1,7 @@
 name: Deploy Maven artefacts on release
 on:
-  # Automated when a release publication completes
   release:
     types: [created]
-  # Allow a manual run for a pre-existing tag (not the main intended usage)
-  workflow_dispatch:
 
 jobs:
   publish:
