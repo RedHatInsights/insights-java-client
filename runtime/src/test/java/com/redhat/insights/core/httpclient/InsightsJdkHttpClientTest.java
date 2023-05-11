@@ -22,6 +22,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.net.ssl.SSLContext;
@@ -46,6 +47,7 @@ public class InsightsJdkHttpClientTest {
   public void testHttpClientWithoutMTLS() {
     InsightsConfiguration config = mock(InsightsConfiguration.class);
     when(config.getMaybeAuthToken()).thenReturn(Optional.of("randomToken"));
+    when(config.getHttpClientTimeout()).thenReturn(Duration.ofSeconds(30));
 
     InsightsJdkHttpClient insightsClient = new InsightsJdkHttpClient(logger, config);
     HttpClient httpClient = insightsClient.getHttpClient();
@@ -60,6 +62,7 @@ public class InsightsJdkHttpClientTest {
     InsightsConfiguration config = mock(InsightsConfiguration.class);
     when(config.getProxyConfiguration())
         .thenReturn(Optional.of(new InsightsConfiguration.ProxyConfiguration("localhost", 8080)));
+    when(config.getHttpClientTimeout()).thenReturn(Duration.ofSeconds(30));
 
     InsightsJdkHttpClient insightsClient = new InsightsJdkHttpClient(logger, config);
     HttpClient httpClient = insightsClient.getHttpClient();
@@ -183,6 +186,7 @@ public class InsightsJdkHttpClientTest {
     when(config.getMaybeAuthToken()).thenReturn(Optional.of("randomToken"));
     when(config.getUploadBaseURL()).thenReturn("https://site.com");
     when(config.getUploadUri()).thenReturn("/path");
+    when(config.getHttpClientTimeout()).thenReturn(Duration.ofSeconds(30));
 
     HttpClient httpClient = mock(HttpClient.class);
     PEMSupport pem = new PEMSupport(logger, config);
