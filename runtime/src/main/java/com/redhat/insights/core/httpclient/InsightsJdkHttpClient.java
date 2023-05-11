@@ -162,13 +162,18 @@ public class InsightsJdkHttpClient implements InsightsHttpClient {
                     case 401:
                       throw new InsightsException(
                           ERROR_HTTP_SEND_AUTH_ERROR, "Authentication missing from request");
+                    case 403:
+                      throw new InsightsException(ERROR_HTTP_SEND_FORBIDDEN, "Forbidden");
                     case 413:
                       throw new InsightsException(ERROR_HTTP_SEND_PAYLOAD, "Payload too large");
                     case 415:
-                    default:
                       throw new InsightsException(
                           ERROR_HTTP_SEND_INVALID_CONTENT_TYPE,
                           "Content type of payload is unsupported");
+                    default:
+                      throw new InsightsException(
+                          ERROR_HTTP_SEND_CLIENT_ERROR,
+                          "Client error with HTTP status code " + statusCode);
                   }
                 case 5:
                 default:

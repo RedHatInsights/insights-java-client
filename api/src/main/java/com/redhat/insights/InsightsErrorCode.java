@@ -29,7 +29,8 @@ public enum InsightsErrorCode {
   ERROR_CLIENT_FAILED(19),
   ERROR_CLIENT_BACKOFF_RETRIES_FAILED(20),
   ERROR_INTERRUPTED_THREAD(21),
-  ;
+  ERROR_HTTP_SEND_FORBIDDEN(22),
+  ERROR_HTTP_SEND_CLIENT_ERROR(23);
 
   private static final String PREFIX = "I4ASR";
   private final int code;
