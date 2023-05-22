@@ -32,7 +32,7 @@
     <!-- Core dependencies versions -->
     <jackson-core.version>2.15.0</jackson-core.version>
     <jackson-databind.version>2.15.0</jackson-databind.version>
-    <jackson-datatype-jsr310>2.15.0</jackson-datatype-jsr310>
+    <jackson-datatype-jsr310>2.15.1</jackson-datatype-jsr310>
     <wildfly-elytron.version>2.1.0.Final</wildfly-elytron.version>
 
     <!-- Test libraries versions -->
