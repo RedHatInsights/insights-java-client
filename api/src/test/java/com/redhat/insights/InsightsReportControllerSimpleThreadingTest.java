@@ -67,7 +67,7 @@ public class InsightsReportControllerSimpleThreadingTest {
 
     assertNotEquals(initialReportJson, reportJson);
 
-    // Sanity check
+    // Final check
     String initialSha512 = computeSha512(initialGz);
     String finalSha512 = computeSha512(finalGz);
     assertNotEquals(initialSha512, finalSha512);
