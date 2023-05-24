@@ -27,8 +27,6 @@ public class InsightsReportControllerSimpleThreadingTest {
     InsightsReportController controller =
         InsightsReportController.of(
             logger, config, DummyTopLevelReport.of(logger), () -> new NoopInsightsHttpClient());
-    // FIXME Configure send interval (if we need to)
-    //    tp.scheduleAtFixedRate(controller, 0, 5, TimeUnit.SECONDS);
 
     InsightsException thrown =
         assertThrows(
@@ -69,7 +67,7 @@ public class InsightsReportControllerSimpleThreadingTest {
 
     assertNotEquals(initialReportJson, reportJson);
 
-    // Sanity check
+    // Final check
     String initialSha512 = computeSha512(initialGz);
     String finalSha512 = computeSha512(finalGz);
     assertNotEquals(initialSha512, finalSha512);

@@ -24,11 +24,6 @@ import java.util.function.Supplier;
  */
 public final class InsightsReportController {
 
-  // FIXME review usage of these
-  // This will not resolve unless on the Red Hat Corporate VPN and is only needed in Staging
-  private static final String CORP_PROXY = "squid.corp.redhat.com";
-  private static final int CORP_PROXY_PORT = 3128;
-
   private final InsightsLogger logger;
 
   private final InsightsConfiguration configuration;

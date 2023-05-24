@@ -40,7 +40,7 @@ public final class JarAnalyzer {
     if (!skipTempJars) {
       logger.debug("Temporary jars will be transmitted to the host");
     }
-    // FIXME Config jars to ignore
+    // Config jars to ignore will go here
     ignoreJars = new ArrayList<>();
   }
 

@@ -29,9 +29,6 @@ public abstract class AbstractTopLevelReportBase implements InsightsReport {
   private static final Map<String, String> renameKeys;
 
   static {
-    // FIXME Move to a constant when finalized
-    // What about JVM arguments? PII?
-
     allowKeys =
         Stream.of(
                 "http.nonProxyHosts",
