@@ -27,8 +27,6 @@ public class InsightsReportControllerSimpleThreadingTest {
     InsightsReportController controller =
         InsightsReportController.of(
             logger, config, DummyTopLevelReport.of(logger), () -> new NoopInsightsHttpClient());
-    // FIXME Configure send interval (if we need to)
-    //    tp.scheduleAtFixedRate(controller, 0, 5, TimeUnit.SECONDS);
 
     InsightsException thrown =
         assertThrows(
