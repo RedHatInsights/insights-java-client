@@ -1,6 +1,7 @@
 /* Copyright (C) Red Hat 2023 */
 package com.redhat.insights.http;
 
+import static com.redhat.insights.InsightsErrorCode.ERROR_UPLOAD_DIR_CREATION;
 import static com.redhat.insights.InsightsErrorCode.ERROR_WRITING_FILE;
 
 import com.redhat.insights.InsightsException;
@@ -22,6 +23,19 @@ public class InsightsFileWritingClient implements InsightsHttpClient {
   public InsightsFileWritingClient(InsightsLogger logger, InsightsConfiguration config) {
     this.logger = logger;
     this.config = config;
+    ensureArchiveUploadDirExists();
+  }
+
+  private void ensureArchiveUploadDirExists() {
+    Path dir = Paths.get(config.getArchiveUploadDir());
+    if (Files.notExists(dir)) {
+      try {
+        Files.createDirectories(dir);
+      } catch (IOException e) {
+        throw new InsightsException(
+            ERROR_UPLOAD_DIR_CREATION, "Could not create directories for path " + dir);
+      }
+    }
   }
 
   @Override
@@ -50,7 +64,6 @@ public class InsightsFileWritingClient implements InsightsHttpClient {
 
   @Override
   public boolean isReadyToSend() {
-    return (new File(config.getArchiveUploadDir()).exists()
-        && new File(config.getMachineIdFilePath()).exists());
+    return new File(config.getMachineIdFilePath()).exists();
   }
 }

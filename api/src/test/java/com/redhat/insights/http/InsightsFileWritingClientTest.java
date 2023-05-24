@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.redhat.insights.InsightsException;
 import com.redhat.insights.InsightsReport;
 import com.redhat.insights.config.InsightsConfiguration;
 import com.redhat.insights.doubles.NoopInsightsLogger;
@@ -62,7 +63,7 @@ public class InsightsFileWritingClientTest {
 
           @Override
           public String getArchiveUploadDir() {
-            return tmpdir.toString();
+            return tmpdir.resolve("inner-folder").toString();
           }
 
           @Override
@@ -98,8 +99,15 @@ public class InsightsFileWritingClientTest {
 
           @Override
           public String getArchiveUploadDir() {
-            // This is unlikely to exist
-            return "/a/b/c/d/FC02B2FE-B18B-48FB-B0B5-9CC8B98E9CD9";
+            try {
+              Path dir = Files.createTempDirectory("insights-tests");
+              if (!dir.toFile().setWritable(false)) {
+                throw new IllegalStateException("Cannot create a non-writable directory: " + dir);
+              }
+              return dir.resolve("should-not-be-created").toString();
+            } catch (IOException e) {
+              throw new IllegalStateException(e);
+            }
           }
 
           @Override
@@ -118,10 +126,12 @@ public class InsightsFileWritingClientTest {
         client.isReadyToSend(),
         "Client shouldn't be ready to send because of wrong machine-id path");
 
-    client = new InsightsFileWritingClient(logger, wrongUploadPathConfig);
-    assertFalse(
-        client.isReadyToSend(),
-        "Client shouldn't be ready to send because of non-existing upload directory");
+    InsightsException err =
+        assertThrows(
+            InsightsException.class,
+            () -> new InsightsFileWritingClient(logger, wrongUploadPathConfig),
+            "Constructor should throw because of non-creatable upload directory");
+    assertTrue(err.getMessage().startsWith("I4ASR0024"));
   }
 
   private Path getPathFromResource(String path) {
