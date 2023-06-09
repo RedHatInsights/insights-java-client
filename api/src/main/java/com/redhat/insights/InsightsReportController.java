@@ -161,10 +161,9 @@ public final class InsightsReportController {
    * timestamp for uniqueness here. 2.) this method mutates both the controller and report objects
    */
   void generateAndSetReportIdHash() {
-    String reportJsonNoHash = report.serialize();
     try {
       if (!idHashHolder.isDone()) {
-        String hash = computeSha512(gzipReport(reportJsonNoHash));
+        String hash = computeSha512(gzipReport(report.serialize()));
         idHashHolder.complete(hash);
         report.setIdHash(hash);
       }

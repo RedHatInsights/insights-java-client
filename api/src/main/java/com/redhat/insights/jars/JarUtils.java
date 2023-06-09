@@ -1,10 +1,10 @@
 /* Copyright (C) Red Hat 2023 */
 package com.redhat.insights.jars;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
@@ -17,6 +17,7 @@ import java.util.jar.Manifest;
 import java.util.stream.Stream;
 
 public final class JarUtils {
+
   private static final Map<String, String> EMBEDDED_FORMAT_TO_EXTENSION =
       getEmbeddedFormatToExtension("ear", "war", "jar");
   private static final int DEFAULT_BUFFER_SIZE = 1024 * 8;
@@ -99,7 +100,6 @@ public final class JarUtils {
 
   /////////////////////////////////////////////////
   // Handle manifests
-
   public static String getVersionFromManifest(Manifest manifest) {
     String version = getVersion(manifest.getMainAttributes());
     if (version == null && !manifest.getEntries().isEmpty()) {
@@ -127,7 +127,6 @@ public final class JarUtils {
 
   //////////////////////////////////////////
   // Handle hashes / digests
-
   public static String computeSha1(URL url) throws NoSuchAlgorithmException, IOException {
     return computeSha(url, "SHA1");
   }
@@ -157,14 +156,18 @@ public final class JarUtils {
 
   public static String computeSha(InputStream inputStream, String algorithm)
       throws NoSuchAlgorithmException, IOException {
-    try (ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
-      int nRead;
-      byte[] data = new byte[8];
-      while ((nRead = inputStream.read(data, 0, data.length)) != -1) {
-        buffer.write(data, 0, nRead);
-      }
-      return computeSha(buffer.toByteArray(), algorithm);
+    final MessageDigest md = MessageDigest.getInstance(algorithm);
+    final int readLen = 128;
+    try (final DigestInputStream dis = new DigestInputStream(inputStream, md)) {
+      final byte[] readBytes = new byte[readLen];
+      while (dis.read(readBytes) != -1) {}
     }
+    byte[] bytes = md.digest();
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < bytes.length; i++) {
+      sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+    }
+    return sb.toString();
   }
 
   public static String computeSha(byte[] buffer, String algorithm) throws NoSuchAlgorithmException {
