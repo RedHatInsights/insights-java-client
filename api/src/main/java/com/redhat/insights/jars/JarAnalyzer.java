@@ -17,6 +17,7 @@ import java.util.jar.Manifest;
  * jars and obtain more detail from manifests.
  */
 public final class JarAnalyzer {
+
   public static final String SHA1_CHECKSUM_KEY = "sha1Checksum";
   public static final String SHA256_CHECKSUM_KEY = "sha256Checksum";
   public static final String SHA512_CHECKSUM_KEY = "sha512Checksum";
@@ -105,26 +106,7 @@ public final class JarAnalyzer {
   JarInfo getJarInfoSafe(String jarFile, URL url) {
     Map<String, String> attributes = new HashMap<>();
 
-    try {
-      String sha1Checksum = JarUtils.computeSha1(url);
-      attributes.put(SHA1_CHECKSUM_KEY, sha1Checksum);
-    } catch (Exception ex) {
-      logger.error(url + " Error getting jar file sha1 checksum", ex);
-    }
-
-    try {
-      String sha256Checksum = JarUtils.computeSha256(url);
-      attributes.put(SHA256_CHECKSUM_KEY, sha256Checksum);
-    } catch (Exception ex) {
-      logger.error(url + " Error getting jar file sha256 checksum", ex);
-    }
-
-    try {
-      String sha512Checksum = JarUtils.computeSha512(url);
-      attributes.put(SHA512_CHECKSUM_KEY, sha512Checksum);
-    } catch (Exception ex) {
-      logger.error(url + " Error getting jar file sha512 checksum", ex);
-    }
+    setChecksumsPerf(attributes, url);
 
     JarInfo jarInfo;
     try {
@@ -135,6 +117,18 @@ public final class JarAnalyzer {
     }
 
     return jarInfo;
+  }
+
+  void setChecksumsPerf(Map<String, String> attributes, URL url) {
+
+    try {
+      String[] shaChecksums = JarUtils.computeSha(url);
+      attributes.put(SHA1_CHECKSUM_KEY, shaChecksums[0]);
+      attributes.put(SHA256_CHECKSUM_KEY, shaChecksums[1]);
+      attributes.put(SHA512_CHECKSUM_KEY, shaChecksums[2]);
+    } catch (Exception ex) {
+      logger.error(url + " Error getting jar file sha checksum", ex);
+    }
   }
 
   private JarInfo getJarInfo(String jarFilename, URL url, Map<String, String> attributes)
