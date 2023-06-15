@@ -1,6 +1,7 @@
 /* Copyright (C) Red Hat 2023 */
 package com.redhat.insights.http;
 
+import static com.redhat.insights.InsightsErrorCode.ERROR_WRITING_FILE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -13,8 +14,10 @@ import com.redhat.insights.doubles.StoringInsightsHttpClient;
 import com.redhat.insights.logging.InsightsLogger;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 
@@ -54,7 +57,24 @@ class InsightsMultiClientTest {
     InsightsLogger logger = new NoopInsightsLogger();
 
     InsightsReport report = mock(InsightsReport.class);
-    when(report.serialize()).thenReturn("foo");
+    doAnswer(
+            invocationOnMock -> {
+              File out = invocationOnMock.getArgument(0, File.class);
+              Path p = out.toPath();
+              try {
+                Files.write(
+                    out.toPath(),
+                    "out".getBytes(StandardCharsets.UTF_8),
+                    StandardOpenOption.WRITE,
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.TRUNCATE_EXISTING);
+                return null;
+              } catch (IOException iox) {
+                throw new InsightsException(ERROR_WRITING_FILE, "Could not write to: " + p, iox);
+              }
+            })
+        .when(report)
+        .serialize(any(File.class));
 
     InsightsHttpClient failingClient = mock(InsightsHttpClient.class);
     doThrow(new InsightsException("Failing on purpose"))
@@ -86,7 +106,7 @@ class InsightsMultiClientTest {
     InsightsLogger logger = new NoopInsightsLogger();
 
     InsightsReport report = mock(InsightsReport.class);
-    when(report.serialize()).thenReturn("foo");
+    when(report.serialize()).thenReturn("foo".getBytes(StandardCharsets.UTF_8));
 
     InsightsHttpClient failingClient = mock(InsightsHttpClient.class);
     doThrow(new InsightsException("Failing on purpose"))

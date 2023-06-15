@@ -2,12 +2,11 @@
 package com.redhat.insights.http;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import com.redhat.insights.InsightsException;
 import com.redhat.insights.InsightsReport;
 import com.redhat.insights.config.InsightsConfiguration;
+import com.redhat.insights.doubles.DummyTopLevelReport;
 import com.redhat.insights.doubles.NoopInsightsLogger;
 import com.redhat.insights.logging.InsightsLogger;
 import java.io.File;
@@ -15,6 +14,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import org.junit.jupiter.api.Test;
 
 public class InsightsFileWritingClientTest {
@@ -37,14 +37,13 @@ public class InsightsFileWritingClientTest {
 
     InsightsLogger logger = new NoopInsightsLogger();
     InsightsHttpClient client = new InsightsFileWritingClient(logger, cfg);
-    InsightsReport report = mock(InsightsReport.class);
-    when(report.serialize()).thenReturn("foo");
+    InsightsReport report = new DummyTopLevelReport(logger, Collections.emptyMap());
 
     client.sendInsightsReport("foo", report);
     File[] files = tmpdir.toFile().listFiles();
     assertEquals(1, files.length);
     assertEquals("foo.json", files[0].getName());
-    assertEquals(3, files[0].length());
+    assertEquals(25, files[0].length());
     // Cleanup
     Files.delete(files[0].toPath());
     Files.delete(tmpdir);

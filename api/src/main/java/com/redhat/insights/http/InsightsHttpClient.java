@@ -7,7 +7,6 @@ import com.redhat.insights.InsightsException;
 import com.redhat.insights.InsightsReport;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPOutputStream;
 
 /**
@@ -46,21 +45,19 @@ public interface InsightsHttpClient {
   default boolean isReadyToSend() {
     return true;
   }
+
   /**
    * Static gzip helper method
    *
    * @param report
    * @return gzipped bytes
    */
-  static byte[] gzipReport(final String report) {
-    try (final ByteArrayOutputStream baos = new ByteArrayOutputStream(report.length())) {
-      final byte[] buffy = report.getBytes(StandardCharsets.UTF_8);
-
+  static byte[] gzipReport(final byte[] report) {
+    try (final ByteArrayOutputStream baos = new ByteArrayOutputStream(report.length)) {
       final GZIPOutputStream gzip = new GZIPOutputStream(baos);
-      gzip.write(buffy, 0, buffy.length);
+      gzip.write(report);
       // An explicit close is necessary before we call toByteArray()
       gzip.close();
-
       return baos.toByteArray();
     } catch (IOException iox) {
       throw new InsightsException(ERROR_GZIP_FILE, "Failed to GZIP report: " + report, iox);

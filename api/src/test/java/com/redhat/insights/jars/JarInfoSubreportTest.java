@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.redhat.insights.AbstractReportTest;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import org.junit.jupiter.api.Test;
 
@@ -41,7 +42,7 @@ public class JarInfoSubreportTest extends AbstractReportTest {
         "Serializer of JarInfoSubreport should be JarInfoSubreportSerializer");
 
     // generate report
-    String report = subreport.serializeReport();
+    String report = new String(subreport.serializeReport(), StandardCharsets.UTF_8);
 
     // parse report and store it as a key-value map
     Map<?, ?> map = parseReport(report);
@@ -85,7 +86,7 @@ public class JarInfoSubreportTest extends AbstractReportTest {
             logger, Arrays.asList(jarInfoWithoutAttrs, jarInfoWithAttrs, JarInfo.MISSING));
 
     // generate report
-    String report = subreport.serializeReport();
+    String report = new String(subreport.serializeReport(), StandardCharsets.UTF_8);
     Map<?, ?> map = parseReport(report);
 
     assertTrue(map.get("jars") instanceof List, "Jars in report should be parsed as list");
@@ -110,7 +111,7 @@ public class JarInfoSubreportTest extends AbstractReportTest {
     // generate report for jars in current classpath
     classpathJarInfoSubreport.generateReport();
 
-    String report = classpathJarInfoSubreport.serializeReport();
+    String report = new String(classpathJarInfoSubreport.serializeReport(), StandardCharsets.UTF_8);
     Map<?, ?> parsedReport = parseReport(report);
     List<Map<String, ?>> jars = (List<Map<String, ?>>) parsedReport.get("jars");
 

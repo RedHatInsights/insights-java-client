@@ -50,7 +50,7 @@ public class InsightsReportControllerSimpleThreadingTest {
     report.generateReport(Filtering.DEFAULT);
 
     // First, compute the SHA 512 fingerprint without the id hash
-    String initialReportJson = report.serialize();
+    byte[] initialReportJson = report.serialize();
     final byte[] initialGz = gzipReport(initialReportJson);
     final String hash = computeSha512(initialGz);
 
@@ -62,7 +62,7 @@ public class InsightsReportControllerSimpleThreadingTest {
     assertEquals(controller.getIdHash(), hash);
 
     // Reserialize with the hash
-    final String reportJson = report.serialize();
+    final byte[] reportJson = report.serialize();
     final byte[] finalGz = gzipReport(reportJson);
 
     assertNotEquals(initialReportJson, reportJson);

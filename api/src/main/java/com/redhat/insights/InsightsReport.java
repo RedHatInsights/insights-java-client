@@ -2,14 +2,10 @@
 package com.redhat.insights;
 
 import static com.redhat.insights.InsightsErrorCode.ERROR_SERIALIZING_TO_JSON;
+import static com.redhat.insights.InsightsErrorCode.ERROR_WRITING_FILE;
 
-import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import java.io.IOException;
-import java.io.StringWriter;
+import java.io.*;
 import java.util.Map;
 
 /**
@@ -41,30 +37,30 @@ public interface InsightsReport {
 
   void decorate(String key, String value);
 
+  /** Serializes this report to JSON on the given {@code file}. */
+  default void serialize(File out) {
+    // It uses RandomAccessFile on purpose vs Files::write
+    // to avoid any hidden pooled off-heap allocations
+    // at the cost of additional allocation/free and copy
+    try (RandomAccessFile raf = new RandomAccessFile(out, "rw")) {
+      // truncate it
+      raf.setLength(0);
+      ObjectMappers.createFor(this).writerWithDefaultPrettyPrinter().writeValue(raf, this);
+    } catch (IOException e) {
+      throw new InsightsException(ERROR_WRITING_FILE, "Could not serialize JSON to: " + out, e);
+    }
+  }
+
   /**
    * Serializes this report to JSON for transport
    *
-   * @return JSON serialized report
+   * @return JSON serialized report as a stream of UTF-8 encoded bytes
    */
-  default String serialize() {
-    ObjectMapper mapper = new ObjectMapper();
-    mapper.registerModule(new JavaTimeModule());
-
-    SimpleModule simpleModule =
-        new SimpleModule(
-            "SimpleModule", new Version(1, 0, 0, null, "com.redhat.insights", "runtimes-java"));
-    simpleModule.addSerializer(InsightsReport.class, getSerializer());
-    for (InsightsSubreport subreport : getSubreports().values()) {
-      simpleModule.addSerializer(subreport.getClass(), subreport.getSerializer());
-    }
-    mapper.registerModule(simpleModule);
-
-    StringWriter writer = new StringWriter();
+  default byte[] serialize() {
     try {
-      mapper.writerWithDefaultPrettyPrinter().writeValue(writer, this);
+      return ObjectMappers.createFor(this).writerWithDefaultPrettyPrinter().writeValueAsBytes(this);
     } catch (IOException e) {
       throw new InsightsException(ERROR_SERIALIZING_TO_JSON, "JSON serialization exception", e);
     }
-    return writer.toString();
   }
 }

@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.redhat.insights.InsightsException;
 import com.redhat.insights.InsightsReport;
@@ -287,7 +286,7 @@ public class InsightsReportControllerTest {
         });
   }
 
-  private Map<?, ?> parseReport(String report) throws JsonProcessingException {
+  private Map<?, ?> parseReport(byte[] report) throws IOException {
     JsonMapper mapper = new JsonMapper();
     return mapper.readValue(report, Map.class);
   }
