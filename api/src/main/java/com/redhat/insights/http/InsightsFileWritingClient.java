@@ -56,7 +56,8 @@ public class InsightsFileWritingClient implements InsightsHttpClient {
           p,
           reportJson.getBytes(StandardCharsets.UTF_8),
           StandardOpenOption.WRITE,
-          StandardOpenOption.CREATE);
+          StandardOpenOption.CREATE,
+          StandardOpenOption.TRUNCATE_EXISTING);
     } catch (IOException iox) {
       throw new InsightsException(ERROR_WRITING_FILE, "Could not write to: " + p, iox);
     }
