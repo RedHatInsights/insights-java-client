@@ -163,7 +163,7 @@ public final class InsightsReportController {
   void generateAndSetReportIdHash() {
     try {
       if (!idHashHolder.isDone()) {
-        String hash = computeSha512(gzipReport(report.serialize()));
+        String hash = computeSha512(gzipReport(report.serializeRaw()));
         idHashHolder.complete(hash);
         report.setIdHash(hash);
       }

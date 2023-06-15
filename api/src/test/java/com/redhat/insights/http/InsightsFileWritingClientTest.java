@@ -12,6 +12,7 @@ import com.redhat.insights.doubles.NoopInsightsLogger;
 import com.redhat.insights.logging.InsightsLogger;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -38,7 +39,7 @@ public class InsightsFileWritingClientTest {
     InsightsLogger logger = new NoopInsightsLogger();
     InsightsHttpClient client = new InsightsFileWritingClient(logger, cfg);
     InsightsReport report = mock(InsightsReport.class);
-    when(report.serialize()).thenReturn("foo");
+    when(report.serializeRaw()).thenReturn("foo".getBytes(StandardCharsets.UTF_8));
 
     client.sendInsightsReport("foo", report);
     File[] files = tmpdir.toFile().listFiles();

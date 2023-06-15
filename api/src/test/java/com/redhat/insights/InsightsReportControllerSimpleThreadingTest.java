@@ -13,6 +13,7 @@ import com.redhat.insights.doubles.NoopInsightsHttpClient;
 import com.redhat.insights.doubles.NoopInsightsLogger;
 import com.redhat.insights.logging.InsightsLogger;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import org.junit.jupiter.api.Test;
@@ -50,7 +51,7 @@ public class InsightsReportControllerSimpleThreadingTest {
     report.generateReport(Filtering.DEFAULT);
 
     // First, compute the SHA 512 fingerprint without the id hash
-    String initialReportJson = report.serialize();
+    byte[] initialReportJson = report.serializeRaw();
     final byte[] initialGz = gzipReport(initialReportJson);
     final String hash = computeSha512(initialGz);
 
@@ -62,10 +63,12 @@ public class InsightsReportControllerSimpleThreadingTest {
     assertEquals(controller.getIdHash(), hash);
 
     // Reserialize with the hash
-    final String reportJson = report.serialize();
+    final byte[] reportJson = report.serializeRaw();
     final byte[] finalGz = gzipReport(reportJson);
 
-    assertNotEquals(initialReportJson, reportJson);
+    assertNotEquals(
+        new String(initialReportJson, StandardCharsets.UTF_8),
+        new String(reportJson, StandardCharsets.UTF_8));
 
     // Final check
     String initialSha512 = computeSha512(initialGz);

@@ -3,13 +3,9 @@ package com.redhat.insights;
 
 import static com.redhat.insights.InsightsErrorCode.ERROR_SERIALIZING_TO_JSON;
 
-import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.Map;
 
 /**
@@ -44,27 +40,30 @@ public interface InsightsReport {
   /**
    * Serializes this report to JSON for transport
    *
-   * @return JSON serialized report
+   * @return JSON serialized report as a stream of UTF-8 encoded bytes
    */
-  default String serialize() {
-    ObjectMapper mapper = new ObjectMapper();
-    mapper.registerModule(new JavaTimeModule());
+  default byte[] serializeRaw() {
+    ObjectMapper mapper = ObjectMappers.createFor(this);
 
-    SimpleModule simpleModule =
-        new SimpleModule(
-            "SimpleModule", new Version(1, 0, 0, null, "com.redhat.insights", "runtimes-java"));
-    simpleModule.addSerializer(InsightsReport.class, getSerializer());
-    for (InsightsSubreport subreport : getSubreports().values()) {
-      simpleModule.addSerializer(subreport.getClass(), subreport.getSerializer());
-    }
-    mapper.registerModule(simpleModule);
-
-    StringWriter writer = new StringWriter();
     try {
-      mapper.writerWithDefaultPrettyPrinter().writeValue(writer, this);
+      return mapper.writerWithDefaultPrettyPrinter().writeValueAsBytes(this);
     } catch (IOException e) {
       throw new InsightsException(ERROR_SERIALIZING_TO_JSON, "JSON serialization exception", e);
     }
-    return writer.toString();
+  }
+
+  /**
+   * Serializes this report to JSON for transport
+   *
+   * @return JSON serialized report
+   */
+  default String serialize() {
+    ObjectMapper mapper = ObjectMappers.createFor(this);
+
+    try {
+      return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this);
+    } catch (IOException e) {
+      throw new InsightsException(ERROR_SERIALIZING_TO_JSON, "JSON serialization exception", e);
+    }
   }
 }

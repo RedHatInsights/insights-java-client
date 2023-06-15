@@ -13,6 +13,7 @@ import com.redhat.insights.doubles.StoringInsightsHttpClient;
 import com.redhat.insights.logging.InsightsLogger;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -54,7 +55,7 @@ class InsightsMultiClientTest {
     InsightsLogger logger = new NoopInsightsLogger();
 
     InsightsReport report = mock(InsightsReport.class);
-    when(report.serialize()).thenReturn("foo");
+    when(report.serializeRaw()).thenReturn("foo".getBytes(StandardCharsets.UTF_8));
 
     InsightsHttpClient failingClient = mock(InsightsHttpClient.class);
     doThrow(new InsightsException("Failing on purpose"))
@@ -86,7 +87,7 @@ class InsightsMultiClientTest {
     InsightsLogger logger = new NoopInsightsLogger();
 
     InsightsReport report = mock(InsightsReport.class);
-    when(report.serialize()).thenReturn("foo");
+    when(report.serializeRaw()).thenReturn("foo".getBytes(StandardCharsets.UTF_8));
 
     InsightsHttpClient failingClient = mock(InsightsHttpClient.class);
     doThrow(new InsightsException("Failing on purpose"))
