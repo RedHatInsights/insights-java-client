@@ -3,8 +3,10 @@ package com.redhat.insights.jars;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.security.DigestInputStream;
+import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
@@ -162,7 +164,15 @@ public final class JarUtils {
       final byte[] readBytes = new byte[readLen];
       while (dis.read(readBytes) != -1) {}
     }
-    byte[] bytes = md.digest();
+    return toHex(md.digest());
+  }
+
+  public static String computeSha(byte[] buffer, String algorithm) throws NoSuchAlgorithmException {
+    final MessageDigest md = MessageDigest.getInstance(algorithm);
+    return toHex(md.digest(buffer));
+  }
+
+  private static String toHex(byte[] bytes) {
     StringBuilder sb = new StringBuilder();
     for (int i = 0; i < bytes.length; i++) {
       sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
@@ -170,15 +180,58 @@ public final class JarUtils {
     return sb.toString();
   }
 
-  public static String computeSha(byte[] buffer, String algorithm) throws NoSuchAlgorithmException {
-    final MessageDigest md = MessageDigest.getInstance(algorithm);
-
-    byte[] bytes = md.digest(buffer);
-    StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < bytes.length; i++) {
-      sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+  public static String[] computeSha(URL url) throws NoSuchAlgorithmException, IOException {
+    try (final InputStream inputStream = JarUtils.getInputStream(url)) {
+      return computeSha(inputStream);
     }
+  }
 
-    return sb.toString();
+  public static final String[] computeSha(InputStream inputStream)
+      throws NoSuchAlgorithmException, IOException {
+    final MessageDigest mdSha1 = MessageDigest.getInstance("SHA1");
+    final MessageDigest mdSha256 = MessageDigest.getInstance("SHA-256");
+    final MessageDigest mdSha512 = MessageDigest.getInstance("SHA-512");
+
+    try (final DigestOutputStream outSha1 = new DigestOutputStream(nullOutputStream(), mdSha1);
+        final DigestOutputStream outSha256 = new DigestOutputStream(nullOutputStream(), mdSha256);
+        final DigestOutputStream outSha512 = new DigestOutputStream(nullOutputStream(), mdSha512)) {
+      int nRead;
+      byte[] data = new byte[4096];
+      while ((nRead = inputStream.read(data, 0, data.length)) != -1) {
+        outSha1.write(data, 0, nRead);
+        outSha256.write(data, 0, nRead);
+        outSha512.write(data, 0, nRead);
+      }
+    }
+    return new String[] {
+      toHex(mdSha1.digest()), toHex(mdSha256.digest()), toHex(mdSha512.digest())
+    };
+  }
+
+  public static OutputStream nullOutputStream() {
+    return new OutputStream() {
+      private volatile boolean closed;
+
+      private void ensureOpen() throws IOException {
+        if (closed) {
+          throw new IOException("Stream closed");
+        }
+      }
+
+      @Override
+      public void write(int b) throws IOException {
+        ensureOpen();
+      }
+
+      @Override
+      public void write(byte b[], int off, int len) throws IOException {
+        ensureOpen();
+      }
+
+      @Override
+      public void close() {
+        closed = true;
+      }
+    };
   }
 }
