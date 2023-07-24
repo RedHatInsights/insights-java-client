@@ -8,11 +8,50 @@
   <version>1.0.10-SNAPSHOT</version>
   <packaging>pom</packaging>
 
+  <name>Red Hat Insights Java Client</name>
+  <description>Red Hat Insights Java Client</description>
+  <url>https://github.com/RedHatInsights/insights-java-client</url>
+  <inceptionYear>2023</inceptionYear>
+
+  <licenses>
+    <license>
+      <name>The Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <name>Benjamin Evans</name>
+      <email>beevans@redhat.com</email>
+      <organization>Red Hat</organization>
+      <organizationUrl>https://www.redhat.com/</organizationUrl>
+    </developer>
+    <developer>
+      <name>Julien Ponge</name>
+      <email>jponge@redhat.com</email>
+      <organization>Red Hat</organization>
+      <organizationUrl>https://www.redhat.com/</organizationUrl>
+    </developer>
+    <developer>
+      <name>Emmanuel Hugonnet</name>
+      <email>ehugonne@redhat.com</email>
+      <organization>Red Hat</organization>
+      <organizationUrl>https://www.redhat.com/</organizationUrl>
+    </developer>
+  </developers>
+
   <modules>
     <module>api</module>
     <module>runtime</module>
     <module>jboss-cert-helper</module>
   </modules>
+
+  <scm>
+    <connection>scm:git:git://github.com/RedHatInsights/insights-java-client.git</connection>
+    <developerConnection>scm:git:ssh://github.com:RedHatInsights/insights-java-client.git</developerConnection>
+    <url>http://github.com/RedHatInsights/insights-java-client/tree/main</url>
+  </scm>
 
   <distributionManagement>
     <repository>
@@ -57,6 +96,9 @@
     <maven-clean-plugin.version>3.3.1</maven-clean-plugin.version>
     <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
     <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
+    <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
+    <maven-deploy-plugin.version>3.1.1</maven-deploy-plugin.version>
+    <jreleaser-maven-plugin.version>1.7.0</jreleaser-maven-plugin.version>
   </properties>
 
   <dependencyManagement>
@@ -205,6 +247,21 @@
           <artifactId>spotless-maven-plugin</artifactId>
           <version>${spotless-maven-plugin.version}</version>
         </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>${maven-javadoc-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-deploy-plugin</artifactId>
+          <version>${maven-deploy-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>${maven-source-plugin.version}</version>
+        </plugin>
       </plugins>
     </pluginManagement>
 
@@ -214,21 +271,6 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>${maven-compiler-plugin.version}</version>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-        <version>${maven-source-plugin.version}</version>
-        <executions>
-          <execution>
-            <id>attach-sources</id>
-            <goals>
-              <goal>jar-no-fork</goal>
-              <goal>test-jar-no-fork</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
 
       <plugin>
@@ -307,6 +349,7 @@
   </build>
 
   <profiles>
+
     <profile>
       <id>coverage</id>
       <build>
@@ -334,6 +377,7 @@
         </plugins>
       </build>
     </profile>
+
     <profile>
       <id>integration</id>
       <build>
@@ -348,5 +392,108 @@
         </plugins>
       </build>
     </profile>
+
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.jreleaser</groupId>
+            <artifactId>jreleaser-maven-plugin</artifactId>
+            <version>${jreleaser-maven-plugin.version}</version>
+            <inherited>false</inherited>
+            <configuration>
+              <projectVersionPattern>SEMVER</projectVersionPattern>
+              <jreleaser>
+                <signing>
+                  <active>ALWAYS</active>
+                  <armored>true</armored>
+                </signing>
+                <release>
+                  <github>
+                    <owner>RedHatInsights</owner>
+                    <changelog>
+                      <preset>conventional-commits</preset>
+                      <links>true</links>
+                      <formatted>ALWAYS</formatted>
+                      <hide>
+                        <contributors>
+                          <contributor>GitHub</contributor>
+                          <contributor>dependabot[bot]</contributor>
+                          <contributor>bot</contributor>
+                        </contributors>
+                      </hide>
+                    </changelog>
+                  </github>
+                </release>
+                <deploy>
+                  <maven>
+                    <pomchecker>
+                      <failOnWarning>false</failOnWarning>
+                      <failOnError>false</failOnError>
+                    </pomchecker>
+                    <nexus2>
+                      <maven-central>
+                        <active>ALWAYS</active>
+                        <url>https://oss.sonatype.org/service/local</url>
+                        <snapshotUrl>https://oss.sonatype.org/content/repositories/snapshots/</snapshotUrl>
+                        <closeRepository>true</closeRepository>
+                        <releaseRepository>false</releaseRepository>
+                        <!-- TODO make true after the first release -->
+                        <stagingRepositories>target/staging-deploy</stagingRepositories>
+                      </maven-central>
+                    </nexus2>
+                  </maven>
+                </deploy>
+              </jreleaser>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>publication</id>
+      <properties>
+        <altDeploymentRepository>local::file:./target/staging-deploy</altDeploymentRepository>
+      </properties>
+      <build>
+        <defaultGoal>deploy</defaultGoal>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+                <configuration>
+                  <attach>true</attach>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar-no-fork</goal>
+                  <goal>test-jar-no-fork</goal>
+                </goals>
+                <configuration>
+                  <attach>true</attach>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
   </profiles>
 </project>
