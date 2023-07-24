@@ -8,6 +8,7 @@
     <artifactId>runtimes-java</artifactId>
     <version>1.0.10-SNAPSHOT</version>
   </parent>
+
   <artifactId>jboss-cert-helper</artifactId>
   <packaging>mvn-golang</packaging>
 
@@ -134,5 +135,36 @@
     <!--Changing standard Maven project source structure to make it Go compatible-->
     <sourceDirectory>${basedir}${file.separator}src</sourceDirectory>
   </build>
+
+  <profiles>
+    <profile>
+      <id>publication</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-deploy-plugin</artifactId>
+            <configuration>
+              <skip>true</skip>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-deploy-plugin</artifactId>
+            <configuration>
+              <skip>true</skip>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>
