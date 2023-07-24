@@ -438,8 +438,7 @@
                         <url>https://oss.sonatype.org/service/local</url>
                         <snapshotUrl>https://oss.sonatype.org/content/repositories/snapshots/</snapshotUrl>
                         <closeRepository>true</closeRepository>
-                        <releaseRepository>false</releaseRepository>
-                        <!-- TODO make true after the first release -->
+                        <releaseRepository>true</releaseRepository>
                         <stagingRepositories>target/staging-deploy</stagingRepositories>
                       </maven-central>
                     </nexus2>
