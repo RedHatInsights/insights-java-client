@@ -72,7 +72,7 @@
     <jackson-core.version>2.15.2</jackson-core.version>
     <jackson-databind.version>2.15.2</jackson-databind.version>
     <jackson-datatype-jsr310>2.15.2</jackson-datatype-jsr310>
-    <wildfly-elytron.version>2.2.1.Final</wildfly-elytron.version>
+    <wildfly-elytron.version>2.2.2.Final</wildfly-elytron.version>
 
     <!-- Test libraries versions -->
     <junit.version>5.10.0</junit.version>
