@@ -113,7 +113,15 @@ public final class InsightsReportController {
             InsightsHttpClient httpClient = httpClientSupplier.get();
             if (httpClient.isReadyToSend()) {
               generateConnectReport();
-              httpClient.sendInsightsReport(getIdHash() + "_connect", report);
+              try {
+                httpClient.sendInsightsReport(getIdHash() + "_connect", report);
+              } finally {
+                try {
+                  report.close();
+                } catch (IOException ioex) {
+                  // Nothing to be done there
+                }
+              }
             } else {
               logger.debug("Insights is not configured to send: " + configuration);
             }

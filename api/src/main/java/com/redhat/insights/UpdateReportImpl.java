@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.redhat.insights.jars.JarInfo;
 import com.redhat.insights.jars.JarInfoSubreport;
 import com.redhat.insights.logging.InsightsLogger;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -77,4 +78,7 @@ public class UpdateReportImpl implements InsightsReport {
     logger.debug(
         String.format("Attempt to add %s => %s to an update report. Ignored.", key, value));
   }
+
+  @Override
+  public void close() throws IOException {}
 }
