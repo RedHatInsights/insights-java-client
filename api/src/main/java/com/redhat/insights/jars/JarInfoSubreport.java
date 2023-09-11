@@ -11,7 +11,6 @@ import com.redhat.insights.InsightsException;
 import com.redhat.insights.InsightsSubreport;
 import com.redhat.insights.logging.InsightsLogger;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -58,12 +57,10 @@ public class JarInfoSubreport implements InsightsSubreport {
     simpleModule.addSerializer(getClass(), getSerializer());
     mapper.registerModule(simpleModule);
 
-    StringWriter writer = new StringWriter();
     try {
-      mapper.writerWithDefaultPrettyPrinter().writeValue(writer, this);
+      return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this);
     } catch (IOException e) {
       throw new InsightsException(ERROR_SERIALIZING_TO_JSON, "JSON serialization exception", e);
     }
-    return writer.toString();
   }
 }

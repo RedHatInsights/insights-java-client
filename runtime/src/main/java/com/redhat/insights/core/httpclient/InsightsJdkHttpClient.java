@@ -104,7 +104,7 @@ public class InsightsJdkHttpClient implements InsightsHttpClient {
   public void sendInsightsReport(String reportName, InsightsReport report) {
     decorate(report);
     final var client = getHttpClient();
-    final var gzipJson = InsightsHttpClient.gzipReport(report.serialize());
+    final var gzipJson = InsightsHttpClient.gzipReport(report.serializeRaw());
     sendInsightsReportWithClient(client, reportName + ".gz", gzipJson);
   }
 

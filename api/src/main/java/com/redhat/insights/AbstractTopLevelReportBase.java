@@ -4,6 +4,7 @@ package com.redhat.insights;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.redhat.insights.config.InsightsConfiguration;
 import com.redhat.insights.logging.InsightsLogger;
+import java.io.IOException;
 import java.lang.management.*;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -80,6 +81,7 @@ public abstract class AbstractTopLevelReportBase implements InsightsReport {
   private final JsonSerializer<InsightsReport> serializer;
   private final InsightsLogger logger;
   private final InsightsConfiguration config;
+  private byte[] subReport;
 
   // Can't be set properly until after report has been generated
   private String idHash = "";
@@ -203,6 +205,19 @@ public abstract class AbstractTopLevelReportBase implements InsightsReport {
   protected abstract long getProcessPID();
 
   protected abstract Package[] getPackages();
+
+  @Override
+  public byte[] getSubModulesReport() {
+    if (subReport == null) {
+      subReport = InsightsReport.super.getSubModulesReport();
+    }
+    return subReport;
+  }
+
+  @Override
+  public void close() throws IOException {
+    subReport = null;
+  }
 
   /**
    * This is the top-level name - implementors that may have to care about multi-tenancy should

@@ -10,7 +10,6 @@ import com.redhat.insights.config.InsightsConfiguration;
 import com.redhat.insights.logging.InsightsLogger;
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -46,15 +45,13 @@ public class InsightsFileWritingClient implements InsightsHttpClient {
   @Override
   public void sendInsightsReport(String filename, InsightsReport report) {
     decorate(report);
-    String reportJson = report.serialize();
-    //    logger.debug(reportJson);
 
     // Can't reuse upload path - as this may be called as part of fallback
     Path p = Paths.get(config.getArchiveUploadDir(), filename + ".json");
     try {
       Files.write(
           p,
-          reportJson.getBytes(StandardCharsets.UTF_8),
+          report.serializeRaw(),
           StandardOpenOption.WRITE,
           StandardOpenOption.CREATE,
           StandardOpenOption.TRUNCATE_EXISTING);
