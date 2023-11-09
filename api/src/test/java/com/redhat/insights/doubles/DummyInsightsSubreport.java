@@ -2,7 +2,7 @@
 package com.redhat.insights.doubles;
 
 import com.fasterxml.jackson.databind.JsonSerializer;
-import com.redhat.insights.InsightsSubreport;
+import com.redhat.insights.reports.InsightsSubreport;
 
 /** A generic Java application {@link InsightsSubreport} implementation. */
 public final class DummyInsightsSubreport implements InsightsSubreport {

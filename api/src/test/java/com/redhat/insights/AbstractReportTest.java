@@ -11,6 +11,8 @@ import com.redhat.insights.doubles.NoopInsightsLogger;
 import com.redhat.insights.jars.JarInfoSubreport;
 import com.redhat.insights.jars.JarInfoSubreportSerializer;
 import com.redhat.insights.logging.InsightsLogger;
+import com.redhat.insights.reports.InsightsReport;
+import com.redhat.insights.reports.InsightsReportSerializer;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;

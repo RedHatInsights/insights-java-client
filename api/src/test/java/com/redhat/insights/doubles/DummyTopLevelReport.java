@@ -1,9 +1,9 @@
 /* Copyright (C) Red Hat 2022-2023 */
 package com.redhat.insights.doubles;
 
-import com.redhat.insights.AbstractTopLevelReportBase;
-import com.redhat.insights.InsightsSubreport;
 import com.redhat.insights.logging.InsightsLogger;
+import com.redhat.insights.reports.AbstractTopLevelReportBase;
+import com.redhat.insights.reports.InsightsSubreport;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;

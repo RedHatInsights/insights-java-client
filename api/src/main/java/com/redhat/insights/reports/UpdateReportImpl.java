@@ -1,7 +1,8 @@
 /* Copyright (C) Red Hat 2023 */
-package com.redhat.insights;
+package com.redhat.insights.reports;
 
 import com.fasterxml.jackson.databind.JsonSerializer;
+import com.redhat.insights.Filtering;
 import com.redhat.insights.jars.JarInfo;
 import com.redhat.insights.jars.JarInfoSubreport;
 import com.redhat.insights.logging.InsightsLogger;

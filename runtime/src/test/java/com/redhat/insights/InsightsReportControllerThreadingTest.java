@@ -6,9 +6,9 @@ import static org.awaitility.Awaitility.await;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-import com.redhat.insights.core.app.AppTopLevelReport;
 import com.redhat.insights.core.httpclient.HttpResponseBase;
 import com.redhat.insights.core.httpclient.MockInsightsJdkHttpClient;
+import com.redhat.insights.core.reports.AppTopLevelReport;
 import com.redhat.insights.doubles.MockInsightsConfiguration;
 import com.redhat.insights.doubles.NoopInsightsLogger;
 import com.redhat.insights.tls.PEMSupport;

@@ -23,12 +23,22 @@ public class ClasspathJarInfoSubreport extends JarInfoSubreport {
 
   @Override
   public void generateReport() {
-    JarAnalyzer analyzer = new JarAnalyzer(logger, true);
-    String cwd = System.getProperty(USER_DIR);
     String cpRaw = System.getProperty(CLASSPATH_ENV);
+    String[] entries = splitClassPathElements(cpRaw, File.pathSeparator);
 
     jarInfos.clear();
-    for (String entry : splitClassPathElements(cpRaw, File.pathSeparator)) {
+    if (entries.length == 0) {
+      logger.warning("No classpath entries found");
+    } else {
+      addEntries(entries);
+    }
+  }
+
+  private void addEntries(String[] entries) {
+    JarAnalyzer analyzer = new JarAnalyzer(logger, true);
+    String cwd = System.getProperty(USER_DIR);
+
+    for (String entry : entries) {
       logger.debug(entry);
       try {
         if (!entry.startsWith(File.separator)) {

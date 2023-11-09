@@ -1,11 +1,13 @@
 /* Copyright (C) Red Hat 2022-2023 */
-package com.redhat.insights;
+package com.redhat.insights.reports;
 
 import static com.redhat.insights.InsightsErrorCode.ERROR_SERIALIZING_TO_JSON;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.redhat.insights.Filtering;
+import com.redhat.insights.InsightsException;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.IOException;

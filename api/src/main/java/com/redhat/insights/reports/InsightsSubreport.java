@@ -1,5 +1,5 @@
 /* Copyright (C) Red Hat 2022-2023 */
-package com.redhat.insights;
+package com.redhat.insights.reports;
 
 import com.fasterxml.jackson.databind.JsonSerializer;
 

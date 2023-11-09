@@ -7,6 +7,8 @@ import com.redhat.insights.doubles.DummyTopLevelReport;
 import com.redhat.insights.jars.ClasspathJarInfoSubreport;
 import com.redhat.insights.jars.JarInfo;
 import com.redhat.insights.jars.JarInfoSubreport;
+import com.redhat.insights.reports.InsightsReport;
+import com.redhat.insights.reports.InsightsSubreport;
 import java.io.IOException;
 import java.util.*;
 import org.junit.jupiter.api.Test;

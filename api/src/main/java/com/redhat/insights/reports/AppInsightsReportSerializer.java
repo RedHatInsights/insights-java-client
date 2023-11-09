@@ -1,10 +1,9 @@
 /* Copyright (C) Red Hat 2022-2023 */
-package com.redhat.insights.core.app;
+package com.redhat.insights.reports;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import com.redhat.insights.InsightsSubreport;
 import java.io.IOException;
 
 /** A generic Java application {@link InsightsSubreport} JSON serializer implementation. */

@@ -10,6 +10,8 @@ import com.redhat.insights.config.InsightsConfiguration;
 import com.redhat.insights.http.InsightsHttpClient;
 import com.redhat.insights.jars.JarInfo;
 import com.redhat.insights.logging.InsightsLogger;
+import com.redhat.insights.reports.InsightsReport;
+import com.redhat.insights.reports.UpdateReportImpl;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.*;

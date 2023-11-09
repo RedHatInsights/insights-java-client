@@ -1,8 +1,8 @@
 /* Copyright (C) Red Hat 2023 */
 package com.redhat.insights.doubles;
 
-import com.redhat.insights.InsightsReport;
 import com.redhat.insights.http.InsightsHttpClient;
+import com.redhat.insights.reports.InsightsReport;
 
 /**
  * Fake http client, which will store content of report sent. Designed to test @link
