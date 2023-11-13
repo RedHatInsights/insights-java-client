@@ -1,8 +1,17 @@
 name: Pull request check
+
 on:
   pull_request:
 
 jobs:
+
+  conventional-commits:
+    runs-on: ubuntu-latest
+    name: Check conventional commits
+    steps:
+      - uses: actions/checkout@v3
+      - uses: wagoid/commitlint-github-action@v5
+
   build:
     name: Pull request check
     runs-on: ubuntu-latest
