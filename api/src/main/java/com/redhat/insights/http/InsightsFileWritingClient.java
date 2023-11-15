@@ -5,9 +5,9 @@ import static com.redhat.insights.InsightsErrorCode.ERROR_UPLOAD_DIR_CREATION;
 import static com.redhat.insights.InsightsErrorCode.ERROR_WRITING_FILE;
 
 import com.redhat.insights.InsightsException;
-import com.redhat.insights.InsightsReport;
 import com.redhat.insights.config.InsightsConfiguration;
 import com.redhat.insights.logging.InsightsLogger;
+import com.redhat.insights.reports.InsightsReport;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;

@@ -10,6 +10,7 @@ import com.redhat.insights.doubles.NoopInsightsHttpClient;
 import com.redhat.insights.doubles.NoopInsightsLogger;
 import com.redhat.insights.http.InsightsHttpClient;
 import com.redhat.insights.logging.InsightsLogger;
+import com.redhat.insights.reports.InsightsReport;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.Test;

@@ -4,8 +4,8 @@ package com.redhat.insights.http;
 import static com.redhat.insights.InsightsErrorCode.ERROR_CLIENT_FAILED;
 
 import com.redhat.insights.InsightsException;
-import com.redhat.insights.InsightsReport;
 import com.redhat.insights.logging.InsightsLogger;
+import com.redhat.insights.reports.InsightsReport;
 import java.util.Arrays;
 import java.util.List;
 

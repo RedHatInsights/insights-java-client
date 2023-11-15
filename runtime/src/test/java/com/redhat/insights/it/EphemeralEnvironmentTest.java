@@ -7,12 +7,12 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import com.redhat.insights.InsightsReportController;
 import com.redhat.insights.config.EnvAndSysPropsInsightsConfiguration;
-import com.redhat.insights.core.app.AppInsightsSubreport;
-import com.redhat.insights.core.app.AppTopLevelReport;
 import com.redhat.insights.core.httpclient.InsightsJdkHttpClient;
+import com.redhat.insights.core.reports.AppTopLevelReport;
 import com.redhat.insights.doubles.DefaultConfiguration;
 import com.redhat.insights.jars.ClasspathJarInfoSubreport;
 import com.redhat.insights.logging.TestLogger;
+import com.redhat.insights.reports.AppInsightsSubreport;
 import com.redhat.insights.tls.PEMSupport;
 import java.nio.file.Path;
 import java.time.Duration;

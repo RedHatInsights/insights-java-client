@@ -1,10 +1,10 @@
 /* Copyright (C) Red Hat 2022-2023 */
-package com.redhat.insights.core;
+package com.redhat.insights.core.reports;
 
-import com.redhat.insights.AbstractTopLevelReportBase;
-import com.redhat.insights.InsightsSubreport;
 import com.redhat.insights.config.InsightsConfiguration;
 import com.redhat.insights.logging.InsightsLogger;
+import com.redhat.insights.reports.AbstractTopLevelReportBase;
+import com.redhat.insights.reports.InsightsSubreport;
 import java.util.*;
 
 /**

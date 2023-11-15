@@ -4,11 +4,11 @@ package com.redhat.insights;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.redhat.insights.config.EnvAndSysPropsInsightsConfiguration;
-import com.redhat.insights.core.app.AppInsightsSubreport;
-import com.redhat.insights.core.app.AppTopLevelReport;
+import com.redhat.insights.core.reports.AppTopLevelReport;
 import com.redhat.insights.jars.ClasspathJarInfoSubreport;
 import com.redhat.insights.jars.JarInfo;
 import com.redhat.insights.logging.PrintLogger;
+import com.redhat.insights.reports.AppInsightsSubreport;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 

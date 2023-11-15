@@ -4,7 +4,7 @@ package com.redhat.insights.jars;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import com.redhat.insights.InsightsSubreport;
+import com.redhat.insights.reports.InsightsSubreport;
 import java.io.IOException;
 
 public class JarInfoSubreportSerializer extends JsonSerializer<InsightsSubreport> {

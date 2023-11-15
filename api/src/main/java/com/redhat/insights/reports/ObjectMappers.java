@@ -1,5 +1,5 @@
 /* Copyright (C) Red Hat 2023 */
-package com.redhat.insights;
+package com.redhat.insights.reports;
 
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.ObjectMapper;

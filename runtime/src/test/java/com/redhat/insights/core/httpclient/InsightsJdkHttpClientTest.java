@@ -4,13 +4,13 @@ package com.redhat.insights.core.httpclient;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import com.redhat.insights.InsightsReport;
 import com.redhat.insights.config.InsightsConfiguration;
-import com.redhat.insights.core.app.AppTopLevelReport;
+import com.redhat.insights.core.reports.AppTopLevelReport;
 import com.redhat.insights.doubles.DummyTopLevelReport;
 import com.redhat.insights.doubles.MockInsightsConfiguration;
 import com.redhat.insights.doubles.NoopInsightsLogger;
 import com.redhat.insights.logging.InsightsLogger;
+import com.redhat.insights.reports.InsightsReport;
 import com.redhat.insights.tls.PEMSupport;
 import java.io.File;
 import java.io.IOException;

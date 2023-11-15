@@ -4,7 +4,7 @@ package com.redhat.insights.http;
 import static com.redhat.insights.InsightsErrorCode.ERROR_GZIP_FILE;
 
 import com.redhat.insights.InsightsException;
-import com.redhat.insights.InsightsReport;
+import com.redhat.insights.reports.InsightsReport;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
