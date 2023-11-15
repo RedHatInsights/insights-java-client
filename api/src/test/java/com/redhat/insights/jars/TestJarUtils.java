@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import org.junit.jupiter.api.Test;
@@ -26,7 +27,7 @@ public class TestJarUtils {
   }
 
   @Test
-  public void basicCheckJars() throws NoSuchAlgorithmException, IOException {
+  public void basicCheckJars() throws NoSuchAlgorithmException, IOException, URISyntaxException {
     URL jar1URL = getURL(JAR_PATH);
     URL jar2URL = getURL(JAR_PATH_2);
 
@@ -41,6 +42,16 @@ public class TestJarUtils {
         buffer.write(data, 0, nRead);
       }
       return buffer.toByteArray();
+    }
+  }
+
+  @Test
+  public void basicCheckJarUrls() throws NoSuchAlgorithmException, IOException, URISyntaxException {
+    String file = "jar:" + getURL(JAR_PATH).toExternalForm() + "!/";
+    try {
+      computeSha(new URL(file));
+    } catch (Exception ex) {
+      fail(ex);
     }
   }
 }

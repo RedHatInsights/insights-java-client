@@ -40,27 +40,34 @@ public final class JarUtils {
    * @throws IOException
    */
   public static InputStream getInputStream(URL url) throws IOException {
-
+    String jarLocation = url.toExternalForm();
+    URL jarURL = url;
     for (Entry<String, String> entry : EMBEDDED_FORMAT_TO_EXTENSION.entrySet()) {
-      int index = url.toExternalForm().indexOf(entry.getKey());
-      if (index > 0) {
+      int index = jarLocation.indexOf(entry.getKey());
+      // if the target is the jar file then we can't use openStream as it is there to look into the
+      // jar content.
+      if (index > 0 && (index + entry.getKey().length()) < jarLocation.length()) {
         String path = url.toExternalForm().substring(index + entry.getKey().length());
         // add 1 to skip past the `.` and the value length, which is the length of the file
         // extension
-        url = new URL(url.toExternalForm().substring(0, index + 1 + entry.getValue().length()));
-        InputStream inputStream = url.openStream();
+        jarURL =
+            new URL(jarURL.toExternalForm().substring(0, index + 1 + entry.getValue().length()));
+        InputStream inputStream = jarURL.openStream();
         JarInputStream jarStream = new JarInputStream(inputStream);
 
         if (!readToEntry(jarStream, path)) {
           inputStream.close();
           throw new IOException(
-              "Unable to open stream for " + path + " in " + url.toExternalForm());
+              "Unable to open stream for " + path + " in " + jarURL.toExternalForm());
         }
         return jarStream;
       }
     }
-
-    return url.openStream();
+    if (jarLocation.startsWith("jar:") && jarLocation.endsWith("!/")) {
+      String jarLoc = jarLocation.substring(4, jarLocation.length() - 2);
+      jarURL = new URL(jarLoc);
+    }
+    return jarURL.openStream();
   }
 
   /**
