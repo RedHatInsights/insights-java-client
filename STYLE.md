@@ -8,7 +8,7 @@ Before you commit, make sure to run the Spotless formatter:
 
 	$ mvn spotless:apply
 
-We adhere to [Semantic Verisoning](https://semver.org/) and reinforce this practice with [Conventional Commits](https://www.conventionalcommits.org/)
+We adhere to [Semantic Versioning](https://semver.org/) and reinforce this practice with [Conventional Commits](https://www.conventionalcommits.org/)
 
 In its simplest form, a commit message should be structured as follows:
 
