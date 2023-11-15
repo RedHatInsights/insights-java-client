@@ -35,6 +35,7 @@ jobs:
       - name: Commit & Push changes
         uses: actions-js/push@v1.4
         with:
+          branch: '1.x'
           github_token: ${{ secrets.GITHUB_TOKEN }}
           message: "chore: releasing version ${{ github.event.inputs.version }}"
       - name: Release with JReleaser
@@ -53,5 +54,6 @@ jobs:
       - name: Commit & Push changes
         uses: actions-js/push@v1.4
         with:
+          branch: '1.x'
           github_token: ${{ secrets.GITHUB_TOKEN }}
           message: "chore: setting version ${{ github.event.inputs.nextVersion }}-SNAPSHOT"
