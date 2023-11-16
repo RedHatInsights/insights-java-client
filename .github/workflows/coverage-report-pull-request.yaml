@@ -25,7 +25,7 @@ jobs:
           echo "base=${GITHUB_BASE_REF}" >> $GITHUB_OUTPUT
           echo "artifacts=${ARTIFACTS}" >> $GITHUB_OUTPUT
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         name: Checkout from Git
         with:
           fetch-depth: 0
