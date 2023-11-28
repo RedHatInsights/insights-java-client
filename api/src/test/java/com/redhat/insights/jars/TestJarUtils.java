@@ -8,6 +8,7 @@ import static com.redhat.insights.jars.TestJarAnalyzer.getURL;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -50,6 +51,24 @@ public class TestJarUtils {
     String file = "jar:" + getURL(JAR_PATH).toExternalForm() + "!/";
     try {
       computeSha(new URL(file));
+    } catch (Exception ex) {
+      fail(ex);
+    }
+    file =
+        "jar:file:"
+            + new File(System.getProperty("basedir")).toPath().toAbsolutePath().toString()
+            + "/target/test-classes/com/redhat/insights/jars/sti-sb-tomcat.jar!/BOOT-INF/lib/jackson-databind-2.13.5.jar!/";
+    try {
+      getInputStream(new URL(file));
+    } catch (Exception ex) {
+      fail(ex);
+    }
+    file =
+        "jar:file:"
+            + new File(System.getProperty("basedir")).toPath().toAbsolutePath().toString()
+            + "/target/test-classes/com/redhat/insights/jars/sti-sb-tomcat.jar!/BOOT-INF/classes!/";
+    try {
+      getInputStream(new URL(file));
     } catch (Exception ex) {
       fail(ex);
     }

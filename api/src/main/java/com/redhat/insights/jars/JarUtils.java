@@ -23,12 +23,14 @@ public final class JarUtils {
   private static final Map<String, String> EMBEDDED_FORMAT_TO_EXTENSION =
       getEmbeddedFormatToExtension("ear", "war", "jar");
   private static final int DEFAULT_BUFFER_SIZE = 1024 * 8;
+  private static final String JAR_PROTOCOL = "jar:";
+  private static final String BANG_SEPARATOR = "!/";
 
   private JarUtils() {}
 
   private static Map<String, String> getEmbeddedFormatToExtension(String... fileExtensions) {
     Map<String, String> out = new HashMap<>();
-    Stream.of(fileExtensions).forEach(ext -> out.put('.' + ext + "!/", ext));
+    Stream.of(fileExtensions).forEach(ext -> out.put('.' + ext + BANG_SEPARATOR, ext));
     return out;
   }
 
@@ -37,6 +39,7 @@ public final class JarUtils {
    * input stream starting at the embedded jar.
    *
    * @param url
+   * @return a Stream to the specified URL.
    * @throws IOException
    */
   public static InputStream getInputStream(URL url) throws IOException {
@@ -48,10 +51,16 @@ public final class JarUtils {
       // jar content.
       if (index > 0 && (index + entry.getKey().length()) < jarLocation.length()) {
         String path = url.toExternalForm().substring(index + entry.getKey().length());
+        if (path.endsWith(BANG_SEPARATOR)) {
+          path = path.substring(0, path.length() - BANG_SEPARATOR.length());
+        }
         // add 1 to skip past the `.` and the value length, which is the length of the file
         // extension
-        jarURL =
-            new URL(jarURL.toExternalForm().substring(0, index + 1 + entry.getValue().length()));
+        String jar = jarURL.toExternalForm().substring(0, index + 1 + entry.getValue().length());
+        if (jarLocation.startsWith(JAR_PROTOCOL)) {
+          jar = jar.substring(JAR_PROTOCOL.length());
+        }
+        jarURL = new URL(jar);
         InputStream inputStream = jarURL.openStream();
         JarInputStream jarStream = new JarInputStream(inputStream);
 
@@ -63,8 +72,8 @@ public final class JarUtils {
         return jarStream;
       }
     }
-    if (jarLocation.startsWith("jar:") && jarLocation.endsWith("!/")) {
-      String jarLoc = jarLocation.substring(4, jarLocation.length() - 2);
+    if (jarLocation.startsWith(JAR_PROTOCOL) && jarLocation.endsWith(BANG_SEPARATOR)) {
+      String jarLoc = jarLocation.substring(4, jarLocation.length() - BANG_SEPARATOR.length());
       jarURL = new URL(jarLoc);
     }
     return jarURL.openStream();
@@ -79,8 +88,9 @@ public final class JarUtils {
    * @throws IOException
    */
   private static boolean readToEntry(JarInputStream jarStream, String path) throws IOException {
+    String folderPath = path.endsWith("/") ? path : path + '/';
     for (JarEntry jarEntry = null; (jarEntry = jarStream.getNextJarEntry()) != null; ) {
-      if (path.equals(jarEntry.getName())) {
+      if (path.equals(jarEntry.getName()) || folderPath.equals(jarEntry.getName())) {
         return true;
       }
     }
