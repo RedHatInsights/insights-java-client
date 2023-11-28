@@ -18,6 +18,7 @@ public class InsightsCustomScheduledExecutor extends ScheduledThreadPoolExecutor
   private InsightsCustomScheduledExecutor(
       InsightsLogger logger, InsightsConfiguration configuration) {
     super(1);
+    setKeepAliveTime(10L, TimeUnit.MILLISECONDS);
     this.logger = logger;
     this.configuration = configuration;
   }
