@@ -1,4 +1,4 @@
-/* Copyright (C) Red Hat 2023 */
+/* Copyright (C) Red Hat 2023-2024 */
 package com.redhat.insights.reports;
 
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -43,7 +43,7 @@ public class UpdateReportImpl implements InsightsReport {
   }
 
   @Override
-  public void generateReport(Filtering masking) {
+  public void generateReport(Filtering __) {
     if (!updatedJars.isEmpty()) {
       List<JarInfo> jars = new ArrayList<>();
       int sendCount = updatedJars.drainTo(jars);

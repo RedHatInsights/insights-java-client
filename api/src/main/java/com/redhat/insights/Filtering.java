@@ -1,13 +1,16 @@
-/* Copyright (C) Red Hat 2022-2023 */
+/* Copyright (C) Red Hat 2022-2024 */
 package com.redhat.insights;
 
+import com.redhat.insights.reports.Utils;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
 /** Insights data filtering function. */
 public enum Filtering implements Function<Map<String, Object>, Map<String, Object>> {
-  DEFAULT(Function.identity()),
+  DEFAULT(Utils::defaultMasking),
+
+  CLEARTEXT(Function.identity()),
 
   NOTHING(__ -> new HashMap<>());
 
