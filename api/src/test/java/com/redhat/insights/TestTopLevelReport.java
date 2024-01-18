@@ -2,6 +2,11 @@
 package com.redhat.insights;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.RETURNS_DEFAULTS;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 import com.redhat.insights.doubles.DummyTopLevelReport;
 import com.redhat.insights.jars.ClasspathJarInfoSubreport;
@@ -10,8 +15,10 @@ import com.redhat.insights.jars.JarInfoSubreport;
 import com.redhat.insights.reports.InsightsReport;
 import com.redhat.insights.reports.InsightsSubreport;
 import java.io.IOException;
+import java.lang.management.*;
 import java.util.*;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 
 public class TestTopLevelReport extends AbstractReportTest {
   @Test
@@ -241,6 +248,102 @@ public class TestTopLevelReport extends AbstractReportTest {
                 + pack.getName()
                 + " should be in the output");
       }
+    }
+  }
+
+  @Test
+  public void testReportSanitization() throws IOException {
+    DummyTopLevelReport insightsReport = new DummyTopLevelReport(logger, Collections.emptyMap());
+    insightsReport.setPackages(Package.getPackages());
+
+    List<String> unsanitizedJvmArgs =
+        Arrays.asList(
+            "-D[Standalone]",
+            "-verbose:gc",
+            "-Xloggc:/opt/jboss-eap-7.4.0/standalone/log/gc.log",
+            "-XX:+PrintGCDetails",
+            "-XX:+PrintGCDateStamps",
+            "-XX:+UseGCLogFileRotation",
+            "-XX:NumberOfGCLogFiles=5",
+            "-XX:GCLogFileSize=3M",
+            "-XX:-TraceClassUnloading",
+            "-Djdk.serialFilter=maxbytes=10485760;maxdepth=128;maxarray=100000;maxrefs=300000",
+            "-Xms1303m",
+            "-Xmx2048m",
+            "-XX:MetaspaceSize=128M",
+            "-XX:MaxMetaspaceSize=512m",
+            "-Djava.net.preferIPv4Stack=true",
+            "-Djboss.modules.system.pkgs=org.jboss.byteman",
+            "-Djava.awt.headless=true",
+            "-Dorg.jboss.boot.log.file=/opt/jboss-eap-7.4.0/standalone/log/server.log",
+            "-Dsome.dumb.practice=\"Man I hope \\\"' this = works\"",
+            "-Dlogging.configuration=file:/opt/jboss-eap-7.4.0/standalone/configuration/logging.properties");
+    List<String> sanitizedJvmArgs =
+        Arrays.asList(
+            "-D[Standalone]",
+            "-verbose:gc",
+            "-Xloggc:/opt/jboss-eap-7.4.0/standalone/log/gc.log",
+            "-XX:+PrintGCDetails",
+            "-XX:+PrintGCDateStamps",
+            "-XX:+UseGCLogFileRotation",
+            "-XX:NumberOfGCLogFiles=5",
+            "-XX:GCLogFileSize=3M",
+            "-XX:-TraceClassUnloading",
+            "-Djdk.serialFilter=ZZZZZZZZZ",
+            "-Xms1303m",
+            "-Xmx2048m",
+            "-XX:MetaspaceSize=128M",
+            "-XX:MaxMetaspaceSize=512m",
+            "-Djava.net.preferIPv4Stack=ZZZZZZZZZ",
+            "-Djboss.modules.system.pkgs=ZZZZZZZZZ",
+            "-Djava.awt.headless=ZZZZZZZZZ",
+            "-Dorg.jboss.boot.log.file=ZZZZZZZZZ",
+            "-Dsome.dumb.practice=ZZZZZZZZZ",
+            "-Dlogging.configuration=ZZZZZZZZZ");
+
+    // Mock the ManagementFactory and RuntimeMXBean to make it give our data
+    // But first collect the necessary beans to give back to the ManagementFactory
+    // If you don't those methods will return null, even if you use
+    // CallRealMethod or RETURNS_DEFAULTS
+    OperatingSystemMXBean systemMXBean = ManagementFactory.getOperatingSystemMXBean();
+    MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
+    List<GarbageCollectorMXBean> gcMxBeans = ManagementFactory.getGarbageCollectorMXBeans();
+    try (MockedStatic<ManagementFactory> mockFactory =
+        mockStatic(ManagementFactory.class, withSettings().defaultAnswer(RETURNS_DEFAULTS))) {
+      RuntimeMXBean mockRuntimeBean =
+          mock(RuntimeMXBean.class, withSettings().defaultAnswer(RETURNS_DEFAULTS));
+      mockFactory.when(ManagementFactory::getOperatingSystemMXBean).thenReturn(systemMXBean);
+      mockFactory.when(ManagementFactory::getMemoryMXBean).thenReturn(memoryMXBean);
+      mockFactory.when(ManagementFactory::getGarbageCollectorMXBeans).thenReturn(gcMxBeans);
+      when(mockRuntimeBean.getInputArguments()).thenReturn(unsanitizedJvmArgs);
+      mockFactory.when(ManagementFactory::getRuntimeMXBean).thenReturn(mockRuntimeBean);
+
+      String unsanitizedJavaCommand =
+          "/opt/jboss/7/eap/jboss-modules.jar -mp"
+              + " /opt/jboss/7/eap/modules:/opt/jboss/7/eap/../modules org.jboss.as.standalone"
+              + " -Djboss.home.dir=/opt/jboss/7/eap"
+              + " -Djboss.server.base.dir=/opt/jboss/7/instances/jboss-bdi-dwhprosa -c"
+              + " standalone.xml -Djboss.server.base.dir=/opt/jboss/7/instances/jboss-bdi-dwhprosa";
+      String sanitizedJavaCommand =
+          "/opt/jboss/7/eap/jboss-modules.jar -mp"
+              + " /opt/jboss/7/eap/modules:/opt/jboss/7/eap/../modules org.jboss.as.standalone"
+              + " -Djboss.home.dir=ZZZZZZZZZ -Djboss.server.base.dir=ZZZZZZZZZ -c standalone.xml"
+              + " -Djboss.server.base.dir=ZZZZZZZZZ";
+
+      // Set our java command property
+      System.setProperty("sun.java.command", unsanitizedJavaCommand);
+
+      String report = generateReport(insightsReport);
+      Map<?, ?> basicReport = (Map<?, ?>) parseReport(report).get("basic");
+
+      assertEquals(
+          sanitizedJvmArgs,
+          basicReport.get("jvm.args"),
+          "The \"jvm.args\" property in the basic report should be properly sanitized.");
+      assertEquals(
+          sanitizedJavaCommand,
+          basicReport.get("java.command"),
+          "The \"java.command\" property in the basic report should be properly sanitized.");
     }
   }
 }

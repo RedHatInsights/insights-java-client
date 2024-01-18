@@ -43,7 +43,7 @@ public class UpdateReportImpl implements InsightsReport {
   }
 
   @Override
-  public void generateReport(Filtering masking) {
+  public void generateReport(Filtering __) {
     if (!updatedJars.isEmpty()) {
       List<JarInfo> jars = new ArrayList<>();
       int sendCount = updatedJars.drainTo(jars);
