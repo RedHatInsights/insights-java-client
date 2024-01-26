@@ -1,4 +1,4 @@
-/* Copyright (C) Red Hat 2023 */
+/* Copyright (C) Red Hat 2023-2024 */
 package com.redhat.insights.core.httpclient;
 
 import static com.redhat.insights.InsightsErrorCode.*;
@@ -126,7 +126,7 @@ public class InsightsJdkHttpClient implements InsightsHttpClient {
 
     if (!configuration.useMTLS()) {
       final var authToken = configuration.getMaybeAuthToken().get();
-      requestBuilder = requestBuilder.setHeader("Authorization", "Basic " + authToken);
+      requestBuilder = requestBuilder.setHeader("Authorization", "Bearer " + authToken);
     }
     requestBuilder =
         requestBuilder.uri(
