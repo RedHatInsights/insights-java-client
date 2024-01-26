@@ -48,11 +48,11 @@ The original work is also licensed under the Apache 2 License.
 Here's a command-line guide to uploading some payload:
 
 ```
-export BASIC_AUTH='the-token'
+export AUTH='the-token'
 export HOST='the-host'
 
 curl -F "file=@foo.json.gz;type=application/vnd.redhat.runtimes-java-general.analytics+tgz" \
-	-H "Authorization: Basic ${BASIC_AUTH}" \
+	-H "Authorization: Bearer ${AUTH}" \
 	"https://${HOST}/api/ingress/v1/upload" -v --insecure
 ```
 
@@ -62,7 +62,7 @@ Or if you prefer HTTPie:
 http --verbose --multipart $HOST/api/ingress/v1/upload \
 'file@foo.json.gz;type=application/vnd.redhat.runtimes-java-general.analytics+tgz' \
 type='application/vnd.redhat.runtimes-java-general.analytics+tgz' \
-"Authorization":"Basic ${BASIC_AUTH}"
+"Authorization":"Bearer ${AUTH}"
 ```
 
 ## Environment variables and system properties

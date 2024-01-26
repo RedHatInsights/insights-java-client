@@ -1,4 +1,4 @@
-/* Copyright (C) Red Hat 2023 */
+/* Copyright (C) Red Hat 2023-2024 */
 package com.redhat.insights.core.httpclient;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -207,7 +207,7 @@ public class InsightsJdkHttpClientTest {
 
     // if using token, there should be authorization header
     assertEquals(1, request.get().headers().allValues("Authorization").size());
-    assertEquals("Basic randomToken", request.get().headers().allValues("Authorization").get(0));
+    assertEquals("Bearer randomToken", request.get().headers().allValues("Authorization").get(0));
   }
 
   @Test
