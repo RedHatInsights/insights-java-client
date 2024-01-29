@@ -76,7 +76,7 @@
 
     <!-- Test libraries versions -->
     <junit.version>5.10.1</junit.version>
-    <mockito.version>5.9.0</mockito.version>
+    <mockito.version>5.10.0</mockito.version>
     <servlet-api.version>4.0.1</servlet-api.version>
     <servlet-jsp-api.version>2.3.3</servlet-jsp-api.version>
     <vertx.version>4.5.1</vertx.version>
