@@ -85,7 +85,7 @@
     <awaitility.version>4.2.0</awaitility.version>
 
     <!-- Plugins versions -->
-    <maven-assembly-plugin.version>3.6.0</maven-assembly-plugin.version>
+    <maven-assembly-plugin.version>3.7.0</maven-assembly-plugin.version>
     <google-java-format.version>1.20.0</google-java-format.version>
     <spotless-maven-plugin.version>2.43.0</spotless-maven-plugin.version>
     <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
