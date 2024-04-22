@@ -33,7 +33,7 @@ jobs:
       - name: Set release version
         run: ./mvnw --batch-mode --no-transfer-progress versions:set -DnewVersion=${{ github.event.inputs.version }}
       - name: Commit & Push changes
-        uses: actions-js/push@v1.4
+        uses: actions-js/push@v1.5
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           message: "chore: releasing version ${{ github.event.inputs.version }}"
@@ -51,7 +51,7 @@ jobs:
       - name: Set the next release version
         run: ./mvnw --batch-mode --no-transfer-progress versions:set -DnewVersion=${{ github.event.inputs.nextVersion }}-SNAPSHOT
       - name: Commit & Push changes
-        uses: actions-js/push@v1.4
+        uses: actions-js/push@v1.5
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           message: "chore: setting version ${{ github.event.inputs.nextVersion }}-SNAPSHOT"
