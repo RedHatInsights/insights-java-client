@@ -1,4 +1,4 @@
-/* Copyright (C) Red Hat 2023 */
+/* Copyright (C) Red Hat 2023-2024 */
 package com.redhat.insights.jars;
 
 import com.redhat.insights.logging.InsightsLogger;
@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
@@ -253,6 +254,11 @@ public final class JarAnalyzer {
    * @return True if the jar file should be added, else false.
    */
   private boolean shouldAttemptAdd(final String jarFile) {
-    return !ignoreJars.contains(jarFile);
+    String agentJarFile =
+        Paths.get(JarAnalyzer.class.getProtectionDomain().getCodeSource().getLocation().getFile())
+            .getFileName()
+            .toString();
+
+    return !ignoreJars.contains(jarFile) && !jarFile.equals(agentJarFile);
   }
 }
