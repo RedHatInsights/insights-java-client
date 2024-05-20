@@ -1,4 +1,4 @@
-/* Copyright (C) Red Hat 2023 */
+/* Copyright (C) Red Hat 2023-2024 */
 package com.redhat.insights;
 
 import static com.redhat.insights.InsightsErrorCode.ERROR_SCHEDULED_SENT;
@@ -62,14 +62,14 @@ public class InsightsCustomScheduledExecutor extends ScheduledThreadPoolExecutor
                 ix);
             shutdown();
             throw ix;
-          } catch (Exception x) {
+          } catch (Throwable th) {
             logger.error(
                 ERROR_SCHEDULED_SENT.formatMessage(
                     "Red Hat Insights client scheduler shutdown, non-Insights failure: "
-                        + x.getMessage()),
-                x);
+                        + th.getMessage()),
+                th);
             shutdown();
-            throw x;
+            throw th;
           }
         };
 
