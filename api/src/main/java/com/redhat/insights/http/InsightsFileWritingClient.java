@@ -1,4 +1,4 @@
-/* Copyright (C) Red Hat 2023 */
+/* Copyright (C) Red Hat 2023-2024 */
 package com.redhat.insights.http;
 
 import static com.redhat.insights.InsightsErrorCode.ERROR_UPLOAD_DIR_CREATION;
@@ -22,7 +22,9 @@ public class InsightsFileWritingClient implements InsightsHttpClient {
   public InsightsFileWritingClient(InsightsLogger logger, InsightsConfiguration config) {
     this.logger = logger;
     this.config = config;
-    ensureArchiveUploadDirExists();
+    if (!config.isOptingOut()) {
+      ensureArchiveUploadDirExists();
+    }
   }
 
   private void ensureArchiveUploadDirExists() {
