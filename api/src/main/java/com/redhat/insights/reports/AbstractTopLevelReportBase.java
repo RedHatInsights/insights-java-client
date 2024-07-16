@@ -187,7 +187,7 @@ public abstract class AbstractTopLevelReportBase implements InsightsReport {
 
     // Check for -Xmn and -Xmx options on the command line
     for (String arg : inputArguments) {
-      if (arg.startsWith("-Xmn")) {
+      if (arg.startsWith("-Xms")) {
         heapMin = getMemorySize(arg.substring(4)).orElse(heapMin);
       } else if (arg.startsWith("-Xmx")) {
         heapMax = getMemorySize(arg.substring(4)).orElse(heapMax);
@@ -283,6 +283,6 @@ public abstract class AbstractTopLevelReportBase implements InsightsReport {
 
   @Override
   public String getVersion() {
-    return "1.0.0";
+    return "1.0.1";
   }
 }
