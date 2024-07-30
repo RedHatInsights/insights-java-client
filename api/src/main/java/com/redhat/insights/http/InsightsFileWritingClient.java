@@ -22,9 +22,7 @@ public class InsightsFileWritingClient implements InsightsHttpClient {
   public InsightsFileWritingClient(InsightsLogger logger, InsightsConfiguration config) {
     this.logger = logger;
     this.config = config;
-    if (!config.isOptingOut()) {
-      ensureArchiveUploadDirExists();
-    }
+    ensureArchiveUploadDirExists();
   }
 
   private void ensureArchiveUploadDirExists() {
