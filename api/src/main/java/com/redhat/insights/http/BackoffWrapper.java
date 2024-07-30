@@ -1,5 +1,5 @@
-/* Copyright (C) Red Hat 2023 */
-package com.redhat.insights.core.httpclient;
+/* Copyright (C) Red Hat 2023-2024 */
+package com.redhat.insights.http;
 
 import static com.redhat.insights.InsightsErrorCode.ERROR_CLIENT_BACKOFF_RETRIES_FAILED;
 import static com.redhat.insights.InsightsErrorCode.ERROR_INTERRUPTED_THREAD;
