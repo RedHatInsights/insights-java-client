@@ -71,34 +71,34 @@
     <!-- Core dependencies versions -->
     <jackson-core.version>2.17.1</jackson-core.version>
     <jackson-databind.version>2.17.1</jackson-databind.version>
-    <jackson-datatype-jsr310>2.16.2</jackson-datatype-jsr310>
-    <wildfly-elytron.version>2.3.1.Final</wildfly-elytron.version>
+    <jackson-datatype-jsr310>2.17.1</jackson-datatype-jsr310>
+    <wildfly-elytron.version>2.4.2.Final</wildfly-elytron.version>
 
     <!-- Test libraries versions -->
     <junit.version>5.10.2</junit.version>
-    <mockito.version>5.11.0</mockito.version>
+    <mockito.version>5.12.0</mockito.version>
     <servlet-api.version>4.0.1</servlet-api.version>
     <servlet-jsp-api.version>2.3.3</servlet-jsp-api.version>
-    <vertx.version>4.5.4</vertx.version>
-    <smallrye-mutiny-vertx-bindings.version>3.10.0</smallrye-mutiny-vertx-bindings.version>
+    <vertx.version>4.5.8</vertx.version>
+    <smallrye-mutiny-vertx-bindings.version>3.13.2</smallrye-mutiny-vertx-bindings.version>
     <system-stubs-jupiter.version>2.1.6</system-stubs-jupiter.version>
-    <awaitility.version>4.2.0</awaitility.version>
+    <awaitility.version>4.2.1</awaitility.version>
 
     <!-- Plugins versions -->
-    <maven-assembly-plugin.version>3.6.0</maven-assembly-plugin.version>
+    <maven-assembly-plugin.version>3.7.1</maven-assembly-plugin.version>
     <google-java-format.version>1.22.0</google-java-format.version>
     <spotless-maven-plugin.version>2.43.0</spotless-maven-plugin.version>
-    <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
+    <maven-surefire-plugin.version>3.3.1</maven-surefire-plugin.version>
     <jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version>
     <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
-    <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
-    <maven-install-plugin.version>3.1.1</maven-install-plugin.version>
+    <maven-jar-plugin.version>3.4.1</maven-jar-plugin.version>
+    <maven-install-plugin.version>3.1.2</maven-install-plugin.version>
     <maven-clean-plugin.version>3.3.2</maven-clean-plugin.version>
     <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
-    <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
-    <maven-javadoc-plugin.version>3.6.3</maven-javadoc-plugin.version>
-    <maven-deploy-plugin.version>3.1.1</maven-deploy-plugin.version>
-    <jreleaser-maven-plugin.version>1.11.0</jreleaser-maven-plugin.version>
+    <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
+    <maven-javadoc-plugin.version>3.7.0</maven-javadoc-plugin.version>
+    <maven-deploy-plugin.version>3.1.2</maven-deploy-plugin.version>
+    <jreleaser-maven-plugin.version>1.12.0</jreleaser-maven-plugin.version>
   </properties>
 
   <dependencyManagement>

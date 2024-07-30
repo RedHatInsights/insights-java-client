@@ -1,4 +1,4 @@
-/* Copyright (C) Red Hat 2022-2023 */
+/* Copyright (C) Red Hat 2022-2024 */
 package com.redhat.insights.reports;
 
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -23,7 +23,9 @@ import java.util.stream.Stream;
  * subreport class and a serializer.
  */
 public abstract class AbstractTopLevelReportBase implements InsightsReport {
+  private static final int BYTES_PER_KB = 1024;
   private static final int BYTES_PER_MB = 1048576;
+  private static final int BYTES_PER_GB = 1073741824;
 
   private static final Pattern JSON_WORKAROUND = Pattern.compile("\\\\+$");
 
@@ -174,14 +176,26 @@ public abstract class AbstractTopLevelReportBase implements InsightsReport {
     options.put("jvm.report_time", System.currentTimeMillis());
     options.put("jvm.pid", getProcessPID());
 
-    MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
-    MemoryUsage heapMemoryUsage = memoryMXBean.getHeapMemoryUsage();
-    options.put("jvm.heap.min", heapMemoryUsage.getInit() / BYTES_PER_MB);
-    options.put("jvm.heap.max", heapMemoryUsage.getMax() / BYTES_PER_MB);
-
     RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
     List<String> inputArguments = fixInputArguments(runtimeMXBean.getInputArguments());
     options.put("jvm.args", inputArguments);
+
+    MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
+    MemoryUsage heapMemoryUsage = memoryMXBean.getHeapMemoryUsage();
+    long heapMin = heapMemoryUsage.getInit();
+    long heapMax = heapMemoryUsage.getMax();
+
+    // Check for -Xmn and -Xmx options on the command line
+    for (String arg : inputArguments) {
+      if (arg.startsWith("-Xms")) {
+        heapMin = getMemorySize(arg.substring(4)).orElse(heapMin);
+      } else if (arg.startsWith("-Xmx")) {
+        heapMax = getMemorySize(arg.substring(4)).orElse(heapMax);
+      }
+    }
+
+    options.put("jvm.heap.min", heapMin / BYTES_PER_MB);
+    options.put("jvm.heap.max", heapMax / BYTES_PER_MB);
 
     List<GarbageCollectorMXBean> gcMxBeans = ManagementFactory.getGarbageCollectorMXBeans();
     StringBuilder gcDetails = new StringBuilder("gc");
@@ -248,8 +262,27 @@ public abstract class AbstractTopLevelReportBase implements InsightsReport {
     return matcher.replaceAll("");
   }
 
+  static OptionalLong getMemorySize(String size) {
+    if (size == null) {
+      return OptionalLong.empty();
+    }
+    try {
+      if (size.endsWith("k") || size.endsWith("K")) {
+        return OptionalLong.of(Long.parseLong(size.substring(0, size.length() - 1)) * BYTES_PER_KB);
+      } else if (size.endsWith("m") || size.endsWith("M")) {
+        return OptionalLong.of(Long.parseLong(size.substring(0, size.length() - 1)) * BYTES_PER_MB);
+      } else if (size.endsWith("g") || size.endsWith("G")) {
+        return OptionalLong.of(Long.parseLong(size.substring(0, size.length() - 1)) * BYTES_PER_GB);
+      } else {
+        return OptionalLong.of(Long.parseLong(size));
+      }
+    } catch (NumberFormatException e) {
+      return OptionalLong.empty();
+    }
+  }
+
   @Override
   public String getVersion() {
-    return "1.0.0";
+    return "1.0.1";
   }
 }

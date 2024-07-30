@@ -29,7 +29,7 @@ public class InsightsFileWritingClient implements InsightsHttpClient {
 
   private void ensureArchiveUploadDirExists() {
     Path dir = Paths.get(config.getArchiveUploadDir());
-    if (Files.notExists(dir)) {
+    if (Files.notExists(dir) && !config.isOptingOut()) {
       try {
         Files.createDirectories(dir);
       } catch (IOException e) {
@@ -46,6 +46,9 @@ public class InsightsFileWritingClient implements InsightsHttpClient {
 
   @Override
   public void sendInsightsReport(String filename, InsightsReport report) {
+    if (config.isOptingOut()) {
+      return;
+    }
     decorate(report);
 
     // Can't reuse upload path - as this may be called as part of fallback
