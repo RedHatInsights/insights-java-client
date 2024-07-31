@@ -5,6 +5,7 @@ import static com.redhat.insights.InsightsErrorCode.*;
 
 import com.redhat.insights.InsightsException;
 import com.redhat.insights.config.InsightsConfiguration;
+import com.redhat.insights.http.BackoffWrapper;
 import com.redhat.insights.http.InsightsHttpClient;
 import com.redhat.insights.logging.InsightsLogger;
 import com.redhat.insights.reports.InsightsReport;

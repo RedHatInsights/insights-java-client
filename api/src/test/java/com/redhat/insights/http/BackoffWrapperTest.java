@@ -1,5 +1,5 @@
-/* Copyright (C) Red Hat 2023 */
-package com.redhat.insights.core.httpclient;
+/* Copyright (C) Red Hat 2023-2024 */
+package com.redhat.insights.http;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -13,16 +13,16 @@ class BackoffWrapperTest {
 
   @Test
   void notFailingAction() {
-    var logger = PrintLogger.STDOUT_LOGGER;
-    var backoff = new BackoffWrapper(logger, 100L, 2L, 3, () -> {});
+    PrintLogger logger = PrintLogger.STDOUT_LOGGER;
+    BackoffWrapper backoff = new BackoffWrapper(logger, 100L, 2L, 3, () -> {});
     assertEquals(0, backoff.run());
   }
 
   @Test
   void alwaysFailingAction() {
-    var start = System.currentTimeMillis();
-    var logger = PrintLogger.STDOUT_LOGGER;
-    var backoff =
+    long start = System.currentTimeMillis();
+    PrintLogger logger = PrintLogger.STDOUT_LOGGER;
+    BackoffWrapper backoff =
         new BackoffWrapper(
             logger,
             10L,
@@ -45,10 +45,10 @@ class BackoffWrapperTest {
 
   @Test
   void eventuallySucceedingAction() {
-    var start = System.currentTimeMillis();
-    var count = new AtomicInteger(0);
-    var logger = PrintLogger.STDOUT_LOGGER;
-    var backoff =
+    long start = System.currentTimeMillis();
+    AtomicInteger count = new AtomicInteger(0);
+    PrintLogger logger = PrintLogger.STDOUT_LOGGER;
+    BackoffWrapper backoff =
         new BackoffWrapper(
             logger,
             10L,
