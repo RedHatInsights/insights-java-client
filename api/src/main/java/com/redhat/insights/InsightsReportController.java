@@ -1,4 +1,4 @@
-/* Copyright (C) Red Hat 2022-2023 */
+/* Copyright (C) Red Hat 2022-2024 */
 package com.redhat.insights;
 
 import static com.redhat.insights.InsightsErrorCode.ERROR_GENERATING_HASH;
@@ -103,11 +103,12 @@ public final class InsightsReportController {
   /** Generates the report (including subreports), computes identifying hash and schedules sends */
   public void generate() {
     try {
-
       if (configuration.isOptingOut()) {
         throw new InsightsException(OPT_OUT, "Opting out of the Red Hat Insights client");
       }
-      final InsightsReport updateReport = new UpdateReportImpl(jarsToSend, logger);
+      if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+        throw new InsightsException(OPT_OUT, "Red Hat Insights is not supported on Windows.");
+      }
 
       // Schedule initial event
       Runnable sendConnect =
@@ -131,6 +132,7 @@ public final class InsightsReportController {
       scheduler.scheduleConnect(sendConnect);
 
       // Schedule a possible Jar send (every few mins? Defaults to 5 min)
+      final InsightsReport updateReport = new UpdateReportImpl(jarsToSend, logger);
       Runnable sendNewJarsIfAny =
           () -> {
             InsightsHttpClient httpClient = httpClientSupplier.get();
