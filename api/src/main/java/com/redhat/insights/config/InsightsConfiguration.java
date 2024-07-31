@@ -1,4 +1,4 @@
-/* Copyright (C) Red Hat 2023 */
+/* Copyright (C) Red Hat 2023-2024 */
 package com.redhat.insights.config;
 
 import java.time.Duration;
@@ -69,6 +69,10 @@ public interface InsightsConfiguration {
   }
 
   default boolean isOptingOut() {
+    String osName = System.getProperty("os.name");
+    if (osName != null) {
+      return osName.trim().toLowerCase().contains("windows");
+    }
     return false;
   }
 
