@@ -1,4 +1,4 @@
-/* Copyright (C) Red Hat 2023 */
+/* Copyright (C) Red Hat 2023-2024 */
 package com.redhat.insights.config;
 
 import static com.redhat.insights.InsightsErrorCode.ERROR_IDENTIFICATION_NOT_DEFINED;
@@ -123,6 +123,10 @@ public class EnvAndSysPropsInsightsConfiguration extends DefaultInsightsConfigur
 
   @Override
   public boolean isOptingOut() {
+    String osName = System.getProperty("os.name");
+    if (osName != null && osName.trim().toLowerCase().contains("windows")) {
+      return true;
+    }
     String value = lookup(ENV_OPT_OUT);
     if (value != null) {
       return "true".equalsIgnoreCase(value.trim());
