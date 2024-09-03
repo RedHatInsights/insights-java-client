@@ -43,6 +43,11 @@
       <artifactId>wildfly-elytron-x500-cert</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.jspecify</groupId>
+      <artifactId>jspecify</artifactId>
+    </dependency>
+
     <!-- Test dependencies -->
 
     <dependency>

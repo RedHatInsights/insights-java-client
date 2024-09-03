@@ -1,4 +1,4 @@
-/* Copyright (C) Red Hat 2023 */
+/* Copyright (C) Red Hat 2023-2024 */
 package com.redhat.insights;
 
 import static com.redhat.insights.InsightsErrorCode.NONE;
@@ -42,6 +42,6 @@ public final class InsightsException extends RuntimeException {
 
   @Override
   public String getMessage() {
-    return error.formatMessage(super.getMessage());
+    return error.formatMessage(String.valueOf(super.getMessage()));
   }
 }

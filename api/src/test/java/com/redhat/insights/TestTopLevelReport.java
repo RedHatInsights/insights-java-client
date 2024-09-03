@@ -97,14 +97,10 @@ public class TestTopLevelReport extends AbstractReportTest {
   public void testGenerateReportWithEmptySubreport() throws IOException {
     JarInfoSubreport jarInfoSubreport =
         new JarInfoSubreport(logger, Collections.singletonList(JarInfo.MISSING));
-    InsightsReport insightsReport =
-        new DummyTopLevelReport(
-            logger,
-            new HashMap<String, InsightsSubreport>() {
-              {
-                put("jarsSubreport", jarInfoSubreport);
-              }
-            });
+    Map<String, InsightsSubreport> reports = new HashMap<>();
+    reports.put("jarsSubreport", jarInfoSubreport);
+
+    InsightsReport insightsReport = new DummyTopLevelReport(logger, reports);
 
     String report = generateReport(insightsReport);
 
@@ -139,33 +135,24 @@ public class TestTopLevelReport extends AbstractReportTest {
 
   @Test
   public void testGenerateReportWithJarInfoSubreports() throws IOException {
+    Map<String, String> attrs = new HashMap<>();
+    attrs.put("attr1", "value1");
+    attrs.put("attr2", "value2 \t \t ");
+
     // prepare JarInfo
     JarInfo jarInfoWithoutAttrs = new JarInfo("RandomName", "0.9", Collections.emptyMap());
-    JarInfo jarInfoWithAttrs =
-        new JarInfo(
-            "DifferentName :\" \n",
-            "0.1",
-            new HashMap<String, String>() {
-              {
-                put("attr1", "value1");
-                put("attr2", "value2 \t \t ");
-              }
-            });
+    JarInfo jarInfoWithAttrs = new JarInfo("DifferentName :\" \n", "0.1", attrs);
 
     // put JarInfos into subreport
     JarInfoSubreport jarInfoSubreport =
         new JarInfoSubreport(logger, Arrays.asList(jarInfoWithoutAttrs, jarInfoWithAttrs));
 
+    Map<String, InsightsSubreport> reports = new HashMap<>();
+    reports.put("jarsSubreport", jarInfoSubreport);
+    reports.put("classpathSubreport", new ClasspathJarInfoSubreport(logger));
+
     // create top level report with subreports
-    InsightsReport insightsReport =
-        new DummyTopLevelReport(
-            logger,
-            new HashMap<String, InsightsSubreport>() {
-              {
-                put("jarsSubreport", jarInfoSubreport);
-                put("classpathSubreport", new ClasspathJarInfoSubreport(logger));
-              }
-            });
+    InsightsReport insightsReport = new DummyTopLevelReport(logger, reports);
 
     String report = generateReport(insightsReport);
 

@@ -1,4 +1,4 @@
-/* Copyright (C) Red Hat 2023 */
+/* Copyright (C) Red Hat 2023-2024 */
 package com.redhat.insights;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -55,17 +55,12 @@ public class TestUpdateReport extends AbstractReportTest {
     String idHash = "Lorem ipsum dolor sit amet";
     BlockingQueue<JarInfo> blockingQueue = new ArrayBlockingQueue<>(10);
 
+    Map<String, String> attrs = new HashMap<>();
+    attrs.put("attr1", "value1");
+    attrs.put("attr2", "value2 \t \t ");
+
     JarInfo jarInfoWithoutAttrs = new JarInfo("RandomName", "0.9", Collections.emptyMap());
-    JarInfo jarInfoWithAttrs =
-        new JarInfo(
-            "DifferentName",
-            "0.1",
-            new HashMap<String, String>() {
-              {
-                put("attr1", "value1");
-                put("attr2", "value2 \t \t ");
-              }
-            });
+    JarInfo jarInfoWithAttrs = new JarInfo("DifferentName", "0.1", attrs);
 
     blockingQueue.add(jarInfoWithoutAttrs);
     blockingQueue.add(jarInfoWithAttrs);

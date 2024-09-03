@@ -1,4 +1,4 @@
-/* Copyright (C) Red Hat 2022-2023 */
+/* Copyright (C) Red Hat 2022-2024 */
 package com.redhat.insights;
 
 /**

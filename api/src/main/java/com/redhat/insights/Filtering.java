@@ -20,6 +20,7 @@ public enum Filtering implements Function<Map<String, Object>, Map<String, Objec
     this.mask = mask;
   }
 
+  @Override
   public Map<String, Object> apply(Map<String, Object> unfiltered) {
     return mask.apply(unfiltered);
   }

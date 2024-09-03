@@ -1,4 +1,4 @@
-/* Copyright (C) Red Hat 2023 */
+/* Copyright (C) Red Hat 2023-2024 */
 package com.redhat.insights.it;
 
 import static org.awaitility.Awaitility.await;
@@ -260,31 +260,23 @@ public class InsightsReportControllerTest {
 
   /** Prepare report to be sent */
   private InsightsReport prepareReport() {
+    Map<String, String> attrs = new HashMap<>();
+    attrs.put("attr1", "value1");
+    attrs.put("attr2", "value2 \t \t ");
+
     JarInfo jarInfoWithoutAttrs = new JarInfo("RandomName", "0.9", Collections.emptyMap());
-    JarInfo jarInfoWithAttrs =
-        new JarInfo(
-            "DifferentName :\" \n",
-            "0.1",
-            new HashMap<String, String>() {
-              {
-                put("attr1", "value1");
-                put("attr2", "value2 \t \t ");
-              }
-            });
+    JarInfo jarInfoWithAttrs = new JarInfo("DifferentName :\" \n", "0.1", attrs);
 
     // put JarInfos into subreport
     JarInfoSubreport jarInfoSubreport =
         new JarInfoSubreport(logger, Arrays.asList(jarInfoWithoutAttrs, jarInfoWithAttrs));
 
     // create top level report with subreports
-    return new DummyTopLevelReport(
-        logger,
-        new HashMap<String, InsightsSubreport>() {
-          {
-            put("jarsSubreport", jarInfoSubreport);
-            put("classpathSubreport", new ClasspathJarInfoSubreport(logger));
-          }
-        });
+    Map<String, InsightsSubreport> reports = new HashMap<>();
+    reports.put("jarsSubreport", jarInfoSubreport);
+    reports.put("classpathSubreport", new ClasspathJarInfoSubreport(logger));
+
+    return new DummyTopLevelReport(logger, reports);
   }
 
   private Map<?, ?> parseReport(String report) throws JsonProcessingException {

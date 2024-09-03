@@ -1,4 +1,4 @@
-/* Copyright (C) Red Hat 2023 */
+/* Copyright (C) Red Hat 2023-2024 */
 package com.redhat.insights.http;
 
 import static com.redhat.insights.InsightsErrorCode.ERROR_GZIP_FILE;
@@ -8,6 +8,7 @@ import com.redhat.insights.reports.InsightsReport;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.zip.GZIPOutputStream;
 
 /**
@@ -72,7 +73,8 @@ public interface InsightsHttpClient {
       gzip.close();
       return baos.toByteArray();
     } catch (IOException iox) {
-      throw new InsightsException(ERROR_GZIP_FILE, "Failed to GZIP report: " + report, iox);
+      throw new InsightsException(
+          ERROR_GZIP_FILE, "Failed to GZIP report: " + Arrays.toString(report), iox);
     }
   }
 }
