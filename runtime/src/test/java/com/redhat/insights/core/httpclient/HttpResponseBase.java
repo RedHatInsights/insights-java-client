@@ -1,4 +1,4 @@
-/* Copyright (C) Red Hat 2023 */
+/* Copyright (C) Red Hat 2023-2024 */
 package com.redhat.insights.core.httpclient;
 
 import java.net.URI;
@@ -8,7 +8,9 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Optional;
 import javax.net.ssl.SSLSession;
+import org.jspecify.annotations.NullUnmarked;
 
+@NullUnmarked
 public class HttpResponseBase implements HttpResponse<String> {
 
   @Override

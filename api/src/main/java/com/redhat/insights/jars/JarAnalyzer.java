@@ -144,16 +144,14 @@ public final class JarAnalyzer {
         if (oPom.isPresent()) {
           Map<String, String> pom = oPom.get();
           attributes.putAll(pom);
-          return new JarInfo(jarFilename, pom.getOrDefault("version", "[null]"), attributes);
+          return new JarInfo(jarFilename, pom.getOrDefault("version", UNKNOWN_VERSION), attributes);
         }
       } catch (Exception ex) {
         logger.error(url + "Exception getting extra attributes or pom", ex);
       }
 
-      String version = getVersion(jarInputStream);
-      if (version == null || "".equals(version)) {
-        version = UNKNOWN_VERSION;
-      }
+      Optional<String> oVersion = getVersion(jarInputStream);
+      String version = oVersion.orElse(UNKNOWN_VERSION);
 
       return new JarInfo(jarFilename, version, attributes);
     }
@@ -201,13 +199,13 @@ public final class JarAnalyzer {
     }
   }
 
-  static String getVersion(JarInputStream jarFile) {
+  static Optional<String> getVersion(JarInputStream jarFile) {
     Manifest manifest = jarFile.getManifest();
     if (manifest == null) {
-      return String.valueOf((Object) null);
+      return Optional.empty();
     }
 
-    return JarUtils.getVersionFromManifest(manifest);
+    return Optional.of(JarUtils.getVersionFromManifest(manifest));
   }
 
   /**

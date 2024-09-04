@@ -66,7 +66,7 @@ public class RecursiveJarAnalyzerHelperTest {
         jars.getOrDefault("pdfbox-2.0.27.jar", new JarInfo("dummy", "0.0.0", new HashMap<>()))
             .name());
     assertEquals(
-        "numberguess.war/WEB-INF/lib/pdfbox-2.0.27.jar",
+        "numberguess.war/WEB-INF/lib/fontbox-2.0.27.jar",
         jars.getOrDefault("fontbox-2.0.27.jar", new JarInfo("dummy", "0.0.0", new HashMap<>()))
             .attributes()
             .get("path"));
