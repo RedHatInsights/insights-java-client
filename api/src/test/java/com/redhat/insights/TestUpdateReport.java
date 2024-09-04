@@ -10,8 +10,10 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import org.jspecify.annotations.NullUnmarked;
 import org.junit.jupiter.api.Test;
 
+@NullUnmarked
 public class TestUpdateReport extends AbstractReportTest {
 
   @Test

@@ -1,4 +1,4 @@
-/* Copyright (C) Red Hat 2023 */
+/* Copyright (C) Red Hat 2023-2024 */
 package com.redhat.insights.tls;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -9,9 +9,11 @@ import com.redhat.insights.logging.PrintLogger;
 import com.redhat.insights.logging.TestLogger;
 import java.io.IOException;
 import java.nio.file.*;
+import org.jspecify.annotations.NullUnmarked;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+@NullUnmarked
 public class PEMSupportTest {
 
   @Test

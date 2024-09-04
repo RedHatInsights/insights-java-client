@@ -1,9 +1,11 @@
-/* Copyright (C) Red Hat 2023 */
+/* Copyright (C) Red Hat 2023-2024 */
 package com.redhat.insights.logging;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.jspecify.annotations.NullUnmarked;
 
+@NullUnmarked
 public class TestLogger implements InsightsLogger {
   public enum LogLevel {
     DEBUG,
@@ -57,7 +59,7 @@ public class TestLogger implements InsightsLogger {
     return logs;
   }
 
-  public class TestLogRecord {
+  public static class TestLogRecord {
     private LogLevel logLevel;
     private String message;
     private Throwable throwable;
@@ -84,6 +86,7 @@ public class TestLogger implements InsightsLogger {
       return throwable;
     }
 
+    @Override
     public String toString() {
       return "["
           + getLogLevel()

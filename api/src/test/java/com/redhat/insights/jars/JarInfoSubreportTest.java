@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.redhat.insights.AbstractReportTest;
 import java.util.*;
+import org.jspecify.annotations.NullUnmarked;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.Test;
  * @see JarInfoSubreportSerializer
  * @see ClasspathJarInfoSubreport
  */
+@NullUnmarked
 public class JarInfoSubreportTest extends AbstractReportTest {
   // list a few jars that should be in a classpath
   private static final List<String> expectedJars =

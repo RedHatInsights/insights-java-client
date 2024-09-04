@@ -17,9 +17,11 @@ import com.redhat.insights.reports.InsightsSubreport;
 import java.io.IOException;
 import java.lang.management.*;
 import java.util.*;
+import org.jspecify.annotations.NullUnmarked;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
+@NullUnmarked
 public class TestTopLevelReport extends AbstractReportTest {
   @Test
   public void testGenerateReportWithoutSubreports() throws IOException {

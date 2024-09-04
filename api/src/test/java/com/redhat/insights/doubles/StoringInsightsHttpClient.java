@@ -1,16 +1,17 @@
-/* Copyright (C) Red Hat 2023 */
+/* Copyright (C) Red Hat 2023-2024 */
 package com.redhat.insights.doubles;
 
 import com.redhat.insights.http.InsightsHttpClient;
 import com.redhat.insights.reports.InsightsReport;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Fake http client, which will store content of report sent. Designed to test @link
  * InsightsReportController
  */
 public class StoringInsightsHttpClient implements InsightsHttpClient {
-  private String reportFilename = null;
-  private InsightsReport reportContent = null;
+  private @Nullable String reportFilename = null;
+  private @Nullable InsightsReport reportContent = null;
   private int reportsSent = 0;
 
   private boolean readyToSend = true;
@@ -40,11 +41,11 @@ public class StoringInsightsHttpClient implements InsightsHttpClient {
     this.readyToSend = readyToSend;
   }
 
-  public String getReportFilename() {
+  public @Nullable String getReportFilename() {
     return reportFilename;
   }
 
-  public InsightsReport getReportContent() {
+  public @Nullable InsightsReport getReportContent() {
     return reportContent;
   }
 
