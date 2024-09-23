@@ -86,7 +86,7 @@
 
     <!-- Plugins versions -->
     <maven-assembly-plugin.version>3.7.1</maven-assembly-plugin.version>
-    <google-java-format.version>1.22.0</google-java-format.version>
+    <google-java-format.version>1.23.0</google-java-format.version>
     <spotless-maven-plugin.version>2.43.0</spotless-maven-plugin.version>
     <maven-surefire-plugin.version>3.3.1</maven-surefire-plugin.version>
     <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
@@ -96,12 +96,12 @@
     <jspecify.version>1.0.0</jspecify.version>
     <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
     <maven-install-plugin.version>3.1.2</maven-install-plugin.version>
-    <maven-clean-plugin.version>3.3.2</maven-clean-plugin.version>
+    <maven-clean-plugin.version>3.4.0</maven-clean-plugin.version>
     <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
     <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
     <maven-javadoc-plugin.version>3.8.0</maven-javadoc-plugin.version>
     <maven-deploy-plugin.version>3.1.2</maven-deploy-plugin.version>
-    <jreleaser-maven-plugin.version>1.12.0</jreleaser-maven-plugin.version>
+    <jreleaser-maven-plugin.version>1.14.0</jreleaser-maven-plugin.version>
   </properties>
 
   <dependencyManagement>
