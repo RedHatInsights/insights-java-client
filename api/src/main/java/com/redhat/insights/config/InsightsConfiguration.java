@@ -3,11 +3,13 @@ package com.redhat.insights.config;
 
 import java.time.Duration;
 import java.util.Optional;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Insights client configuration, covering topics such as PEM file locations, endpoint parameters,
  * proxing and more.
  */
+@NullMarked
 public interface InsightsConfiguration {
 
   String DEFAULT_RHEL_CERT_FILE_PATH = "/etc/pki/consumer/cert.pem";

@@ -6,6 +6,7 @@ import static com.redhat.insights.InsightsErrorCode.ERROR_IDENTIFICATION_NOT_DEF
 import com.redhat.insights.InsightsException;
 import java.time.Duration;
 import java.util.Optional;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Configuration where values from {@link DefaultInsightsConfiguration} can be overridden by
@@ -13,6 +14,7 @@ import java.util.Optional;
  *
  * <p>Environment variables take priority over system properties.
  */
+@NullMarked
 public class EnvAndSysPropsInsightsConfiguration extends DefaultInsightsConfiguration {
 
   public static final String ENV_IDENTIFICATION_NAME = "RHT_INSIGHTS_JAVA_IDENTIFICATION_NAME";

@@ -1,10 +1,12 @@
-/* Copyright (C) Red Hat 2023 */
+/* Copyright (C) Red Hat 2023-2024 */
 package com.redhat.insights;
 
 import java.util.List;
 import java.util.concurrent.ScheduledFuture;
+import org.jspecify.annotations.NullMarked;
 
 /** Interface for scheduling {@code CONNECT} and {@code UPDATE} events. */
+@NullMarked
 public interface InsightsScheduler {
 
   /**

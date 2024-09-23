@@ -3,12 +3,15 @@ package com.redhat.insights;
 
 import static com.redhat.insights.InsightsErrorCode.NONE;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * General-purpose insights client exception type.
  *
  * <p>Lower-level exceptions (IO, etc.) shall be wrapped or attached to an {@link
  * InsightsException}.
  */
+@NullMarked
 public final class InsightsException extends RuntimeException {
 
   private final InsightsErrorCode error;

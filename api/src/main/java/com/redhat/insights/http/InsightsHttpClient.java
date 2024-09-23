@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.zip.GZIPOutputStream;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * The main interface used for delivering Insights data (aka archives) to Red Hat. Note that the
@@ -17,6 +18,7 @@ import java.util.zip.GZIPOutputStream;
  * However, we need to also support a file-based mechanism - but only temporarily - so we don't warp
  * the interface name.
  */
+@NullMarked
 public interface InsightsHttpClient {
 
   public static final String GENERAL_MIME_TYPE =

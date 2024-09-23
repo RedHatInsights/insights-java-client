@@ -1,4 +1,4 @@
-/* Copyright (C) Red Hat 2023 */
+/* Copyright (C) Red Hat 2023-2024 */
 package com.redhat.insights.http;
 
 import static com.redhat.insights.InsightsErrorCode.ERROR_CLIENT_FAILED;
@@ -8,11 +8,13 @@ import com.redhat.insights.logging.InsightsLogger;
 import com.redhat.insights.reports.InsightsReport;
 import java.util.Arrays;
 import java.util.List;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * An implementation of the Insights client interface that can try multiple connection paths. This
  * includes the expected primary use case of HTTPS, then File.
  */
+@NullMarked
 public class InsightsMultiClient implements InsightsHttpClient {
   private final InsightsLogger logger;
   private final List<InsightsHttpClient> clients;

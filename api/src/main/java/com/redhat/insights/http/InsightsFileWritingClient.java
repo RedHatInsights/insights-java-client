@@ -14,7 +14,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import org.jspecify.annotations.NullMarked;
 
+/** A client that writes the insights report to a file. */
+@NullMarked
 public class InsightsFileWritingClient implements InsightsHttpClient {
   private final InsightsLogger logger;
   private final InsightsConfiguration config;
