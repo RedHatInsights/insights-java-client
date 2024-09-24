@@ -4,6 +4,7 @@ package com.redhat.insights.config;
 import static com.redhat.insights.InsightsErrorCode.ERROR_IDENTIFICATION_NOT_DEFINED;
 
 import com.redhat.insights.InsightsException;
+import java.net.URI;
 import java.time.Duration;
 import java.util.Optional;
 import org.jspecify.annotations.NullMarked;
@@ -26,6 +27,7 @@ public class EnvAndSysPropsInsightsConfiguration extends DefaultInsightsConfigur
   public static final String ENV_ARCHIVE_UPLOAD_DIR = "RHT_INSIGHTS_JAVA_ARCHIVE_UPLOAD_DIR";
   public static final String ENV_PROXY_HOST = "RHT_INSIGHTS_JAVA_PROXY_HOST";
   public static final String ENV_PROXY_PORT = "RHT_INSIGHTS_JAVA_PROXY_PORT";
+  public static final String ENV_HTTPS_PROXY = "HTTPS_PROXY";
   public static final String ENV_OPT_OUT = "RHT_INSIGHTS_JAVA_OPT_OUT";
   public static final String ENV_CONNECT_PERIOD = "RHT_INSIGHTS_JAVA_CONNECT_PERIOD";
   public static final String ENV_UPDATE_PERIOD = "RHT_INSIGHTS_JAVA_UPDATE_PERIOD";
@@ -118,7 +120,13 @@ public class EnvAndSysPropsInsightsConfiguration extends DefaultInsightsConfigur
     String host = lookup(ENV_PROXY_HOST);
     String port = lookup(ENV_PROXY_PORT);
     if (host == null || port == null) {
-      return Optional.empty();
+      String httpsProxy = lookup(ENV_HTTPS_PROXY);
+      if (httpsProxy == null) {
+        return Optional.empty();
+      }
+      URI proxyUri = URI.create(httpsProxy);
+      host = proxyUri.getHost();
+      port = Integer.toString(proxyUri.getPort());
     }
     return Optional.of(new ProxyConfiguration(host, Integer.parseUnsignedInt(port)));
   }
