@@ -138,21 +138,20 @@ public final class JarAnalyzer {
       try {
         getExtraAttributes(jarInputStream, attributes);
 
-        Map<String, String> pom = getPom(jarInputStream);
+        Optional<Map<String, String>> oPom = getPom(jarInputStream);
 
         // if we find exactly one pom, use it
-        if (pom != null) {
+        if (oPom.isPresent()) {
+          Map<String, String> pom = oPom.get();
           attributes.putAll(pom);
-          return new JarInfo(jarFilename, pom.get("version"), attributes);
+          return new JarInfo(jarFilename, pom.getOrDefault("version", UNKNOWN_VERSION), attributes);
         }
       } catch (Exception ex) {
         logger.error(url + "Exception getting extra attributes or pom", ex);
       }
 
-      String version = getVersion(jarInputStream);
-      if (version == null || "".equals(version)) {
-        version = UNKNOWN_VERSION;
-      }
+      Optional<String> oVersion = getVersion(jarInputStream);
+      String version = oVersion.orElse(UNKNOWN_VERSION);
 
       return new JarInfo(jarFilename, version, attributes);
     }
@@ -163,26 +162,26 @@ public final class JarAnalyzer {
    * are found, return null.
    */
   @SuppressWarnings({"unchecked", "rawtypes"})
-  private static Map<String, String> getPom(JarInputStream jarFile) throws IOException {
-    Map<String, String> pom = null;
+  private static Optional<Map<String, String>> getPom(JarInputStream jarFile) throws IOException {
+    Optional<Map<String, String>> out = Optional.empty();
 
     for (JarEntry entry = jarFile.getNextJarEntry();
         entry != null;
         entry = jarFile.getNextJarEntry()) {
       if (entry.getName().startsWith("META-INF/maven")
           && entry.getName().endsWith("pom.properties")) {
-        if (pom != null) {
+        if (out.isPresent()) {
           // we've found multiple pom files. bail!
-          return null;
+          return Optional.empty();
         }
         Properties props = new Properties();
         props.load(jarFile);
 
-        pom = (Map) props;
+        out = Optional.of((Map) props);
       }
     }
 
-    return pom;
+    return out;
   }
 
   static void getExtraAttributes(JarInputStream jarFile, Map<String, String> map) {
@@ -200,13 +199,13 @@ public final class JarAnalyzer {
     }
   }
 
-  static String getVersion(JarInputStream jarFile) {
+  static Optional<String> getVersion(JarInputStream jarFile) {
     Manifest manifest = jarFile.getManifest();
     if (manifest == null) {
-      return null;
+      return Optional.empty();
     }
 
-    return JarUtils.getVersionFromManifest(manifest);
+    return Optional.of(JarUtils.getVersionFromManifest(manifest));
   }
 
   /**

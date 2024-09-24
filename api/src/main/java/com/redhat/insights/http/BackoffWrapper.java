@@ -7,6 +7,7 @@ import static com.redhat.insights.InsightsErrorCode.ERROR_INTERRUPTED_THREAD;
 import com.redhat.insights.InsightsException;
 import com.redhat.insights.config.InsightsConfiguration;
 import com.redhat.insights.logging.InsightsLogger;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * A general-purpose exponential backoff implementation.
@@ -14,6 +15,7 @@ import com.redhat.insights.logging.InsightsLogger;
  * <p>It wraps an execution that might throw an exception (see {@link Action}). In this case
  * attempts will be retried with the provided parameters (count, initial delay, factor).
  */
+@NullMarked
 public final class BackoffWrapper {
 
   @FunctionalInterface

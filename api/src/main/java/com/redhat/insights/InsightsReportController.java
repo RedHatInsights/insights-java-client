@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.*;
 import java.util.function.Supplier;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * The controller class has primarily responsibility for managing the upload of {@code CONNECT} and
@@ -24,6 +25,7 @@ import java.util.function.Supplier;
  * <p>Client code must explicitly manage the lifecycle of the controller object, and shut it down at
  * application exit.
  */
+@NullMarked
 public final class InsightsReportController {
 
   private final InsightsLogger logger;

@@ -1,4 +1,4 @@
-/* Copyright (C) Red Hat 2023 */
+/* Copyright (C) Red Hat 2023-2024 */
 package com.redhat.insights.it;
 
 import static org.awaitility.Awaitility.await;
@@ -24,10 +24,12 @@ import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
+import org.jspecify.annotations.NullUnmarked;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
+@NullUnmarked
 public class InsightsReportControllerTest {
   private static final InsightsLogger logger = new NoopInsightsLogger();
 
@@ -96,14 +98,20 @@ public class InsightsReportControllerTest {
         instance.isShutdown(), "Controller should be shutdown, after it was forced to shutdown");
     assertEquals(jarsQueue, instance.getJarsToSend(), "JarsToSend should be the same as set");
 
+    String reportFileName = httpClient.getReportFilename();
+    assertNotNull(reportFileName, "Report filename should not be null");
     assertTrue(
-        httpClient.getReportFilename().matches("^.*_connect\\.txt"),
-        "Report filename should be *_connect.txt");
+        reportFileName.matches("^.*_connect\\.txt"), "Report filename should be *_connect.txt");
 
-    Map<?, ?> parsedReport = parseReport(httpClient.getReportContent().serialize());
+    InsightsReport reportContent = httpClient.getReportContent();
+    assertNotNull(reportContent, "Report content should not be null");
+    Map<?, ?> parsedReport = parseReport(reportContent.serialize());
     assertTrue(parsedReport.containsKey("version"), "Report should have version");
     assertTrue(parsedReport.containsKey("idHash"), "Report should have idHash");
-    assertFalse(((String) parsedReport.get("idHash")).isEmpty(), "Report iHash not be empty");
+
+    String strIdHash = (String) parsedReport.get("idHash");
+    assertNotNull(strIdHash, "Report should have idHash");
+    assertFalse(strIdHash.isEmpty(), "Report iHash not be empty");
     assertTrue(parsedReport.containsKey("basic"), "Report should have basic");
     assertTrue(parsedReport.containsKey("jarsSubreport"), "Report should have jarsSubreport");
     assertTrue(
@@ -132,15 +140,22 @@ public class InsightsReportControllerTest {
 
     // There should be two reports sent - one connect and one update
     assertEquals(2, httpClient.getReportsSent(), "There should be 2 reports sent");
+    String reportFileName = httpClient.getReportFilename();
+    assertNotNull(reportFileName, "Report filename should not be null");
     assertTrue(
-        httpClient.getReportFilename().matches("^.*_update\\.txt"),
+        reportFileName.matches("^.*_update\\.txt"),
         "Update report filename should be *_update.txt");
 
     // validate content of report
-    Map<?, ?> parsedReport = parseReport(httpClient.getReportContent().serialize());
+    InsightsReport reportContent = httpClient.getReportContent();
+    assertNotNull(reportContent, "Report content should not be null");
+    Map<?, ?> parsedReport = parseReport(reportContent.serialize());
+    assertNotNull(parsedReport, "Parsed report should not be null");
     assertTrue(parsedReport.containsKey("version"), "Report should have version");
     assertTrue(parsedReport.containsKey("idHash"), "Report should have idHash");
-    assertFalse(((String) parsedReport.get("idHash")).isEmpty(), "Report iHash not be empty");
+    String idHash = (String) parsedReport.get("idHash");
+    assertNotNull(idHash, "Report should have idHash");
+    assertFalse(idHash.isEmpty(), "Report iHash not be empty");
     assertTrue(parsedReport.containsKey("updated-jars"), "Report should have basic");
   }
 
@@ -174,11 +189,16 @@ public class InsightsReportControllerTest {
             () -> assertEquals(3, httpClient.getReportsSent(), "There should be 3 reports sent"));
     instance.shutdown();
 
+    String reportFilename = httpClient.getReportFilename();
+    assertNotNull(reportFilename, "Report filename should not be null");
     assertTrue(
-        httpClient.getReportFilename().matches("^.*_update\\.txt"),
+        reportFilename.matches("^.*_update\\.txt"),
         "Update report filename should be *_update.txt");
     // validate content of last report
-    Map<?, ?> parsedReport = parseReport(httpClient.getReportContent().serialize());
+    InsightsReport reportContent = httpClient.getReportContent();
+    assertNotNull(reportContent, "Report content should not be null");
+
+    Map<?, ?> parsedReport = parseReport(reportContent.serialize());
     assertTrue(parsedReport.containsKey("version"), "Report should have version");
     assertTrue(parsedReport.containsKey("idHash"), "Report should have idHash");
     assertFalse(((String) parsedReport.get("idHash")).isEmpty(), "Report iHash not be empty");
@@ -260,31 +280,23 @@ public class InsightsReportControllerTest {
 
   /** Prepare report to be sent */
   private InsightsReport prepareReport() {
+    Map<String, String> attrs = new HashMap<>();
+    attrs.put("attr1", "value1");
+    attrs.put("attr2", "value2 \t \t ");
+
     JarInfo jarInfoWithoutAttrs = new JarInfo("RandomName", "0.9", Collections.emptyMap());
-    JarInfo jarInfoWithAttrs =
-        new JarInfo(
-            "DifferentName :\" \n",
-            "0.1",
-            new HashMap<String, String>() {
-              {
-                put("attr1", "value1");
-                put("attr2", "value2 \t \t ");
-              }
-            });
+    JarInfo jarInfoWithAttrs = new JarInfo("DifferentName :\" \n", "0.1", attrs);
 
     // put JarInfos into subreport
     JarInfoSubreport jarInfoSubreport =
         new JarInfoSubreport(logger, Arrays.asList(jarInfoWithoutAttrs, jarInfoWithAttrs));
 
     // create top level report with subreports
-    return new DummyTopLevelReport(
-        logger,
-        new HashMap<String, InsightsSubreport>() {
-          {
-            put("jarsSubreport", jarInfoSubreport);
-            put("classpathSubreport", new ClasspathJarInfoSubreport(logger));
-          }
-        });
+    Map<String, InsightsSubreport> reports = new HashMap<>();
+    reports.put("jarsSubreport", jarInfoSubreport);
+    reports.put("classpathSubreport", new ClasspathJarInfoSubreport(logger));
+
+    return new DummyTopLevelReport(logger, reports);
   }
 
   private Map<?, ?> parseReport(String report) throws JsonProcessingException {

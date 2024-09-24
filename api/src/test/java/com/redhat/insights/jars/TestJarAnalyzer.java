@@ -1,4 +1,4 @@
-/* Copyright (C) Red Hat 2020-2023 */
+/* Copyright (C) Red Hat 2020-2024 */
 package com.redhat.insights.jars;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,7 +14,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Optional;
-import java.util.jar.JarOutputStream;
 import javax.servlet.jsp.JspPage;
 import org.junit.jupiter.api.Test;
 
@@ -286,9 +285,6 @@ public class TestJarAnalyzer {
     File jar = File.createTempFile("test", "jar");
     jar.deleteOnExit();
 
-    JarOutputStream out = new JarOutputStream(new FileOutputStream(jar));
-    out.close();
-
     JarAnalyzer processor = new JarAnalyzer(new NoopInsightsLogger(), true);
     JarInfo jarInfo = processor.getJarInfoSafe(jar.getName(), jar.toURI().toURL());
     assertEquals(JarAnalyzer.UNKNOWN_VERSION, jarInfo.version());
@@ -306,11 +302,11 @@ public class TestJarAnalyzer {
   public void getVersion() throws IOException {
     // The jsp jar's version is not in the main attributes, it is tucked in the entries. Make sure
     // we find it.
-    String version =
+    Optional<String> oVersion =
         JarAnalyzer.getVersion(
             JarUtils.getJarInputStream(
                 JspPage.class.getProtectionDomain().getCodeSource().getLocation()));
-    assertNotNull(version);
+    assertTrue(oVersion.isPresent());
   }
 
   @Test

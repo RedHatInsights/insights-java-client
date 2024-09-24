@@ -8,8 +8,10 @@ import com.redhat.insights.logging.InsightsLogger;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import org.jspecify.annotations.NullMarked;
 
 /** A scheduler based on a single-threaded {@link ScheduledThreadPoolExecutor}. */
+@NullMarked
 public class InsightsCustomScheduledExecutor extends ScheduledThreadPoolExecutor
     implements InsightsScheduler {
   private final InsightsLogger logger;

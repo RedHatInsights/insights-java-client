@@ -1,4 +1,4 @@
-/* Copyright (C) Red Hat 2023 */
+/* Copyright (C) Red Hat 2023-2024 */
 package com.redhat.insights.core.httpclient;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,6 +22,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Flow;
+import org.jspecify.annotations.NullUnmarked;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -130,6 +131,7 @@ class MultipartBodyBuilderTest {
   }
 
   @Nested
+  @NullUnmarked
   class WithVertxBackend {
 
     int port;

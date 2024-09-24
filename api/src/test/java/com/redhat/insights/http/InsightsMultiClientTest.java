@@ -1,4 +1,4 @@
-/* Copyright (C) Red Hat 2023 */
+/* Copyright (C) Red Hat 2023-2024 */
 package com.redhat.insights.http;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -47,6 +47,7 @@ class InsightsMultiClientTest {
             return "TEST";
           }
 
+          @Override
           public String getArchiveUploadDir() {
             return tmpdir.toString();
           }

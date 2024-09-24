@@ -1,11 +1,14 @@
-/* Copyright (C) Red Hat 2022-2023 */
+/* Copyright (C) Red Hat 2022-2024 */
 package com.redhat.insights;
+
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Client internal errors.
  *
  * @author Emmanuel Hugonnet (c) 2023 Red Hat, Inc.
  */
+@NullMarked
 public enum InsightsErrorCode {
   NONE(0),
   OPT_OUT(1),

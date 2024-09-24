@@ -1,4 +1,4 @@
-/* Copyright (C) Red Hat 2023 */
+/* Copyright (C) Red Hat 2023-2024 */
 package com.redhat.insights.jars;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -36,39 +37,68 @@ public class RecursiveJarAnalyzerHelperTest {
     assertEquals(3, result.size());
     Map<String, JarInfo> jars =
         result.stream().collect(Collectors.toMap(JarInfo::name, Function.identity()));
-    assertEquals("fontbox-2.0.27.jar", jars.get("fontbox-2.0.27.jar").name());
+    assertEquals(
+        "fontbox-2.0.27.jar",
+        jars.getOrDefault("fontbox-2.0.27.jar", new JarInfo("dummy", "0.0.0", new HashMap<>()))
+            .name());
     assertEquals(
         "numberguess.war/WEB-INF/lib/fontbox-2.0.27.jar",
-        jars.get("fontbox-2.0.27.jar").attributes().get("path"));
+        jars.getOrDefault("fontbox-2.0.27.jar", new JarInfo("dummy", "0.0.0", new HashMap<>()))
+            .attributes()
+            .get("path"));
     assertEquals(
         "d08c064d18b2b149da937d15c0d1708cba03f29d",
-        jars.get("fontbox-2.0.27.jar").attributes().get(JarAnalyzer.SHA1_CHECKSUM_KEY));
+        jars.getOrDefault("fontbox-2.0.27.jar", new JarInfo("dummy", "0.0.0", new HashMap<>()))
+            .attributes()
+            .get(JarAnalyzer.SHA1_CHECKSUM_KEY));
     assertEquals(
         "dc7429868aaf3d313c524b9aab846a405e89ca4927f35762ca4d1a60bce1d7f4",
-        jars.get("fontbox-2.0.27.jar").attributes().get(JarAnalyzer.SHA256_CHECKSUM_KEY));
+        jars.getOrDefault("fontbox-2.0.27.jar", new JarInfo("dummy", "0.0.0", new HashMap<>()))
+            .attributes()
+            .get(JarAnalyzer.SHA256_CHECKSUM_KEY));
     assertEquals(
         "38c8a1edb8c1c92a598c82fc7dd283c50feeac975ef75513c8d048e8c4b41b3ec2c941688b5fc54b8dee461edfd1174ae8457f48f5e3c365065810b3623e90e8",
-        jars.get("fontbox-2.0.27.jar").attributes().get(JarAnalyzer.SHA512_CHECKSUM_KEY));
-    assertEquals("pdfbox-2.0.27.jar", jars.get("pdfbox-2.0.27.jar").name());
+        jars.getOrDefault("fontbox-2.0.27.jar", new JarInfo("dummy", "0.0.0", new HashMap<>()))
+            .attributes()
+            .get(JarAnalyzer.SHA512_CHECKSUM_KEY));
     assertEquals(
-        "numberguess.war/WEB-INF/lib/pdfbox-2.0.27.jar",
-        jars.get("pdfbox-2.0.27.jar").attributes().get("path"));
+        "pdfbox-2.0.27.jar",
+        jars.getOrDefault("pdfbox-2.0.27.jar", new JarInfo("dummy", "0.0.0", new HashMap<>()))
+            .name());
+    assertEquals(
+        "numberguess.war/WEB-INF/lib/fontbox-2.0.27.jar",
+        jars.getOrDefault("fontbox-2.0.27.jar", new JarInfo("dummy", "0.0.0", new HashMap<>()))
+            .attributes()
+            .get("path"));
     assertEquals(
         "a25ad2a0be6b0bf9eb0e972abd09c34c0e797a3ce2a980d5ff035ff4cf078037",
-        jars.get("pdfbox-2.0.27.jar").attributes().get(JarAnalyzer.SHA256_CHECKSUM_KEY));
+        jars.getOrDefault("pdfbox-2.0.27.jar", new JarInfo("dummy", "0.0.0", new HashMap<>()))
+            .attributes()
+            .get(JarAnalyzer.SHA256_CHECKSUM_KEY));
     assertEquals(
         "e49f3c7c8d58d9aeecebcce052ec5915de4e67f9f81f5a23c295127d284e7ac69c74a0239d3b1db2d65e23f3d1d8a0baf39645dfa1f85c1955cfaca04b0128b6",
-        jars.get("pdfbox-2.0.27.jar").attributes().get(JarAnalyzer.SHA512_CHECKSUM_KEY));
-    assertEquals("commons-logging-1.2.jar", jars.get("commons-logging-1.2.jar").name());
+        jars.getOrDefault("pdfbox-2.0.27.jar", new JarInfo("dummy", "0.0.0", new HashMap<>()))
+            .attributes()
+            .get(JarAnalyzer.SHA512_CHECKSUM_KEY));
+    assertEquals(
+        "commons-logging-1.2.jar",
+        jars.getOrDefault("commons-logging-1.2.jar", new JarInfo("dummy", "0.0.0", new HashMap<>()))
+            .name());
     assertEquals(
         "numberguess.war/WEB-INF/lib/commons-logging-1.2.jar",
-        jars.get("commons-logging-1.2.jar").attributes().get("path"));
+        jars.getOrDefault("commons-logging-1.2.jar", new JarInfo("dummy", "0.0.0", new HashMap<>()))
+            .attributes()
+            .get("path"));
     assertEquals(
         "daddea1ea0be0f56978ab3006b8ac92834afeefbd9b7e4e6316fca57df0fa636",
-        jars.get("commons-logging-1.2.jar").attributes().get(JarAnalyzer.SHA256_CHECKSUM_KEY));
+        jars.getOrDefault("commons-logging-1.2.jar", new JarInfo("dummy", "0.0.0", new HashMap<>()))
+            .attributes()
+            .get(JarAnalyzer.SHA256_CHECKSUM_KEY));
     assertEquals(
         "ed00dbfabd9ae00efa26dd400983601d076fe36408b7d6520084b447e5d1fa527ce65bd6afdcb58506c3a808323d28e88f26cb99c6f5db9ff64f6525ecdfa557",
-        jars.get("commons-logging-1.2.jar").attributes().get(JarAnalyzer.SHA512_CHECKSUM_KEY));
+        jars.getOrDefault("commons-logging-1.2.jar", new JarInfo("dummy", "0.0.0", new HashMap<>()))
+            .attributes()
+            .get(JarAnalyzer.SHA512_CHECKSUM_KEY));
     deployment =
         Paths.get("target", "test-classes", "com", "redhat", "insights", "jars", "jarTest.jar");
     result = instance.listDeploymentContent(analyzer, tempDir, parentName, deployment);

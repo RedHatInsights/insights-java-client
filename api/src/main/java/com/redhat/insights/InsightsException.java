@@ -1,7 +1,9 @@
-/* Copyright (C) Red Hat 2023 */
+/* Copyright (C) Red Hat 2023-2024 */
 package com.redhat.insights;
 
 import static com.redhat.insights.InsightsErrorCode.NONE;
+
+import org.jspecify.annotations.NullMarked;
 
 /**
  * General-purpose insights client exception type.
@@ -9,6 +11,7 @@ import static com.redhat.insights.InsightsErrorCode.NONE;
  * <p>Lower-level exceptions (IO, etc.) shall be wrapped or attached to an {@link
  * InsightsException}.
  */
+@NullMarked
 public final class InsightsException extends RuntimeException {
 
   private final InsightsErrorCode error;
@@ -42,6 +45,6 @@ public final class InsightsException extends RuntimeException {
 
   @Override
   public String getMessage() {
-    return error.formatMessage(super.getMessage());
+    return error.formatMessage(String.valueOf(super.getMessage()));
   }
 }

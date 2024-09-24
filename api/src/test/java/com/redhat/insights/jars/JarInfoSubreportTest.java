@@ -1,4 +1,4 @@
-/* Copyright (C) Red Hat 2023 */
+/* Copyright (C) Red Hat 2023-2024 */
 package com.redhat.insights.jars;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.redhat.insights.AbstractReportTest;
 import java.util.*;
+import org.jspecify.annotations.NullUnmarked;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.Test;
  * @see JarInfoSubreportSerializer
  * @see ClasspathJarInfoSubreport
  */
+@NullUnmarked
 public class JarInfoSubreportTest extends AbstractReportTest {
   // list a few jars that should be in a classpath
   private static final List<String> expectedJars =
@@ -68,17 +70,12 @@ public class JarInfoSubreportTest extends AbstractReportTest {
    */
   @Test
   public void testWithJarInfos() throws JsonProcessingException {
+    Map<String, String> attrs = new HashMap<>();
+    attrs.put("attr1", "value1");
+    attrs.put("attr2", "value2 \t \t ");
+
     JarInfo jarInfoWithoutAttrs = new JarInfo("RandomName", "0.9", Collections.emptyMap());
-    JarInfo jarInfoWithAttrs =
-        new JarInfo(
-            "DifferentName :\" \n",
-            "0.1",
-            new HashMap<String, String>() {
-              {
-                put("attr1", "value1");
-                put("attr2", "value2 \t \t ");
-              }
-            });
+    JarInfo jarInfoWithAttrs = new JarInfo("DifferentName :\" \n", "0.1", attrs);
 
     JarInfoSubreport subreport =
         new JarInfoSubreport(

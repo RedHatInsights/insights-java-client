@@ -26,8 +26,10 @@ import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.net.ssl.SSLContext;
+import org.jspecify.annotations.NullUnmarked;
 import org.junit.jupiter.api.Test;
 
+@NullUnmarked
 public class InsightsJdkHttpClientTest {
   private static final InsightsLogger logger = new NoopInsightsLogger();
 

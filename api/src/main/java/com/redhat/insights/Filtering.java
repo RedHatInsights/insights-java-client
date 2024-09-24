@@ -5,8 +5,10 @@ import com.redhat.insights.reports.Utils;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+import org.jspecify.annotations.NullMarked;
 
 /** Insights data filtering function. */
+@NullMarked
 public enum Filtering implements Function<Map<String, Object>, Map<String, Object>> {
   DEFAULT(Utils::defaultMasking),
 
@@ -20,6 +22,7 @@ public enum Filtering implements Function<Map<String, Object>, Map<String, Objec
     this.mask = mask;
   }
 
+  @Override
   public Map<String, Object> apply(Map<String, Object> unfiltered) {
     return mask.apply(unfiltered);
   }

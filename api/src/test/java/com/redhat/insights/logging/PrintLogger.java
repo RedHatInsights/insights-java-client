@@ -1,8 +1,10 @@
-/* Copyright (C) Red Hat 2023 */
+/* Copyright (C) Red Hat 2023-2024 */
 package com.redhat.insights.logging;
 
 import java.io.PrintStream;
+import org.jspecify.annotations.NullUnmarked;
 
+@NullUnmarked
 public class PrintLogger implements InsightsLogger {
   public static final PrintLogger STDOUT_LOGGER = new PrintLogger(System.out);
   public static final PrintLogger STDERR_LOGGER = new PrintLogger(System.err);

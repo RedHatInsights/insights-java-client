@@ -14,6 +14,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Base class that collects basic information and delegates to the subreport for product-specific
@@ -84,7 +85,7 @@ public abstract class AbstractTopLevelReportBase implements InsightsReport {
   private final JsonSerializer<InsightsReport> serializer;
   private final InsightsLogger logger;
   private final InsightsConfiguration config;
-  private byte[] subReport;
+  private byte @Nullable [] subReport;
 
   // Can't be set properly until after report has been generated
   private String idHash = "";
