@@ -1,4 +1,4 @@
-/* Copyright (C) Red Hat 2023 */
+/* Copyright (C) Red Hat 2023-2024 */
 package com.redhat.insights.configuration;
 
 import static com.redhat.insights.config.EnvAndSysPropsInsightsConfiguration.*;
@@ -94,6 +94,33 @@ public class EnvVariableConfigurationTest {
         "Configuration does not contain value passed through environment variable.");
     assertEquals(
         12345,
+        config.getProxyConfiguration().get().getPort(),
+        "Configuration does not contain value passed through environment variable.");
+  }
+
+  @Test
+  void testGetProxyConfigurationWithUnusedEnv() {
+    environmentVariables.set(ENV_HTTPS_PROXY, "https://env-https-proxy-host:54321");
+    assertEquals(
+        "env-proxy-host",
+        config.getProxyConfiguration().get().getHost(),
+        "Configuration does not contain value passed through environment variable.");
+    assertEquals(
+        12345,
+        config.getProxyConfiguration().get().getPort(),
+        "Configuration does not contain value passed through environment variable.");
+  }
+
+  @Test
+  void testGetProxyConfigurationAlternative() {
+    environmentVariables.remove(ENV_PROXY_HOST).remove(ENV_PROXY_PORT);
+    environmentVariables.set(ENV_HTTPS_PROXY, "https://env-https-proxy-host:54321");
+    assertEquals(
+        "env-https-proxy-host",
+        config.getProxyConfiguration().get().getHost(),
+        "Configuration does not contain value passed through environment variable.");
+    assertEquals(
+        54321,
         config.getProxyConfiguration().get().getPort(),
         "Configuration does not contain value passed through environment variable.");
   }
