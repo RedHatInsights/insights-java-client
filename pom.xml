@@ -81,7 +81,7 @@
     <servlet-jsp-api.version>2.3.3</servlet-jsp-api.version>
     <vertx.version>4.5.10</vertx.version>
     <smallrye-mutiny-vertx-bindings.version>3.15.1</smallrye-mutiny-vertx-bindings.version>
-    <system-stubs-jupiter.version>2.1.6</system-stubs-jupiter.version>
+    <system-stubs-jupiter.version>2.1.7</system-stubs-jupiter.version>
     <awaitility.version>4.2.1</awaitility.version>
 
     <!-- Plugins versions -->
