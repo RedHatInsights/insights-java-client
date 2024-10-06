@@ -326,7 +326,7 @@ public class TestTopLevelReport extends AbstractReportTest {
       Map<?, ?> basicReport = (Map<?, ?>) parseReport(report).get("basic");
 
       assertEquals(
-          sanitizedJvmArgs,
+          String.join(" ", sanitizedJvmArgs.toArray(new String[0])),
           basicReport.get("jvm.args"),
           "The \"jvm.args\" property in the basic report should be properly sanitized.");
       assertEquals(

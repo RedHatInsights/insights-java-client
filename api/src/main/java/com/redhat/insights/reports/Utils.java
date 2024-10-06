@@ -1,10 +1,7 @@
 /* Copyright (C) Red Hat 2023-2024 */
 package com.redhat.insights.reports;
 
-import static java.util.Collections.emptyMap;
-
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 public final class Utils {
@@ -12,11 +9,7 @@ public final class Utils {
 
   @SuppressWarnings("unchecked")
   public static Map<String, Object> defaultMasking(final Map<String, Object> inArgs) {
-    List<String> jvmArgs = new ArrayList<>();
-    List<String> args = (List<String>) (inArgs.getOrDefault("jvm.args", emptyMap()));
-    for (String arg : args) {
-      jvmArgs.add(sanitizeJavaParameters(arg));
-    }
+    String jvmArgs = sanitizeJavaParameters((String) (inArgs.getOrDefault("jvm.args", "")));
     inArgs.put("jvm.args", jvmArgs);
     String command = (String) inArgs.getOrDefault("java.command", "");
     inArgs.put("java.command", sanitizeJavaParameters(command));

@@ -179,7 +179,7 @@ public abstract class AbstractTopLevelReportBase implements InsightsReport {
 
     RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
     List<String> inputArguments = fixInputArguments(runtimeMXBean.getInputArguments());
-    options.put("jvm.args", inputArguments);
+    options.put("jvm.args", String.join(" ", inputArguments));
 
     MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
     MemoryUsage heapMemoryUsage = memoryMXBean.getHeapMemoryUsage();
