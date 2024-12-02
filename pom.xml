@@ -65,6 +65,7 @@
     <maven.compiler.release>11</maven.compiler.release>
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
+    <maven.compiler.fork>true</maven.compiler.fork>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <skip.spotless>false</skip.spotless>
 
@@ -91,7 +92,7 @@
     <maven-surefire-plugin.version>3.5.1</maven-surefire-plugin.version>
     <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
     <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
-    <error-prone.version>2.31.0</error-prone.version>
+    <error-prone.version>2.36.0</error-prone.version>
     <nullaway.version>0.11.3</nullaway.version>
     <jspecify.version>1.0.0</jspecify.version>
     <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
@@ -293,6 +294,7 @@
           <encoding>UTF-8</encoding>
           <compilerArgs>
             <arg>-XDcompilePolicy=simple</arg>
+            <arg>--should-stop=ifError=FLOW</arg>
             <arg>-Xplugin:ErrorProne \
               -Xep:MissingCasesInEnumSwitch:OFF \
               -Xep:MissingOverride:ERROR \
