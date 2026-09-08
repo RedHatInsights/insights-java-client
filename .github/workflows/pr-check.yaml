@@ -25,7 +25,7 @@ jobs:
         name: Setup Java
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '17'
           cache: maven
       - name: Run tests
         run: ./mvnw --no-transfer-progress verify
