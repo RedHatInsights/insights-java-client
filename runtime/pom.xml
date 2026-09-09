@@ -11,6 +11,14 @@
 
   <artifactId>runtimes-java-core-runtime</artifactId>
 
+  <properties>
+    <!--! Artifact bytecode target is Java 11. The root POM sets release=17 (build JDK);
+         this module overrides back to 11 so consumers on Java 11+ can use it. -->
+    <maven.compiler.release>11</maven.compiler.release>
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
