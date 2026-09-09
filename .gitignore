@@ -1,6 +1,8 @@
 # JReleaser file
 JRELEASER_VERSION
 
+.bob/
+
 # Release process POM manipulation
 pom.xml.versionsBackup
 
