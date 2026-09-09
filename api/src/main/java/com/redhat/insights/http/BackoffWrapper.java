@@ -1,4 +1,4 @@
-/* Copyright (C) Red Hat 2023-2024 */
+/* Copyright (C) Red Hat 2023-2026 */
 package com.redhat.insights.http;
 
 import static com.redhat.insights.InsightsErrorCode.ERROR_CLIENT_BACKOFF_RETRIES_FAILED;
@@ -14,9 +14,19 @@ import org.jspecify.annotations.NullMarked;
  *
  * <p>It wraps an execution that might throw an exception (see {@link Action}). In this case
  * attempts will be retried with the provided parameters (count, initial delay, factor).
+ *
+ * <p>Actions may throw an {@link InsightsException} that implements {@link NonRetryable} to signal
+ * that retrying will never succeed (e.g. HTTP 401/403). Such exceptions are rethrown immediately
+ * without consuming any retry budget.
  */
 @NullMarked
 public final class BackoffWrapper {
+
+  /**
+   * Marker interface for {@link InsightsException}s that must not be retried. Throw an exception
+   * implementing this interface from an {@link Action} to bypass the backoff loop immediately.
+   */
+  public interface NonRetryable {}
 
   @FunctionalInterface
   public interface Action {
@@ -55,6 +65,13 @@ public final class BackoffWrapper {
         action.run();
         return count;
       } catch (Throwable err) {
+        // ! Fix 4: 4xx errors (401, 403, 413, 415) are thrown as NonRetryableInsightsException
+        // ! which implements NonRetryable; retrying them wastes backoff budget and adds unnecessary
+        // ! delay because the outcome will never change (auth/permission/payload errors are not
+        // ! transient). We rethrow as RuntimeException since InsightsException is final.
+        if (err instanceof NonRetryable) {
+          throw (RuntimeException) err;
+        }
         if (retryFailure == null) {
           retryFailure =
               new InsightsException(
