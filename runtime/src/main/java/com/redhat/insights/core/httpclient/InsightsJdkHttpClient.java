@@ -1,4 +1,4 @@
-/* Copyright (C) Red Hat 2023-2024 */
+/* Copyright (C) Red Hat 2023-2026 */
 package com.redhat.insights.core.httpclient;
 
 import static com.redhat.insights.InsightsErrorCode.*;
@@ -7,6 +7,7 @@ import com.redhat.insights.InsightsException;
 import com.redhat.insights.config.InsightsConfiguration;
 import com.redhat.insights.http.BackoffWrapper;
 import com.redhat.insights.http.InsightsHttpClient;
+import com.redhat.insights.http.NonRetryableInsightsException;
 import com.redhat.insights.logging.InsightsLogger;
 import com.redhat.insights.reports.InsightsReport;
 import java.io.File;
@@ -159,20 +160,24 @@ public class InsightsJdkHttpClient implements InsightsHttpClient {
                   }
                   break;
                 case 4:
+                  // ! Fix 4: 4xx errors are non-retryable — auth/permission/payload issues will not
+                  // ! resolve on retry, so we implement NonRetryable to skip the backoff loop.
                   switch (statusCode) {
                     case 401:
-                      throw new InsightsException(
+                      throw new NonRetryableInsightsException(
                           ERROR_HTTP_SEND_AUTH_ERROR, "Authentication missing from request");
                     case 403:
-                      throw new InsightsException(ERROR_HTTP_SEND_FORBIDDEN, "Forbidden");
+                      throw new NonRetryableInsightsException(
+                          ERROR_HTTP_SEND_FORBIDDEN, "Forbidden");
                     case 413:
-                      throw new InsightsException(ERROR_HTTP_SEND_PAYLOAD, "Payload too large");
+                      throw new NonRetryableInsightsException(
+                          ERROR_HTTP_SEND_PAYLOAD, "Payload too large");
                     case 415:
-                      throw new InsightsException(
+                      throw new NonRetryableInsightsException(
                           ERROR_HTTP_SEND_INVALID_CONTENT_TYPE,
                           "Content type of payload is unsupported");
                     default:
-                      throw new InsightsException(
+                      throw new NonRetryableInsightsException(
                           ERROR_HTTP_SEND_CLIENT_ERROR,
                           "Client error with HTTP status code " + statusCode);
                   }

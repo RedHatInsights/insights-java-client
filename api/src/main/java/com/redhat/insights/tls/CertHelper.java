@@ -1,4 +1,4 @@
-/* Copyright (C) Red Hat 2023 */
+/* Copyright (C) Red Hat 2023-2026 */
 package com.redhat.insights.tls;
 
 import com.redhat.insights.config.InsightsConfiguration;
@@ -10,7 +10,11 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import org.jspecify.annotations.NullMarked;
 
+// ! Fix 7: Added @NullMarked — CertHelper was the only production TLS class without it, leaving
+// ! a gap in NullAway static analysis coverage.
+@NullMarked
 public class CertHelper {
   private final InsightsLogger logger;
   private final InsightsConfiguration configuration;
@@ -33,25 +37,29 @@ public class CertHelper {
     final StringBuilder sb = new StringBuilder();
     final CertStreamHandler handler =
         new CertStreamHandler(process.getInputStream(), l -> sb.append(l));
+    // ! Fix 5: ExecutorService is now shut down in a finally block to prevent a thread-pool leak
+    // ! if an exception is thrown between submit() and the original shutdown() call.
     final ExecutorService service = Executors.newSingleThreadExecutor();
     Future<?> future = service.submit(handler);
-    final InsightsHelperStatus exitCode = InsightsHelperStatus.fromExitCode(process.waitFor());
-    service.shutdown();
     try {
-      // We don't care about the return of the future - only that the task exited
-      future.get();
-    } catch (ExecutionException e) {
-      throw new IOException("Helper subprocess execution failed", e);
+      final InsightsHelperStatus exitCode = InsightsHelperStatus.fromExitCode(process.waitFor());
+      try {
+        // We don't care about the return of the future - only that the task exited
+        future.get();
+      } catch (ExecutionException e) {
+        throw new IOException("Helper subprocess execution failed", e);
+      }
+      if (InsightsHelperStatus.OK.equals(exitCode)) {
+        return sb.toString().getBytes(StandardCharsets.UTF_8);
+      }
+      String msg =
+          "Couldn't use helper. Sub-process returned: "
+              + exitCode.getCode()
+              + " ; "
+              + exitCode.getMessage();
+      throw new IOException(msg);
+    } finally {
+      service.shutdown();
     }
-    if (InsightsHelperStatus.OK.equals(exitCode)) {
-      return sb.toString().getBytes(StandardCharsets.UTF_8);
-    }
-    String msg =
-        "Couldn't use helper. Sub-process returned: "
-            + exitCode.getCode()
-            + " ; "
-            + exitCode.getMessage();
-    // Should this be an InsightsException ?
-    throw new IOException(msg);
   }
 }

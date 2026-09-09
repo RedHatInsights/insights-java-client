@@ -1,4 +1,4 @@
-/* Copyright (C) Red Hat 2022-2023 */
+/* Copyright (C) Red Hat 2022-2026 */
 package com.redhat.insights.tls;
 
 import static com.redhat.insights.InsightsErrorCode.*;
@@ -17,9 +17,13 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
+import org.jspecify.annotations.NullMarked;
 import org.wildfly.common.iteration.CodePointIterator;
 import org.wildfly.security.pem.Pem;
 
+// ! Fix 7: Added @NullMarked — PEMSupport was missing the annotation despite the rest of the
+// ! tls package being covered, leaving a gap in NullAway static analysis.
+@NullMarked
 public class PEMSupport {
 
   private final InsightsLogger logger;

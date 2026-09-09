@@ -62,9 +62,11 @@
   </distributionManagement>
 
   <properties>
-    <maven.compiler.release>11</maven.compiler.release>
-    <maven.compiler.source>11</maven.compiler.source>
-    <maven.compiler.target>11</maven.compiler.target>
+    <!--! The JDK used to run the build must be Java 17. Artifact bytecode targets are set
+         per-module: api overrides to release=8, runtime overrides to release=11. -->
+    <maven.compiler.release>17</maven.compiler.release>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
     <maven.compiler.fork>true</maven.compiler.fork>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <skip.spotless>false</skip.spotless>
