@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Check conventional commits
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: wagoid/commitlint-github-action@v6
         if: (github.actor!= 'dependabot[bot]') && (contains(github.head_ref, 'dependabot/') == false)
 
