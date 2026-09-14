@@ -79,7 +79,7 @@
 
     <!-- Test libraries versions -->
     <junit.version>5.12.2</junit.version>
-    <mockito.version>5.18.0</mockito.version>
+    <mockito.version>5.23.0</mockito.version>
     <bytebuddy.version>1.17.7</bytebuddy.version>
     <servlet-api.version>4.0.1</servlet-api.version>
     <servlet-jsp-api.version>2.3.3</servlet-jsp-api.version>
